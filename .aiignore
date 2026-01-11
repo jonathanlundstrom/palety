@@ -1,0 +1,9 @@
+# Files
+.env
+.env.example
+test-ignore.txt
+
+# Directories
+.idea
+.github
+vendor

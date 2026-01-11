@@ -9,12 +9,13 @@ return new class extends Migration {
      * Run the migrations.
      */
     public function up(): void {
-        Schema::create('transports', function (Blueprint $table) {
+        Schema::create('contents', function (Blueprint $table) {
             $table->id();
-            $table->string('type');
-            $table->string('notes');
+            $table->string('label_en');
+            $table->string('label_ua');
+            $table->string('category');
             $table->timestamps();
-            $table->timestamp('delivered_at')->nullable();
+            $table->softDeletes();
         });
     }
 
@@ -22,6 +23,6 @@ return new class extends Migration {
      * Reverse the migrations.
      */
     public function down(): void {
-        Schema::dropIfExists('transports');
+        Schema::dropIfExists('contents');
     }
 };

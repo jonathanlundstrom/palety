@@ -6,6 +6,7 @@ use App\Enumerables\ParcelType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Parcel extends Model {
     use HasFactory;
@@ -18,18 +19,16 @@ class Parcel extends Model {
     protected $table = 'parcels';
 
     /**
-     * The attributes that are mass assignable.
+     * The attributes that are mass-assignable.
      *
      * @var list<string>
      */
     public $fillable = [
+        'type',
+        'weight',
+        'recipient_id',
         'pallet_id',
         'transport_id',
-        'recipient_id',
-        'label_en',
-        'label_ua',
-        'weight',
-        'type',
     ];
 
     /**
@@ -40,6 +39,13 @@ class Parcel extends Model {
     protected $casts = [
         'type' => ParcelType::class,
     ];
+
+    /**
+     * Get the contents associated with the parcel.
+     */
+    public function contents(): BelongsToMany {
+        return $this->belongsToMany(Content::class);
+    }
 
     /**
      * Get the recipient associated with the parcel.

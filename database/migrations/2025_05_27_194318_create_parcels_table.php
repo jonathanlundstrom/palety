@@ -1,5 +1,6 @@
 <?php
 
+use App\Enumerables\ParcelType;
 use App\Models\Pallet;
 use App\Models\Recipient;
 use App\Models\Transport;
@@ -14,19 +15,18 @@ return new class extends Migration {
     public function up(): void {
         Schema::create('parcels', function (Blueprint $table) {
             $table->id();
+            $table->string('type');
+            $table->float('weight');
+            $table->foreignIdFor(Recipient::class)
+                ->nullable()
+                ->constrained();
             $table->foreignIdFor(Pallet::class)
                 ->nullable()
                 ->constrained();
             $table->foreignIdFor(Transport::class)
                 ->nullable()
                 ->constrained();
-            $table->foreignIdFor(Recipient::class)
-                ->nullable()
-                ->constrained();
-            $table->string('label_en');
-            $table->string('label_ua');
-            $table->float('weight');
-            $table->string('type');
+            $table->string('notes')->nullable();
             $table->timestamps();
         });
     }
