@@ -18,7 +18,7 @@ class Pallet extends Model {
     protected $table = 'pallets';
 
     /**
-     * The attributes that are mass assignable.
+     * The attributes that are mass-assignable.
      *
      * @var list<string>
      */

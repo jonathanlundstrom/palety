@@ -12,22 +12,17 @@
             </a>
 
             <flux:navlist variant="outline">
-                <flux:navlist.group :heading="__('Platform')" class="grid">
-                    <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
-                </flux:navlist.group>
+                <flux:navlist.item icon="chart-bar-square" :href="route('dashboard')" wire:navigate>{{ __('navigation.dashboard') }}</flux:navlist.item>
+                <flux:navlist.item icon="archive-box" :href="route('parcels')" wire:navigate>{{ __('navigation.parcels') }}</flux:navlist.item>
+                <flux:navlist.item icon="rectangle-group" :href="route('dashboard')" wire:navigate>{{ __('navigation.pallets') }}</flux:navlist.item>
+                <flux:navlist.item icon="truck" :href="route('dashboard')" wire:navigate>{{ __('navigation.transports') }}</flux:navlist.item>
+                <flux:navlist.item icon="map-pin" :href="route('dashboard')" wire:navigate>{{ __('navigation.recipients') }}</flux:navlist.item>
+                <flux:navlist.item icon="list-bullet" :href="route('dashboard')" wire:navigate>{{ __('navigation.contents') }}</flux:navlist.item>
+                <flux:navlist.item icon="map-pin" :href="route('recipients')" wire:navigate>{{ __('navigation.recipients') }}</flux:navlist.item>
+                <flux:navlist.item icon="list-bullet" :href="route('dashboard')" wire:navigate>{{ __('navigation.contents') }}</flux:navlist.item>
             </flux:navlist>
 
             <flux:spacer />
-
-            <flux:navlist variant="outline">
-                <flux:navlist.item icon="folder-git-2" href="https://github.com/laravel/livewire-starter-kit" target="_blank">
-                {{ __('Repository') }}
-                </flux:navlist.item>
-
-                <flux:navlist.item icon="book-open-text" href="https://laravel.com/docs/starter-kits#livewire" target="_blank">
-                {{ __('Documentation') }}
-                </flux:navlist.item>
-            </flux:navlist>
 
             <!-- Desktop User Menu -->
             <flux:dropdown position="bottom" align="start">
@@ -42,9 +37,7 @@
                         <div class="p-0 text-sm font-normal">
                             <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
                                 <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
-                                    <span
-                                        class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white"
-                                    >
+                                    <span class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
                                         {{ auth()->user()->initials() }}
                                     </span>
                                 </span>
@@ -92,9 +85,7 @@
                         <div class="p-0 text-sm font-normal">
                             <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
                                 <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
-                                    <span
-                                        class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white"
-                                    >
+                                    <span class="flex h-full w-full items-center justify-center rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
                                         {{ auth()->user()->initials() }}
                                     </span>
                                 </span>

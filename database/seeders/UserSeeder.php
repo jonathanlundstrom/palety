@@ -16,6 +16,7 @@ class UserSeeder extends Seeder {
             'email' => 'developer@palety.se',
             'password' => Hash::make('12345678'),
             'role' => 'admin',
+            'locale' => 'en',
         ]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enumerables\DeliveryType;
 use App\Enumerables\RecipientType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -19,15 +20,16 @@ class Recipient extends Model {
     protected $table = 'recipients';
 
     /**
-     * The attributes that are mass assignable.
+     * The attributes that are mass-assignable.
      *
      * @var list<string>
      */
     public $fillable = [
         'name',
-        'email',
-        'phone',
         'type',
+        'email',
+        'phone_number',
+        'delivery_type',
         'address',
         'zipcode',
         'nova_poshta_id',
@@ -42,6 +44,7 @@ class Recipient extends Model {
      */
     protected $casts = [
         'type' => RecipientType::class,
+        'delivery_type' => DeliveryType::class,
     ];
 
     /**

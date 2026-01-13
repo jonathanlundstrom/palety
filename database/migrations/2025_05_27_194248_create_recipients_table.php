@@ -1,5 +1,6 @@
 <?php
 
+use App\Enumerables\DeliveryType;
 use App\Enumerables\RecipientType;
 use App\Models\Recipient;
 use Illuminate\Database\Migrations\Migration;
@@ -17,11 +18,12 @@ return new class extends Migration {
                 ->nullable()
                 ->constrained();
             $table->string('name');
-            $table->string('reference');
+            $table->string('type')->default(RecipientType::ORGANISATION->name);
+            $table->string('reference')->nullable();
             $table->string('email')->nullable();
-            $table->string('phone')->nullable();
+            $table->string('phone_number');
             $table->string('organisation_number')->nullable();
-            $table->string('type')->default(RecipientType::NOVA_POSHTA_DELIVERY->name);
+            $table->string('delivery_type')->default(DeliveryType::NOVA_POSHTA_DELIVERY->name);
             $table->string('address')->nullable();
             $table->string('zipcode')->nullable();
             $table->integer('nova_poshta_id')->nullable();
