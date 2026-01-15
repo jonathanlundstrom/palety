@@ -29,7 +29,7 @@
                 <flux:profile
                     :name="auth()->user()->name"
                     :initials="auth()->user()->initials()"
-                    icon-trailing="chevrons-up-down"
+                    icon-trailing="chevron-up-down"
                 />
 
                 <flux:menu class="w-[220px]">
@@ -117,6 +117,10 @@
         </flux:header>
 
         {{ $slot }}
+
+        @persist('toast')
+            <flux:toast />
+        @endpersist
 
         @fluxScripts
     </body>

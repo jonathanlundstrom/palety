@@ -1,7 +1,6 @@
 <?php
 
 use App\Enumerables\DeliveryType;
-use App\Enumerables\FormVariant;
 use App\Enumerables\RecipientType;
 use App\Models\Recipient;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -9,7 +8,7 @@ use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\Validate;
-use Livewire\Volt\Component;
+use Livewire\Component;
 
 new class extends Component {
 
@@ -19,8 +18,8 @@ new class extends Component {
      */
     public ?Recipient $recipient = null;
 
-    #[Validate('integer')]
-    public int $parent_id;
+    #[Validate('integer|nullable')]
+    public ?int $parent_id = null;
 
     #[Validate('required')]
     public string $type = RecipientType::ORGANISATION->name;
@@ -34,7 +33,7 @@ new class extends Component {
     #[Validate('required_if:type,' . RecipientType::ORGANISATION->name)]
     public string $reference;
 
-    #[Validate('email')]
+    #[Validate('email|nullable')]
     public string $email;
 
     #[Validate('required')]
@@ -89,9 +88,7 @@ new class extends Component {
 
 }
 ?>
-<form wire:submit="save" class="space-y-6">
-    {{ $this->isEditForm ? 'EDIT' : 'CREATE' }}
-
+<form wire:submit="{{ $this->isEditForm ? 'update' : 'create' }}" class="space-y-6">
     <flux:select variant="listbox" wire:model.live="parent_id" label="Parent recipient">
         <!-- Will be populated soon... -->
     </flux:select>

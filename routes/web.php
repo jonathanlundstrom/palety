@@ -9,16 +9,16 @@ Route::view('/', 'dashboard')
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('/', 'dashboard')->name('dashboard');
-    Volt::route('/parcels', 'pages.parcels')->name('parcels');
-    Volt::route('/recipients', 'recipients.recipients')->name('recipients');
+    Route::livewire('/parcels', 'pages::parcels')->name('parcels');
+    Route::livewire('/recipients', 'pages::recipients')->name('recipients');
 });
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
 
-    Volt::route('settings/profile', 'settings.profile')->name('settings.profile');
-    Volt::route('settings/password', 'settings.password')->name('settings.password');
-    Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
+    Route::livewire('settings/profile', 'pages::settings.profile')->name('settings.profile');
+    Route::livewire('settings/password', 'pages::settings.password')->name('settings.password');
+    Route::livewire('settings/appearance', 'pages::settings.appearance')->name('settings.appearance');
 });
 
 require __DIR__.'/auth.php';

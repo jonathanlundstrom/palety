@@ -29,7 +29,7 @@ new class extends TableComponent {
      * @return View
      */
     public function render(): View {
-        return view('livewire.recipients.recipients')
+        return view('pages::recipients.recipients')
             ->title(__('navigation.recipients'));
     }
 }
@@ -102,6 +102,6 @@ new class extends TableComponent {
     </flux:table>
 
     <x-flyout name="add-recipient" title="Recipient Details" subtitle="Fill in the information below" position="right">
-        <livewire:recipients.recipient-form />
+        <livewire:pages::recipients.recipient-form />
     </x-flyout>
 </div>

@@ -19,7 +19,7 @@ new class extends TableComponent {
      * @return View
      */
     public function render(): View {
-        return view('livewire.pages.parcels')
+        return view('pages::parcels.parcels')
             ->title(__('navigation.parcels'));
     }
 }

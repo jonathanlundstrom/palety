@@ -3,7 +3,7 @@
 namespace App\Livewire\Components;
 
 use Livewire\Attributes\Url;
-use Livewire\Volt\Component;
+use Livewire\Component;
 use Livewire\WithPagination;
 
 abstract class TableComponent extends Component {
