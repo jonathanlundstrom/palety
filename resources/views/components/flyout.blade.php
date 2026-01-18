@@ -5,7 +5,7 @@
     'position' => 'right'
 ])
 
-<flux:modal :name="$name" flyout :position="$position">
+<flux:modal :name="$name" flyout :position="$position" x-on:close="$wire.dispatch('reset-modal')">
     <div class="space-y-6">
         <div>
             <flux:heading size="lg">{{ $title }}</flux:heading>

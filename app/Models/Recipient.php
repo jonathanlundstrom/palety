@@ -25,10 +25,13 @@ class Recipient extends Model {
      * @var list<string>
      */
     public $fillable = [
+        'parent_id',
         'name',
         'type',
+        'reference',
         'email',
         'phone_number',
+        'organisation_number',
         'delivery_type',
         'address',
         'zipcode',

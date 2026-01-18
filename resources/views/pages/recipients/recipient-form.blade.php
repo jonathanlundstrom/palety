@@ -2,21 +2,35 @@
 
 use App\Enumerables\DeliveryType;
 use App\Enumerables\RecipientType;
+use App\Helpers\ComponentHelpers;
 use App\Models\Recipient;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Flux\Flux;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 
 new class extends Component {
+    use ComponentHelpers;
 
-    /**
-     * The recipient to edit, if any.
-     * @var Recipient|null
-     */
-    public ?Recipient $recipient = null;
+    #[Locked]
+    public bool $loading = false;
+
+    #[Locked]
+    public Recipient $recipient;
+
+    #[On('reset-modal')]
+    public function clear(): void {
+        $this->reset();
+    }
+
+    #[On('edit-recipient')]
+    public function edit(int $id): void {
+        $this->recipient = Recipient::find($id);
+        $this->hydrateFields($this->recipient);
+    }
 
     #[Validate('integer|nullable')]
     public ?int $parent_id = null;
@@ -55,8 +69,11 @@ new class extends Component {
     public string $nova_poshta_id;
 
     #[Computed]
-    protected function isEditForm(): bool {
-        return !is_null($this->recipient);
+    protected function recipients(): Collection {
+        return Recipient::query()
+            ->select('id', 'name')
+            ->orderBy('name')
+            ->get();
     }
 
     #[Computed]
@@ -74,23 +91,37 @@ new class extends Component {
         return DeliveryType::from($this->delivery_type)->hasAddress();
     }
 
-    public function create() {
-        $this->validate();
-        dump('CREATE!');
-        $this->dispatch('recipient-created', recipient: []);
-    }
+    public function onSubmit() {
+        $validated = $this->validate();
 
-    public function update() {
-        $this->validate();
-        dump('UPDATE!');
-        $this->dispatch('recipient-updated', recipient: []);
+        try {
+            if (isset($this->recipient) && $this->recipient->exists) {
+                if (!$this->recipient->update($validated)) {
+                    throw new Exception('notifications.recipients.failed');
+                }
+            } else {
+                if (!Recipient::create($validated)) {
+                    throw new Exception('notifications.recipients.failed');
+                }
+            }
+
+            Flux::toast(variant: 'success', text: __('notifications.recipient.saved'));
+
+            $this->dispatch('recipients-updated');
+            $this->dispatch('modal-close', name: 'recipient-form');
+            $this->reset(); // Reset the form properties
+        } catch (Exception $e) {
+            Flux::toast(variant: 'danger', text: __($e->getMessage()));
+        }
     }
 
 }
 ?>
-<form wire:submit="{{ $this->isEditForm ? 'update' : 'create' }}" class="space-y-6">
-    <flux:select variant="listbox" wire:model.live="parent_id" label="Parent recipient">
-        <!-- Will be populated soon... -->
+<form wire:submit="onSubmit" class="space-y-6 min-h-full">
+    <flux:select variant="listbox" wire:model.live="parent_id" label="Parent recipient" placeholder="Choose parent recipient" clearable>
+        @foreach ($this->recipients as $recipient)
+            <flux:select.option value="{{ $recipient->id }}">{{ $recipient->name }}</flux:select.option>
+        @endforeach
     </flux:select>
 
     <flux:select variant="listbox" wire:model.live="type" label="Type">
@@ -120,15 +151,16 @@ new class extends Component {
             <flux:input wire:model="address" label="Address"/>
             <flux:input wire:model="zipcode" label="Zipcode"/>
         @else
-            <flux:input type="number" min="1" max="1000" icon="hashtag" wire:model="nova_poshta_id"
-                        label="Nova Poshta ID"/>
+            <flux:input type="number" min="1" max="1000" icon="hashtag" wire:model="nova_poshta_id" label="Nova Poshta ID"/>
         @endif
 
-        <flux:input wire:model="city" label="City"/>
     @endif
+
+    <flux:input wire:model="city" label="City"/>
+    <flux:textarea wire:model="notes" label="Notes"/>
 
     <div class="flex">
         <flux:spacer/>
-        <flux:button type="submit" variant="primary">Add recipient</flux:button>
+        <flux:button type="submit" variant="primary">Submit</flux:button>
     </div>
 </form>

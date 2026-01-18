@@ -44,6 +44,7 @@ abstract class TableComponent extends Component {
             $this->sortBy = $key;
             $this->sortDirection = 'asc';
         }
+
         $this->resetPage();
     }
 }
