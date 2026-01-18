@@ -19,27 +19,20 @@ abstract class TableComponent extends Component {
      * Sort by on a specific column.
      */
     #[Url(as: 'sortBy')]
-    public string $sortBy = 'created_at';
+    public string $sortBy = 'id';
 
     /**
      * Sort direction on a specific column.
      */
     #[Url(as: 'sortDirection')]
-    public ?string $sortDirection = 'desc';
+    public ?string $sortDirection = 'asc';
 
     /**
      * Sorting function
      */
     public function sort(string $key): void {
         if ($this->sortBy === $key) {
-            if ($this->sortDirection === 'asc') {
-                $this->sortDirection = 'desc';
-            } elseif ($this->sortDirection === 'desc' && $key !== 'created_at') {
-                $this->sortBy = 'created_at';
-                $this->sortDirection = 'desc';
-            } else {
-                $this->sortDirection = 'asc';
-            }
+            $this->sortDirection = $this->sortDirection === 'asc' ? 'desc' : 'asc';
         } else {
             $this->sortBy = $key;
             $this->sortDirection = 'asc';

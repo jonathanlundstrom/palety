@@ -9,6 +9,7 @@ use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
 use Illuminate\View\View;
 use Livewire\Attributes\On;
+use Livewire\Attributes\Url;
 
 new class extends TableComponent {
     /**
@@ -19,9 +20,31 @@ new class extends TableComponent {
         $this->dispatch('edit-recipient', id: $recipient_id);
     }
 
+    #[On('recipients-updated')]
+    public function refreshList(): void {
+        unset($this->items, $this->cities);
+    }
+
+    #[Url(except: '')]
+    public string $type = '';
+
+    #[Url(except: '')]
+    public string $delivery_type = '';
+
+    #[Url(except: '')]
+    public string $city = '';
+
     #[Computed]
     public function items(): LengthAwarePaginator {
+        dump($this->type);
         return Recipient::query()
+            ->when($this->q, fn($query) => $query->whereAny(
+                ['name', 'phone_number', 'email', 'city'], 'ILIKE', "%{$this->q}%")
+            )
+            ->when($this->type, fn($query) => $query->where('type', $this->type))
+            ->when($this->delivery_type, fn($query) => $query->where('delivery_type', $this->delivery_type))
+            ->when($this->city, fn($query) => $query->where('city', $this->city))
+            ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate(20);
     }
 
@@ -31,11 +54,6 @@ new class extends TableComponent {
             ->unique('city')
             ->sortBy('city')
             ->pluck('city');
-    }
-
-    #[On('recipients-updated')]
-    public function refreshList(): void {
-        unset($this->items, $this->cities);
     }
 
     /**
@@ -50,25 +68,28 @@ new class extends TableComponent {
 
 ?>
 <section>
-    <flux:heading size="xl" level="1">Good afternoon, Olivia</flux:heading>
-    <flux:separator variant="subtle" />
+    <header class="mb-6">
+        <flux:heading size="xl" level="1">All recipients</flux:heading>
+        <flux:text class="mb-6 mt-2 text-base">Add, edit and delete the list of recipients.</flux:text>
+        <flux:separator variant="subtle" />
+    </header>
 
     <div class="flex flex-wrap gap-4 items-center mb-4">
-        <flux:input wire:model.live.debounce.1000ms="q" icon-trailing="magnifying-glass" placeholder="{{__('app.search')}}" clearable class="flex-1"/>
+        <flux:input wire:model.live.debounce.500ms="q" icon-trailing="magnifying-glass" placeholder="{{__('app.search')}}" clearable class="flex-1"/>
 
-        <flux:select variant="listbox" wire:model="type" placeholder="Type" clearable class="flex-1">
+        <flux:select variant="listbox" wire:model.live="type" placeholder="Type" clearable class="flex-1">
             @foreach (RecipientType::cases() as $type)
                 <flux:select.option>{{ $type->name }}</flux:select.option>
             @endforeach
         </flux:select>
 
-        <flux:select variant="listbox" wire:model="delivery_type" placeholder="Delivery type" clearable class="flex-1">
+        <flux:select variant="listbox" wire:model.live="delivery_type" placeholder="Delivery type" clearable class="flex-1">
             @foreach (DeliveryType::cases() as $type)
                 <flux:select.option>{{ $type->name }}</flux:select.option>
             @endforeach
         </flux:select>
 
-        <flux:select variant="listbox" wire:model="city" placeholder="City" clearable class="flex-1">
+        <flux:select variant="listbox" wire:model.live="city" placeholder="City" clearable class="flex-1">
             @foreach ($this->cities as $city)
                 <flux:select.option>{{ $city }}</flux:select.option>
             @endforeach
