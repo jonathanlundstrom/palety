@@ -12,14 +12,7 @@ use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 
 new class extends TableComponent {
-    /**
-     * Edit an existing recipient based on ID.
-     * @param int $recipient_id
-     * @return void
-     */
-    public function edit(int $recipient_id): void {
-        $this->dispatch('edit-recipient', id: $recipient_id);
-    }
+    // TODO: Implement deletion...
 
     #[On('recipients-updated')]
     public function refreshList(): void {

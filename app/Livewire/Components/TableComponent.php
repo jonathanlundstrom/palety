@@ -7,27 +7,19 @@ use App\Enumerables\RecipientType;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
+use phpDocumentor\Reflection\Types\ClassString;
 use UnitEnum;
 
 abstract class TableComponent extends Component {
     use WithPagination;
 
-    /**
-     * Query string; searching primary column.
-     */
     #[Url(except: '')]
     public string $q = '';
 
-    /**
-     * Sort by on a specific column.
-     */
-    #[Url(as: 'sortBy')]
+    #[Url(as: 'sort')]
     public string $sortBy = 'id';
 
-    /**
-     * Sort direction on a specific column.
-     */
-    #[Url(as: 'sortDirection')]
+    #[Url(as: 'direction')]
     public ?string $sortDirection = 'asc';
 
     /**
@@ -49,6 +41,15 @@ abstract class TableComponent extends Component {
         }
 
         $this->resetPage();
+    }
+
+    /**
+     * Edit an existing resource based on ID.
+     * @param int $id
+     * @return void
+     */
+    public function edit(int $id): void {
+        $this->dispatch('edit-resource', id: $id);
     }
 
     /**

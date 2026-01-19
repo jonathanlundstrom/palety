@@ -2,7 +2,7 @@
 
 use App\Enumerables\DeliveryType;
 use App\Enumerables\RecipientType;
-use App\Helpers\ComponentHelpers;
+use App\Livewire\Components\FormComponent;
 use App\Models\Recipient;
 use Flux\Flux;
 use Illuminate\Support\Collection;
@@ -10,24 +10,13 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
-use Livewire\Component;
 
-new class extends Component {
-    use ComponentHelpers;
-
-    #[Locked]
-    public bool $loading = false;
+new class extends FormComponent {
 
     #[Locked]
     public Recipient $recipient;
 
-    #[On('reset-modal')]
-    public function clear(): void {
-        $this->reset();
-        $this->resetValidation();
-    }
-
-    #[On('edit-recipient')]
+    #[On('edit-resource')]
     public function edit(int $id): void {
         $this->recipient = Recipient::find($id);
         $this->hydrateFields($this->recipient);
@@ -118,7 +107,8 @@ new class extends Component {
 }
 ?>
 <form wire:submit="onSubmit" class="space-y-6 min-h-full">
-    <flux:select variant="listbox" wire:model.live="parent_id" label="{{ __('validation.attributes.parent_id') }}" placeholder="{{ __('app.parent.select') }}" clearable>
+    <flux:select variant="listbox" wire:model.live="parent_id" label="{{ __('validation.attributes.parent_id') }}"
+                 placeholder="{{ __('app.parent.select') }}" clearable>
         @foreach ($this->recipients as $recipient)
             <flux:select.option value="{{ $recipient->id }}">{{ $recipient->name }}</flux:select.option>
         @endforeach
@@ -133,14 +123,17 @@ new class extends Component {
     <flux:input wire:model="name" label="Name"/>
 
     @if ($this->legalEntitySelected)
-        <flux:input wire:model="organisation_number" label="{{ __('validation.attributes.organisation_number') }} – {{ __('pages.recipients.form.extras.EDRPOU') }}"/>
+        <flux:input wire:model="organisation_number"
+                    label="{{ __('validation.attributes.organisation_number') }} – {{ __('pages.recipients.form.extras.EDRPOU') }}"/>
         <flux:input icon="user" wire:model="reference" label="{{ __('validation.attributes.reference') }}"/>
     @endif
 
     <flux:input type="email" icon="at-symbol" wire:model="email" label="{{ __('validation.attributes.email') }}"/>
-    <flux:input type="phone" icon="phone" wire:model="phone_number" label="{{ __('validation.attributes.phone_number') }}"/>
+    <flux:input type="phone" icon="phone" wire:model="phone_number"
+                label="{{ __('validation.attributes.phone_number') }}"/>
 
-    <flux:select variant="listbox" wire:model.live="delivery_type" label="{{ __('validation.attributes.delivery_type') }}">
+    <flux:select variant="listbox" wire:model.live="delivery_type"
+                 label="{{ __('validation.attributes.delivery_type') }}">
         @foreach (DeliveryType::cases() as $case)
             <flux:select.option :value="$case->name">{{ $case->label() }}</flux:select.option>
         @endforeach
@@ -151,7 +144,8 @@ new class extends Component {
             <flux:input wire:model="address" label="{{ __('validation.attributes.address') }}"/>
             <flux:input wire:model="zipcode" label="{{ __('validation.attributes.zipcode') }}"/>
         @else
-            <flux:input type="number" min="1" max="1000" icon="hashtag" wire:model="nova_poshta_id" label="{{ __('validation.attributes.nova_poshta_id') }}"/>
+            <flux:input type="number" min="1" max="1000" icon="hashtag" wire:model="nova_poshta_id"
+                        label="{{ __('validation.attributes.nova_poshta_id') }}"/>
         @endif
 
     @endif
