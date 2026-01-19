@@ -12,14 +12,14 @@
             </a>
 
             <flux:navlist variant="outline">
-                <flux:navlist.item icon="chart-bar-square" :href="route('dashboard')" wire:navigate>{{ __('navigation.dashboard') }}</flux:navlist.item>
-                <flux:navlist.item icon="archive-box" :href="route('parcels')" wire:navigate>{{ __('navigation.parcels') }}</flux:navlist.item>
-                <flux:navlist.item icon="rectangle-group" :href="route('dashboard')" wire:navigate>{{ __('navigation.pallets') }}</flux:navlist.item>
-                <flux:navlist.item icon="truck" :href="route('dashboard')" wire:navigate>{{ __('navigation.transports') }}</flux:navlist.item>
-                <flux:navlist.item icon="map-pin" :href="route('dashboard')" wire:navigate>{{ __('navigation.recipients') }}</flux:navlist.item>
-                <flux:navlist.item icon="list-bullet" :href="route('dashboard')" wire:navigate>{{ __('navigation.contents') }}</flux:navlist.item>
-                <flux:navlist.item icon="map-pin" :href="route('recipients')" wire:navigate>{{ __('navigation.recipients') }}</flux:navlist.item>
-                <flux:navlist.item icon="list-bullet" :href="route('dashboard')" wire:navigate>{{ __('navigation.contents') }}</flux:navlist.item>
+                <flux:navlist.item icon="chart-bar-square" :href="route('dashboard')" wire:navigate>{{ __('pages.dashboard.title') }}</flux:navlist.item>
+                <flux:navlist.item icon="archive-box" :href="route('parcels')" wire:navigate>{{ __('pages.parcels.title') }}</flux:navlist.item>
+                <flux:navlist.item icon="rectangle-group" :href="route('dashboard')" wire:navigate>{{ __('pages.pallets.title') }}</flux:navlist.item>
+                <flux:navlist.item icon="truck" :href="route('dashboard')" wire:navigate>{{ __('pages.transports.title') }}</flux:navlist.item>
+                <flux:navlist.item icon="map-pin" :href="route('dashboard')" wire:navigate>{{ __('pages.recipients.title') }}</flux:navlist.item>
+                <flux:navlist.item icon="list-bullet" :href="route('dashboard')" wire:navigate>{{ __('pages.contents.title') }}</flux:navlist.item>
+                <flux:navlist.item icon="map-pin" :href="route('recipients')" wire:navigate>{{ __('pages.recipients.title') }}</flux:navlist.item>
+                <flux:navlist.item icon="list-bullet" :href="route('dashboard')" wire:navigate>{{ __('pages.contents.title') }}</flux:navlist.item>
             </flux:navlist>
 
             <flux:spacer />

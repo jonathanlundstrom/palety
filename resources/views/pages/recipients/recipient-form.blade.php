@@ -24,6 +24,7 @@ new class extends Component {
     #[On('reset-modal')]
     public function clear(): void {
         $this->reset();
+        $this->resetValidation();
     }
 
     #[On('edit-recipient')]
@@ -50,7 +51,7 @@ new class extends Component {
     #[Validate('email|nullable')]
     public string $email;
 
-    #[Validate('required')]
+    #[Validate('required|phone')]
     public string $phone_number;
 
     #[Validate('required')]
@@ -97,19 +98,18 @@ new class extends Component {
         try {
             if (isset($this->recipient) && $this->recipient->exists) {
                 if (!$this->recipient->update($validated)) {
-                    throw new Exception('notifications.recipients.failed');
+                    throw new Exception('toasts.recipients.failed');
                 }
             } else {
                 if (!Recipient::create($validated)) {
-                    throw new Exception('notifications.recipients.failed');
+                    throw new Exception('toasts.recipients.failed');
                 }
             }
 
-            Flux::toast(variant: 'success', text: __('notifications.recipient.saved'));
+            Flux::toast(variant: 'success', text: __('toasts.recipients.saved'));
 
             $this->dispatch('recipients-updated');
             $this->dispatch('modal-close', name: 'recipient-form');
-            $this->reset(); // Reset the form properties
         } catch (Exception $e) {
             Flux::toast(variant: 'danger', text: __($e->getMessage()));
         }
@@ -118,49 +118,49 @@ new class extends Component {
 }
 ?>
 <form wire:submit="onSubmit" class="space-y-6 min-h-full">
-    <flux:select variant="listbox" wire:model.live="parent_id" label="Parent recipient" placeholder="Choose parent recipient" clearable>
+    <flux:select variant="listbox" wire:model.live="parent_id" label="{{ __('validation.attributes.parent_id') }}" placeholder="{{ __('app.parent.select') }}" clearable>
         @foreach ($this->recipients as $recipient)
             <flux:select.option value="{{ $recipient->id }}">{{ $recipient->name }}</flux:select.option>
         @endforeach
     </flux:select>
 
-    <flux:select variant="listbox" wire:model.live="type" label="Type">
+    <flux:select variant="listbox" wire:model.live="type" label="{{ __('validation.attributes.type') }}">
         @foreach (RecipientType::cases() as $case)
-            <flux:select.option :value="$case->name">{{ $case->name }}</flux:select.option>
+            <flux:select.option :value="$case->name">{{ $case->label() }}</flux:select.option>
         @endforeach
     </flux:select>
 
     <flux:input wire:model="name" label="Name"/>
 
     @if ($this->legalEntitySelected)
-        <flux:input wire:model="organisation_number" label="EDRPOU code"/>
-        <flux:input wire:model="reference" label="Reference person"/>
+        <flux:input wire:model="organisation_number" label="{{ __('validation.attributes.organisation_number') }} – {{ __('pages.recipients.form.extras.EDRPOU') }}"/>
+        <flux:input icon="user" wire:model="reference" label="{{ __('validation.attributes.reference') }}"/>
     @endif
 
-    <flux:input type="email" icon="at-symbol" wire:model="email" label="E-mail address"/>
-    <flux:input type="phone" icon="phone" wire:model="phone_number" label="Phone number"/>
+    <flux:input type="email" icon="at-symbol" wire:model="email" label="{{ __('validation.attributes.email') }}"/>
+    <flux:input type="phone" icon="phone" wire:model="phone_number" label="{{ __('validation.attributes.phone_number') }}"/>
 
-    <flux:select variant="listbox" wire:model.live="delivery_type" label="Delivery type">
+    <flux:select variant="listbox" wire:model.live="delivery_type" label="{{ __('validation.attributes.delivery_type') }}">
         @foreach (DeliveryType::cases() as $case)
-            <flux:select.option :value="$case->name">{{ $case->name }}</flux:select.option>
+            <flux:select.option :value="$case->name">{{ $case->label() }}</flux:select.option>
         @endforeach
     </flux:select>
 
     @if ($this->shouldBeDelivered)
         @if ($this->hasAddress)
-            <flux:input wire:model="address" label="Address"/>
-            <flux:input wire:model="zipcode" label="Zipcode"/>
+            <flux:input wire:model="address" label="{{ __('validation.attributes.address') }}"/>
+            <flux:input wire:model="zipcode" label="{{ __('validation.attributes.zipcode') }}"/>
         @else
-            <flux:input type="number" min="1" max="1000" icon="hashtag" wire:model="nova_poshta_id" label="Nova Poshta ID"/>
+            <flux:input type="number" min="1" max="1000" icon="hashtag" wire:model="nova_poshta_id" label="{{ __('validation.attributes.nova_poshta_id') }}"/>
         @endif
 
     @endif
 
-    <flux:input wire:model="city" label="City"/>
-    <flux:textarea wire:model="notes" label="Notes"/>
+    <flux:input wire:model="city" label="{{ __('validation.attributes.city') }}"/>
+    <flux:textarea wire:model="notes" label="{{ __('validation.attributes.notes') }}"/>
 
     <div class="flex">
         <flux:spacer/>
-        <flux:button type="submit" variant="primary">Submit</flux:button>
+        <flux:button type="submit" variant="primary">{{ __('app.submit') }}</flux:button>
     </div>
 </form>

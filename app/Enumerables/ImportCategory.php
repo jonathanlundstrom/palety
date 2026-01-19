@@ -18,6 +18,7 @@ enum ImportCategory {
     case MEDICAL;
     case CLOTHING;
     case TECHNICAL;
+    case VEHICLES;
     case FUEL;
     case OTHER;
 }

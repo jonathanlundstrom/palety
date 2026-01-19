@@ -15,4 +15,13 @@ trait EnumHelpers {
             ? constant($constant)
             : null;
     }
+
+    /**
+     * Retrieves the label associated with the current enum case.
+     *
+     * @return string Returns the translated label
+     */
+    public function label(): string {
+        return __("enumerables.{$this->name}");
+    }
 }
