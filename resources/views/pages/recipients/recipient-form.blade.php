@@ -120,7 +120,7 @@ new class extends FormComponent {
         @endforeach
     </flux:select>
 
-    <flux:input wire:model="name" label="Name"/>
+    <flux:input wire:model="name" label="{{ __('validation.attributes.name') }}"/>
 
     @if ($this->legalEntitySelected)
         <flux:input wire:model="organisation_number"

@@ -10,6 +10,7 @@ Route::view('/', 'dashboard')
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('/', 'dashboard')->name('dashboard');
     Route::livewire('/parcels', 'pages::parcels')->name('parcels');
+    Route::livewire('/contents', 'pages::content')->name('content');
     Route::livewire('/recipients', 'pages::recipients')->name('recipients');
 });
 

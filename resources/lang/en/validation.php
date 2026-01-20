@@ -211,6 +211,9 @@ return [
         'nova_poshta_id' => 'Nova Poshta ID',
         'city' => 'City',
         'notes' => 'Notes',
+        'label_en' => 'English label',
+        'label_ua' => 'Ukrainian label',
+        'category' => 'Category',
     ],
 
 ];

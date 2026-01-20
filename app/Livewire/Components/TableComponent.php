@@ -3,7 +3,11 @@
 namespace App\Livewire\Components;
 
 use App\Enumerables\DeliveryType;
+use App\Enumerables\ImportCategory;
+use App\Enumerables\PalletType;
+use App\Enumerables\ParcelType;
 use App\Enumerables\RecipientType;
+use App\Enumerables\TransportType;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -59,12 +63,33 @@ abstract class TableComponent extends Component {
      * @return string The color associated with the provided enum value.
      */
     public function color(UnitEnum $enum): string {
-        return match($enum->name) {
-            RecipientType::INDIVIDUAL->name => 'lime',
-            RecipientType::ORGANISATION->name => 'blue',
-            DeliveryType::SELF_PICKUP->name => 'yellow',
-            DeliveryType::ADDRESS_DELIVERY->name => 'green',
-            DeliveryType::NOVA_POSHTA_DELIVERY->name => 'red',
+        return match($enum) {
+            RecipientType::INDIVIDUAL => 'lime',
+            RecipientType::ORGANISATION => 'blue',
+
+            DeliveryType::SELF_PICKUP => 'yellow',
+            DeliveryType::ADDRESS_DELIVERY => 'green',
+            DeliveryType::NOVA_POSHTA_DELIVERY => 'red',
+
+            ParcelType::BOX => 'lime',
+            ParcelType::OTHER => 'blue',
+
+            ImportCategory::FOOD => 'lime',
+            ImportCategory::SANITARY_HYGIENE => 'cyan',
+            ImportCategory::MEDICAL => 'red',
+            ImportCategory::CLOTHING => 'emerald',
+            ImportCategory::TECHNICAL => 'purple',
+            ImportCategory::VEHICLES => 'orange',
+            ImportCategory::FUEL => 'yellow',
+            ImportCategory::OTHER => 'zinc',
+
+            PalletType::CALCULATED => 'lime',
+            PalletType::MANUAL_OVERRIDE => 'blue',
+
+            TransportType::CAR => 'yellow',
+            TransportType::TRUCK => 'green',
+            TransportType::OTHER => 'red',
+
             default => 'zinc',
         };
     }

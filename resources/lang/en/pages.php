@@ -25,7 +25,13 @@ return [
             ],
         ],
     ],
-    'contents' => [
-        'title' => 'Contents',
+    'content' => [
+        'title' => 'Content',
+        'headline' => 'All content',
+        'subtitle' => 'Add, edit and delete the list of parcel content.',
+        'form' => [
+            'title' => 'Content Details',
+            'subtitle' => 'Fill in the information below.',
+        ],
     ],
 ];
