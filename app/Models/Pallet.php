@@ -47,4 +47,9 @@ class Pallet extends Model {
     public function transport(): BelongsTo {
         return $this->belongsTo(Transport::class);
     }
+
+    public function getWeight(): float {
+        return floatval(0);
+        // return $this->parcels->sum('weight');
+    }
 }

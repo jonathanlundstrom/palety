@@ -7,7 +7,6 @@ return [
     'delete' => 'Delete',
     'submit' => 'Submit',
     'parent' => [
-        'resource' => 'Parent|Parents',
         'select' => 'Select parent resource',
     ],
     'content' => [
@@ -15,6 +14,11 @@ return [
     ],
     'weight' => [
         'unit' => 'kg',
+    ],
+    'scan' => [
+        'title' => 'Scan QR Code',
+        'subtitle' => 'Point your camera at the QR code to scan it.',
+        'toggle_flash' => 'Toggle Flash',
     ],
     'no_items' => 'No items found',
 ];

@@ -216,6 +216,7 @@ return [
         'category' => 'Category',
         'content' => 'Content',
         'weight' => 'Weight',
+        'recipient' => 'Recipient',
     ],
 
 ];

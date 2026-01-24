@@ -12,4 +12,12 @@ abstract class FormComponent extends Component {
         $this->reset();
         $this->resetValidation();
     }
+
+    /**
+     * Dispatch the event which initializes the QR code scanner.
+     * @return void
+     */
+    public function scan(): void {
+        $this->dispatch('scan');
+    }
 }
