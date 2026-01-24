@@ -1,5 +1,6 @@
 <?php namespace App\Helpers;
 
+use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Validate;
 use UnitEnum;
 
@@ -25,6 +26,10 @@ trait ComponentHelpers {
                 if (!is_null($object->{$property_name})) {
                     if ($object->{$property_name} instanceof UnitEnum) {
                         $this->{$property_name} = $object->{$property_name}->name;
+                    } else if ($object->{$property_name} instanceof Collection) {
+                        $this->{$property_name} = $object->{$property_name}
+                            ->pluck('id')
+                            ->toArray();
                     } else {
                         $this->{$property_name} = $object->{$property_name};
                     }

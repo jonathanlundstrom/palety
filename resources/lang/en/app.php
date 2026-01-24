@@ -10,5 +10,11 @@ return [
         'resource' => 'Parent|Parents',
         'select' => 'Select parent resource',
     ],
+    'content' => [
+        'select' => 'Select parcel content',
+    ],
+    'weight' => [
+        'unit' => 'kg',
+    ],
     'no_items' => 'No items found',
 ];

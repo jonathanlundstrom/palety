@@ -87,15 +87,15 @@ new class extends FormComponent {
         try {
             if (isset($this->recipient) && $this->recipient->exists) {
                 if (!$this->recipient->update($validated)) {
-                    throw new Exception('toasts.recipients.failed');
+                    throw new Exception('toasts.recipient.failed');
                 }
             } else {
                 if (!Recipient::create($validated)) {
-                    throw new Exception('toasts.recipients.failed');
+                    throw new Exception('toasts.recipient.failed');
                 }
             }
 
-            Flux::toast(variant: 'success', text: __('toasts.recipients.saved'));
+            Flux::toast(variant: 'success', text: __('toasts.recipient.saved'));
 
             $this->dispatch('recipients-updated');
             $this->dispatch('modal-close', name: 'recipient-form');

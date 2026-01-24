@@ -29,6 +29,7 @@ class Parcel extends Model {
         'recipient_id',
         'pallet_id',
         'transport_id',
+        'notes',
     ];
 
     /**
@@ -41,9 +42,9 @@ class Parcel extends Model {
     ];
 
     /**
-     * Get the contents associated with the parcel.
+     * Get the content associated with the parcel.
      */
-    public function contents(): BelongsToMany {
+    public function content(): BelongsToMany {
         return $this->belongsToMany(Content::class);
     }
 

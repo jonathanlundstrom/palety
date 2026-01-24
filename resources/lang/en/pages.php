@@ -6,6 +6,12 @@ return [
     ],
     'parcels' => [
         'title' => 'Parcels',
+        'headline' => 'All parcels',
+        'subtitle' => 'Add, edit and delete the list of parcels.',
+        'form' => [
+            'title' => 'Parcel Details',
+            'subtitle' => 'Fill in the information below.',
+        ],
     ],
     'pallets' => [
         'title' => 'Pallets',

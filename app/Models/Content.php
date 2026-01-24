@@ -45,4 +45,13 @@ class Content extends Model {
     public function parcels(): BelongsToMany {
         return $this->belongsToMany(Parcel::class);
     }
+
+    /**
+     * Retrieves the correct label field based on the current application locale.
+     * @return string
+     */
+    public static function label(): string {
+        $locale = app()->getLocale();
+        return $locale === 'ua' ? 'label_ua' : 'label_en';
+    }
 }

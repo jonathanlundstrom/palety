@@ -214,6 +214,8 @@ return [
         'label_en' => 'English label',
         'label_ua' => 'Ukrainian label',
         'category' => 'Category',
+        'content' => 'Content',
+        'weight' => 'Weight',
     ],
 
 ];

@@ -63,6 +63,7 @@ abstract class TableComponent extends Component {
      * @return string The color associated with the provided enum value.
      */
     public function color(UnitEnum $enum): string {
+        // TODO: Replace this terrible method...
         return match($enum) {
             RecipientType::INDIVIDUAL => 'lime',
             RecipientType::ORGANISATION => 'blue',
