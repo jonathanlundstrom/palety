@@ -33,7 +33,7 @@ new class extends TableComponent {
             )
             ->when($this->type, fn($query) => $query->where('type', $this->type))
             ->when($this->content_id, fn($query) =>
-                $query->whereHas('content', fn($q) => $q->where('contents.id', $this->content_id))
+                $query->whereHas('content', fn($q) => $q->whereKey($this->content_id))
             )
             ->with(['content' => fn($query) => $query->orderBy(Content::label())])
             ->orderBy($this->sortBy, $this->sortDirection)
@@ -88,6 +88,8 @@ new class extends TableComponent {
             <flux:table.column>{{ __('validation.attributes.content') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'weight'" :direction="$sortDirection"
                                wire:click="sort('weight')">{{ __('validation.attributes.weight') }}</flux:table.column>
+            <flux:table.column sortable :sorted="$sortBy === 'notes'" :direction="$sortDirection"
+                               wire:click="sort('weight')">{{ __('validation.attributes.notes') }}</flux:table.column>
             <flux:table.column></flux:table.column>
         </flux:table.columns>
         <flux:table.rows>
@@ -107,6 +109,7 @@ new class extends TableComponent {
                         @endforeach
                     </flux:table.cell>
                     <flux:table.cell>{{ $item->weight }} {{ __('app.weight.unit') }}</flux:table.cell>
+                    <flux:table.cell>{{ $item->notes ?? 'N/A' }}</flux:table.cell>
                     <flux:table.cell>
                         <flux:dropdown>
                             <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal"

@@ -16,6 +16,8 @@ return new class extends Migration {
         Schema::create('parcels', function (Blueprint $table) {
             $table->id();
             $table->string('type');
+            $table->string('label_en');
+            $table->string('label_ua');
             $table->float('weight');
             $table->foreignIdFor(Recipient::class)
                 ->nullable()

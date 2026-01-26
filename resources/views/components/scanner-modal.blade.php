@@ -1,13 +1,5 @@
 <?php
 
-use App\Enumerables\ImportCategory;
-use App\Models\Content;
-use Flux\Flux;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Livewire\Attributes\Computed;
-use Illuminate\View\View;
-use Livewire\Attributes\On;
-use Livewire\Attributes\Url;
 use Livewire\Component;
 
 new class extends Component {
@@ -27,7 +19,7 @@ new class extends Component {
             $this->dispatch('scan-result', payload: null);
         }
 
-        Flux::modal('scanner-modal')->close();
+        // Flux::modal('scanner-modal')->close();
     }
 }
 
@@ -39,14 +31,21 @@ new class extends Component {
             <flux:text class="mt-2">{{ __('app.scan.subtitle')  }}</flux:text>
         </div>
 
-        <div x-show="scanning" class="mb-0">
+        <div x-show="scanning">
             <div class="rounded-lg overflow-hidden">
                 <video class="camera_preview w-full"></video>
             </div>
-            <flux:button x-on:click="toggleFlash()" x-show="hasFlash" icon="bolt" class="mt-4">{{ __('app.scan.toggle_flash') }}</flux:button>
         </div>
 
         <flux:skeleton animate="shimmer" class="aspect-[16/9] size-full rounded-lg" x-show="!scanning"/>
+
+        <div class="flex gap-6">
+            <flux:button x-on:click="toggleFlash()" x-show="hasFlash" icon="bolt" class="flex-1">{{ __('app.scan.toggle_flash') }}</flux:button>
+
+            <flux:modal.close class="flex-1">
+                <flux:button icon="check" class="w-full">Finish scanning</flux:button>
+            </flux:modal.close>
+        </div>
     </div>
 </flux:modal>
 

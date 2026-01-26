@@ -23,7 +23,9 @@ class Transport extends Model {
      * @var list<string>
      */
     public $fillable = [
+        'type',
         'notes',
+        'sent_at',
         'delivered_at',
     ];
 
@@ -34,6 +36,7 @@ class Transport extends Model {
      */
     protected $casts = [
         'type' => TransportType::class,
+        'sent_at' => 'datetime_immutable',
         'delivered_at' => 'datetime_immutable',
     ];
 

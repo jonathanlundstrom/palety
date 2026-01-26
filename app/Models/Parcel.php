@@ -49,6 +49,18 @@ class Parcel extends Model {
     }
 
     /**
+     * Get a comma-separated list of parcel content for display.
+     * @return string
+     */
+    public function contentList(): string {
+        if ($content = $this->content()) {
+            return implode(', ', $content->pluck(Content::label())->toArray());
+        }
+
+        return '';
+    }
+
+    /**
      * Get the recipient associated with the parcel.
      */
     public function recipient(): BelongsTo {
@@ -64,10 +76,37 @@ class Parcel extends Model {
     }
 
     /**
+     * Check if the parcel is already loaded on a pallet.
+     * Ideally, it should not be able to be added to multiple pallets or transports.
+     * @return bool
+     */
+    public function isLoadedOnPallet(): bool {
+        return $this->pallet_id !== null;
+    }
+
+    /**
      * Get the transport associated with the parcel.
      * This relationship is used to track which transport a parcel is on, if not on a pallet.
      */
     public function transport(): BelongsTo {
         return $this->belongsTo(Transport::class);
+    }
+
+    /**
+     * Check if the parcel is already loaded on transport.
+     * Ideally, it should not be able to be added to multiple pallets or transports.
+     * @return bool
+     */
+    public function isLoadedOnTransport(): bool {
+        return $this->transport_id !== null;
+    }
+
+    /**
+     * Check if the parcel is loaded, either on a pallet or transport.
+     * Combines checks for both pallet and transport loading states.
+     * @return bool
+     */
+    public function isLoaded(): bool {
+        return $this->isLoadedOnPallet() || $this->isLoadedOnTransport();
     }
 }

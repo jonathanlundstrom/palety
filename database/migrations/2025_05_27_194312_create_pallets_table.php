@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->string('label_en')->nullable();
             $table->string('label_ua')->nullable();
             $table->float('weight')->nullable();
+            $table->string('notes')->nullable();
             $table->timestamps();
         });
     }

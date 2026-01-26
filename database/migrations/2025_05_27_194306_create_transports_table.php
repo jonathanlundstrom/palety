@@ -13,8 +13,9 @@ return new class extends Migration {
             $table->id();
             $table->string('type');
             $table->string('notes');
-            $table->timestamps();
+            $table->timestamp('sent_at')->nullable();
             $table->timestamp('delivered_at')->nullable();
+            $table->timestamps();
         });
     }
 

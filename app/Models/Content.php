@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use App\Enumerables\ImportCategory;
+use App\Models\Traits\ModelHelpers;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Content extends Model {
-    use HasFactory, SoftDeletes;
+    use ModelHelpers, HasFactory, SoftDeletes;
 
     /**
      * The table associated with the model.
@@ -44,14 +45,5 @@ class Content extends Model {
      */
     public function parcels(): BelongsToMany {
         return $this->belongsToMany(Parcel::class);
-    }
-
-    /**
-     * Retrieves the correct label field based on the current application locale.
-     * @return string
-     */
-    public static function label(): string {
-        $locale = app()->getLocale();
-        return $locale === 'ua' ? 'label_ua' : 'label_en';
     }
 }

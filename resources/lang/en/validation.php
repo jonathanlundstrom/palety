@@ -211,12 +211,15 @@ return [
         'nova_poshta_id' => 'Nova Poshta ID',
         'city' => 'City',
         'notes' => 'Notes',
+        'label' => 'Label',
         'label_en' => 'English label',
         'label_ua' => 'Ukrainian label',
         'category' => 'Category',
         'content' => 'Content',
         'weight' => 'Weight',
         'recipient' => 'Recipient',
+        'recipient_id' => 'Recipient',
+        'parcels' => 'Parcels',
     ],
 
 ];

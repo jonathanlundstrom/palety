@@ -29,9 +29,12 @@ new class extends TableComponent {
     public function items(): LengthAwarePaginator {
         return Pallet::query()
             ->when($this->q, fn($query) => $query->whereAny(
-                ['label_en', 'label_ua', 'weight'], 'ILIKE', "%{$this->q}%")
+                ['label_en', 'label_ua', 'weight', 'notes'], 'ILIKE', "%{$this->q}%")
             )
             ->when($this->type, fn($query) => $query->where('type', $this->type))
+            ->when($this->recipient_id, fn($query) =>
+                $query->where('recipient_id', $this->recipient_id)
+            )
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate(20);
     }
@@ -82,6 +85,7 @@ new class extends TableComponent {
         <flux:table.columns>
             <flux:table.column sortable :sorted="$sortBy === 'id'" :direction="$sortDirection"
                                wire:click="sort('id')">{{ __('validation.attributes.id') }}</flux:table.column>
+            <flux:table.column>{{ __('validation.attributes.label') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'type'" :direction="$sortDirection"
                                wire:click="sort('type')">{{ __('validation.attributes.type') }}</flux:table.column>
             <flux:table.column>{{ __('validation.attributes.recipient') }}</flux:table.column>
@@ -92,19 +96,25 @@ new class extends TableComponent {
             @forelse ($this->items as $item)
                 <flux:table.row :key="$item->id">
                     <flux:table.cell>{{ $item->id }}</flux:table.cell>
+                    <flux:table.cell>{{ $item->{$item::label()} ?? 'N/A' }}</flux:table.cell>
                     <flux:table.cell>
                         <flux:badge size="sm" inset="top bottom" color="{{ $this->color($item->type) }}">
                             {{ $item->type->label() }}
                         </flux:badge>
                     </flux:table.cell>
                     <flux:table.cell>
-                        @foreach ($item->content as $type)
-                            <flux:badge size="sm" inset="top bottom" color="zinc">
-                                {{ $type->{Content::label()} }}
-                            </flux:badge>
-                        @endforeach
+                        <flux:badge size="sm" inset="top bottom" color="zinc">
+                            {{ $item->recipient->name }}
+                        </flux:badge>
                     </flux:table.cell>
-                    <flux:table.cell>{{ $item->getWeight() }} {{ __('app.weight.unit') }}</flux:table.cell>
+                    <flux:table.cell>
+                        {{ $item->getWeight() }} {{ __('app.weight.unit') }}
+                        @if ($item->type === PalletType::CALCULATED)
+                            <flux:badge as="button" rounded size="sm">
+                                {{ $item->parcels->count() }}
+                            </flux:badge>
+                        @endif
+                    </flux:table.cell>
                     <flux:table.cell>
                         <flux:dropdown>
                             <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal"
@@ -129,4 +139,6 @@ new class extends TableComponent {
     <x-flyout name="pallet-form" title="{{ __('pages.pallets.form.title') }}" subtitle="{{ __('pages.pallets.form.subtitle') }}" position="right">
         <livewire:pages::pallets.pallet-form/>
     </x-flyout>
+
+    <livewire:scanner-modal/>
 </section>

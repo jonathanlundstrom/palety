@@ -13,9 +13,6 @@ return [
             'subtitle' => 'Fill in the information below.',
         ],
     ],
-    'pallets' => [
-        'title' => 'Pallets',
-    ],
     'transports' => [
         'title' => 'Transports',
     ],
@@ -37,6 +34,15 @@ return [
         'subtitle' => 'Add, edit and delete the list of parcel content.',
         'form' => [
             'title' => 'Content Details',
+            'subtitle' => 'Fill in the information below.',
+        ],
+    ],
+    'pallets' => [
+        'title' => 'Pallets',
+        'headline' => 'All pallets',
+        'subtitle' => 'Add, edit and delete the list of pallets.',
+        'form' => [
+            'title' => 'Pallet Details',
             'subtitle' => 'Fill in the information below.',
         ],
     ],
