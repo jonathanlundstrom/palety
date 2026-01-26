@@ -74,7 +74,7 @@ new class extends TableComponent {
             @endforeach
         </flux:select>
 
-        <flux:modal.trigger name="parcels-form">
+        <flux:modal.trigger name="parcel-form">
             <flux:button variant="primary" icon="plus" class="flex-0">{{ __('app.add') }}</flux:button>
         </flux:modal.trigger>
     </div>
@@ -115,7 +115,7 @@ new class extends TableComponent {
                             <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal"
                                          inset="top bottom"></flux:button>
                             <flux:menu>
-                                <flux:modal.trigger name="parcels-form">
+                                <flux:modal.trigger name="parcel-form">
                                     <flux:menu.item icon="pencil-square" wire:click="edit({{ $item->id }})">{{ __('app.edit') }}</flux:menu.item>
                                 </flux:modal.trigger>
                                 <flux:menu.item icon="trash" variant="danger">{{ __('app.delete') }}</flux:menu.item>
@@ -131,7 +131,7 @@ new class extends TableComponent {
         </flux:table.rows>
     </flux:table>
 
-    <x-flyout name="parcels-form" title="{{ __('pages.parcels.form.title') }}" subtitle="{{ __('pages.parcels.form.subtitle') }}" position="right">
-        <livewire:pages::parcels.parcels-form/>
+    <x-flyout name="parcel-form" title="{{ __('pages.parcels.form.title') }}" subtitle="{{ __('pages.parcels.form.subtitle') }}" position="right">
+        <livewire:pages::parcels.parcel-form/>
     </x-flyout>
 </section>

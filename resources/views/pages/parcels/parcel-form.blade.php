@@ -63,7 +63,7 @@ new class extends FormComponent {
             Flux::toast(variant: 'success', text: __('toasts.parcel.saved'));
 
             $this->dispatch('content-updated');
-            $this->dispatch('modal-close', name: 'parcels-form');
+            Flux::modal('parcel-form')->close();
         } catch (Exception $e) {
             Flux::toast(variant: 'danger', text: __($e->getMessage()));
         }
