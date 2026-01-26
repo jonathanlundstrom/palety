@@ -7,9 +7,11 @@
         <flux:sidebar sticky stashable class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
             <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
-            <a href="{{ route('dashboard') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
-                <x-app-logo />
-            </a>
+            <flux:brand href="{{ route('dashboard') }}" name="{{ config('app.name') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
+                <x-slot name="logo" class="size-6 rounded-full bg-blue-700 text-yellow-300 text-xs font-bold">
+                    <flux:icon name="archive-box" variant="micro" />
+                </x-slot>
+            </flux:brand>
 
             <flux:navlist variant="outline">
                 <flux:navlist.item icon="chart-bar-square" :href="route('dashboard')" wire:navigate>{{ __('pages.dashboard.title') }}</flux:navlist.item>
