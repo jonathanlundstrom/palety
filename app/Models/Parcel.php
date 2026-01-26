@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enumerables\ParcelStatus;
 use App\Enumerables\ParcelType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -78,10 +79,12 @@ class Parcel extends Model {
     /**
      * Check if the parcel is already loaded on a pallet.
      * Ideally, it should not be able to be added to multiple pallets or transports.
-     * @return bool
+     * @return ParcelStatus
      */
-    public function isLoadedOnPallet(): bool {
-        return $this->pallet_id !== null;
+    public function getPalletStatus(): ParcelStatus {
+        return $this->pallet_id !== null
+            ? ParcelStatus::LOADED_ON_PALLET
+            : ParcelStatus::AVAILABLE;
     }
 
     /**
@@ -95,18 +98,22 @@ class Parcel extends Model {
     /**
      * Check if the parcel is already loaded on transport.
      * Ideally, it should not be able to be added to multiple pallets or transports.
-     * @return bool
+     * @return ParcelStatus
      */
-    public function isLoadedOnTransport(): bool {
-        return $this->transport_id !== null;
+    public function getTransportStatus(): ParcelStatus {
+        return $this->transport_id !== null
+            ? ParcelStatus::LOADED_ON_TRANSPORT
+            : ParcelStatus::AVAILABLE;
     }
 
     /**
      * Check if the parcel is loaded, either on a pallet or transport.
      * Combines checks for both pallet and transport loading states.
-     * @return bool
+     * @return ParcelStatus
      */
-    public function isLoaded(): bool {
-        return $this->isLoadedOnPallet() || $this->isLoadedOnTransport();
+    public function getAvailability(): ParcelStatus {
+        return $this->getPalletStatus() === ParcelStatus::LOADED_ON_PALLET || $this->getTransportStatus() === ParcelStatus::LOADED_ON_TRANSPORT
+            ? ParcelStatus::ALREADY_LOADED
+            : ParcelStatus::AVAILABLE;
     }
 }

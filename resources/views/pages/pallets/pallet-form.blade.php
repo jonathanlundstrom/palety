@@ -1,6 +1,7 @@
 <?php
 
 use App\Enumerables\PalletType;
+use App\Enumerables\ParcelStatus;
 use App\Livewire\Components\FormComponent;
 use App\Models\Content;
 use App\Models\Pallet;
@@ -33,7 +34,7 @@ new class extends FormComponent {
             try {
                 $abstract = app()->make($payload['class']);
                 $object = $abstract::find($payload['id']);
-                if (!$object->isLoaded()) {
+                if ($object->getAvailability() === ParcelStatus::AVAILABLE) {
                     if (!in_array($object->id, array_column($this->scanned_items, 'id'), true)) {
                         $this->scanned_items[] = $object;
                         Flux::toast(variant: 'success', text: __('toasts.parcel.scanned'));
