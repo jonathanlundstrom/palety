@@ -1,5 +1,6 @@
 <?php
 
+use App\Enumerables\FormStatus;
 use App\Enumerables\ParcelType;
 use App\Livewire\Components\FormComponent;
 use App\Models\Content;
@@ -12,15 +13,6 @@ use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 
 new class extends FormComponent {
-
-    #[Locked]
-    public Parcel $parcel;
-
-    #[On('edit-resource')]
-    public function edit(int $id): void {
-        $this->parcel = Parcel::find($id);
-        $this->hydrateFields($this->parcel);
-    }
 
     #[Validate('required')]
     public string $type = ParcelType::BOX->name;
@@ -42,28 +34,47 @@ new class extends FormComponent {
             ->get();
     }
 
-    public function onSubmit() {
+    /**
+     * Create a new parcel from validated form data.
+     * @param array $validated
+     * @return Parcel
+     */
+    protected function createParcel(array $validated): Parcel {
+        $parcel = Parcel::create($validated);
+        if (!$parcel) throw new Exception('toasts.parcel.failed');
+        return $parcel;
+    }
+
+    /**
+     * Update an existing parcel with validated form data.
+     * @param array $validated
+     * @return Parcel
+     */
+    protected function updateParcel(array $validated): Parcel {
+        $result = $this->resource->update($validated);
+        if (!$result) throw new Exception('toasts.parcel.failed');
+        return $this->resource;
+    }
+
+    /**
+     * Handle the form submission event.
+     * @return void
+     */
+    public function onSubmit(): void {
         $validated = $this->validate();
 
         try {
-            if (isset($this->parcel) && $this->parcel->exists) {
-                if ($this->parcel->update($validated)) {
-                    $this->parcel->content()->sync($this->content);
-                } else {
-                    throw new Exception('toasts.parcel.failed');
-                }
-            } else {
-                if ($parcel = Parcel::create($validated)) {
-                    $parcel->content()->sync($this->content);
-                } else {
-                    throw new Exception('toasts.parcel.failed');
-                }
-            }
+            $parcel = match($this->formStatus()) {
+                FormStatus::EDITING => $this->updateParcel($validated),
+                FormStatus::CREATING => $this->createParcel($validated),
+            };
+
+            // Sync attached content after create/edit
+            $parcel->content()->sync($this->content);
 
             Flux::toast(variant: 'success', text: __('toasts.parcel.saved'));
-
-            $this->dispatch('content-updated');
-            Flux::modal('parcel-form')->close();
+            $this->dispatch('items-updated');
+            $this->dispatch('modal-close');
         } catch (Exception $e) {
             Flux::toast(variant: 'danger', text: __($e->getMessage()));
         }
@@ -88,10 +99,10 @@ new class extends FormComponent {
     <flux:field>
         <flux:label>{{ __('validation.attributes.weight') }}</flux:label>
         <flux:input.group>
-            <flux:input type="number" step="0.01" wire:model="weight" />
+            <flux:input type="number" step="0.01" wire:model="weight"/>
             <flux:input.group.suffix>{{ __('app.weight.unit') }}</flux:input.group.suffix>
         </flux:input.group>
-        <flux:error name="weight" />
+        <flux:error name="weight"/>
     </flux:field>
 
     <flux:textarea wire:model="notes" label="{{ __('validation.attributes.notes') }}"/>

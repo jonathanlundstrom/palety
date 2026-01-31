@@ -16,4 +16,8 @@ return [
         'loaded' => 'Scanned parcel is already reserved for another pallet or transport!',
         'not_found' => 'Scanned parcel was found in database',
     ],
+    'pallet' => [
+        'failed' => 'Failed to save pallet',
+        'saved' => 'Pallet saved successfully!',
+    ],
 ];

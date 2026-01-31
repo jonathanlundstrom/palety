@@ -8,14 +8,15 @@ use App\Enumerables\PalletType;
 use App\Enumerables\ParcelType;
 use App\Enumerables\RecipientType;
 use App\Enumerables\TransportType;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
-use phpDocumentor\Reflection\Types\ClassString;
 use UnitEnum;
 
 abstract class TableComponent extends Component {
     use WithPagination;
+
 
     #[Url(except: '')]
     public string $q = '';
@@ -25,6 +26,16 @@ abstract class TableComponent extends Component {
 
     #[Url(as: 'direction')]
     public ?string $sortDirection = 'asc';
+
+    /**
+     * Get the modal name for this form component.
+     * Returns the component name with dots replaced by dashes.
+     */
+    #[Computed]
+    public function modalName(): string {
+        $component_name = explode('::', $this->getName());
+        return array_last($component_name) . '-modal';
+    }
 
     /**
      * Handles the sorting logic for the data.
@@ -48,12 +59,14 @@ abstract class TableComponent extends Component {
     }
 
     /**
-     * Edit an existing resource based on ID.
+     * Edit an existing resource based on ID and class.
+     *
      * @param int $id
+     * @param string $class
      * @return void
      */
-    public function edit(int $id): void {
-        $this->dispatch('edit-resource', id: $id);
+    public function edit(int $id, string $class): void {
+        $this->dispatch('edit-resource', id: $id, class: $class);
     }
 
     /**

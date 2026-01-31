@@ -41,10 +41,7 @@ new class extends TableComponent {
 
     #[Computed]
     protected function recipients(): Collection {
-        return Recipient::query()
-            ->select('id', 'name')
-            ->orderBy('name')
-            ->get();
+        return Recipient::list(['id', 'name'], 'name')->get();
     }
 
     public function render(): View {
@@ -76,7 +73,7 @@ new class extends TableComponent {
             @endforeach
         </flux:select>
 
-        <flux:modal.trigger name="pallet-form">
+        <flux:modal.trigger name="{{ $this->modalName }}">
             <flux:button variant="primary" icon="plus" class="flex-0">{{ __('app.add') }}</flux:button>
         </flux:modal.trigger>
     </div>
@@ -120,10 +117,8 @@ new class extends TableComponent {
                             <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal"
                                          inset="top bottom"></flux:button>
                             <flux:menu>
-                                <flux:modal.trigger name="pallet-form">
-                                    <flux:menu.item icon="pencil-square" wire:click="edit({{ $item->id }})">{{ __('app.edit') }}</flux:menu.item>
-                                </flux:modal.trigger>
-                                <flux:menu.item icon="trash" variant="danger">{{ __('app.delete') }}</flux:menu.item>
+                                <x-edit-button form="{{ $this->modalName }}" :object="$item" />
+                                <x-delete-button :object="$item" />
                             </flux:menu>
                         </flux:dropdown>
                     </flux:table.cell>
@@ -136,7 +131,7 @@ new class extends TableComponent {
         </flux:table.rows>
     </flux:table>
 
-    <x-flyout name="pallet-form" title="{{ __('pages.pallets.form.title') }}" subtitle="{{ __('pages.pallets.form.subtitle') }}" position="right">
+    <x-flyout name="{{ $this->modalName }}" title="{{ __('pages.pallets.form.title') }}" subtitle="{{ __('pages.pallets.form.subtitle') }}" position="right">
         <livewire:pages::pallets.pallet-form/>
     </x-flyout>
 

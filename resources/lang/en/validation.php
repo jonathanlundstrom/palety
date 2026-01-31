@@ -220,6 +220,7 @@ return [
         'recipient' => 'Recipient',
         'recipient_id' => 'Recipient',
         'parcels' => 'Parcels',
+        'scanned_items' => 'Scanned items',
     ],
 
 ];

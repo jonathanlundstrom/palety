@@ -1,5 +1,6 @@
 <?php
 
+use App\Enumerables\FormStatus;
 use App\Enumerables\ImportCategory;
 use App\Livewire\Components\FormComponent;
 use App\Models\Content;
@@ -9,16 +10,6 @@ use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 
 new class extends FormComponent {
-
-    #[Locked]
-    public Content $content;
-
-    #[On('edit-resource')]
-    public function edit(int $id): void {
-        $this->content = Content::find($id);
-        $this->hydrateFields($this->content);
-    }
-
     #[Validate('required')]
     public string $category;
 
@@ -28,24 +19,41 @@ new class extends FormComponent {
     #[Validate('required')]
     public string $label_ua;
 
-    public function onSubmit() {
+    /**
+     * Create new content from validated form data.
+     * @param array $validated
+     * @return void
+     */
+    protected function createContent(array $validated): void {
+        $content = Content::create($validated);
+        if (!$content) throw new Exception('toasts.content.failed');
+    }
+
+    /**
+     * Update existing content with validated form data.
+     * @param array $validated
+     */
+    protected function updateContent(array $validated): void {
+        $result = $this->resource->update($validated);
+        if (!$result) throw new Exception('toasts.content.failed');
+    }
+
+    /**
+     * Handle the form submission event.
+     * @return void
+     */
+    public function onSubmit(): void {
         $validated = $this->validate();
 
         try {
-            if (isset($this->content) && $this->content->exists) {
-                if (!$this->content->update($validated)) {
-                    throw new Exception('toasts.content.failed');
-                }
-            } else {
-                if (!Content::create($validated)) {
-                    throw new Exception('toasts.content.failed');
-                }
-            }
+            match ($this->formStatus()) {
+                FormStatus::EDITING => $this->updateContent($validated),
+                FormStatus::CREATING => $this->createContent($validated),
+            };
 
             Flux::toast(variant: 'success', text: __('toasts.content.saved'));
-
-            $this->dispatch('content-updated');
-            $this->dispatch('modal-close', name: 'content-form');
+            $this->dispatch('items-updated');
+            $this->dispatch('modal-close');
         } catch (Exception $e) {
             Flux::toast(variant: 'danger', text: __($e->getMessage()));
         }

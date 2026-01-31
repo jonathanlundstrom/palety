@@ -1,28 +1,18 @@
 <?php
 
 use App\Enumerables\DeliveryType;
+use App\Enumerables\FormStatus;
 use App\Enumerables\RecipientType;
 use App\Livewire\Components\FormComponent;
 use App\Models\Recipient;
 use Flux\Flux;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Locked;
-use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 
 new class extends FormComponent {
 
-    #[Locked]
-    public Recipient $recipient;
-
-    #[On('edit-resource')]
-    public function edit(int $id): void {
-        $this->recipient = Recipient::find($id);
-        $this->hydrateFields($this->recipient);
-    }
-
-    #[Validate('integer|nullable')]
+    #[Validate('nullable|integer')]
     public ?int $parent_id = null;
 
     #[Validate('required')]
@@ -37,7 +27,7 @@ new class extends FormComponent {
     #[Validate('required_if:type,' . RecipientType::ORGANISATION->name)]
     public string $reference;
 
-    #[Validate('email|nullable')]
+    #[Validate('nullable|email')]
     public string $email;
 
     #[Validate('required|phone')]
@@ -58,12 +48,12 @@ new class extends FormComponent {
     #[Validate('required_if:delivery_type,' . DeliveryType::NOVA_POSHTA_DELIVERY->name)]
     public string $nova_poshta_id;
 
+    #[Validate('nullable')]
+    public string $notes;
+
     #[Computed]
     protected function recipients(): Collection {
-        return Recipient::query()
-            ->select('id', 'name')
-            ->orderBy('name')
-            ->get();
+        return Recipient::list(['id', 'name'], 'name')->get();
     }
 
     #[Computed]
@@ -81,29 +71,46 @@ new class extends FormComponent {
         return DeliveryType::from($this->delivery_type)->hasAddress();
     }
 
-    public function onSubmit() {
+    /**
+     * Create a new recipient from validated form data.
+     * @param array $validated
+     * @return void
+     */
+    protected function createRecipient(array $validated): void {
+        $recipient = Recipient::create($validated);
+        if (!$recipient) throw new Exception('toasts.recipient.failed');
+    }
+
+    /**
+     * Update an existing recipient with validated form data.
+     * @param array $validated
+     * @return void
+     */
+    protected function updateRecipient(array $validated): void {
+        $result = $this->resource->update($validated);
+        if (!$result) throw new Exception('toasts.recipient.failed');
+    }
+
+    /**
+     * Handle the form submission event.
+     * @return void
+     */
+    public function onSubmit(): void {
         $validated = $this->validate();
 
         try {
-            if (isset($this->recipient) && $this->recipient->exists) {
-                if (!$this->recipient->update($validated)) {
-                    throw new Exception('toasts.recipient.failed');
-                }
-            } else {
-                if (!Recipient::create($validated)) {
-                    throw new Exception('toasts.recipient.failed');
-                }
-            }
+            match($this->formStatus()) {
+                FormStatus::EDITING => $this->updateRecipient($validated),
+                FormStatus::CREATING => $this->createRecipient($validated),
+            };
 
             Flux::toast(variant: 'success', text: __('toasts.recipient.saved'));
-
-            $this->dispatch('recipients-updated');
-            $this->dispatch('modal-close', name: 'recipient-form');
+            $this->dispatch('items-updated');
+            $this->dispatch('modal-close');
         } catch (Exception $e) {
             Flux::toast(variant: 'danger', text: __($e->getMessage()));
         }
     }
-
 }
 ?>
 <form wire:submit="onSubmit" class="space-y-6 min-h-full">

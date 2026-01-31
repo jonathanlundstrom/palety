@@ -1,9 +1,9 @@
 <?php
 
+use App\Enumerables\FormStatus;
 use App\Enumerables\PalletType;
 use App\Enumerables\ParcelStatus;
 use App\Livewire\Components\FormComponent;
-use App\Models\Content;
 use App\Models\Pallet;
 use App\Models\Parcel;
 use App\Models\Recipient;
@@ -18,14 +18,10 @@ use Livewire\Attributes\Validate;
 
 new class extends FormComponent {
 
-    #[Locked]
-    public Pallet $pallet;
-
     #[On('edit-resource')]
-    public function edit(int $id): void {
-        $this->pallet = Pallet::find($id);
-        $this->hydrateFields($this->pallet);
-        $this->scanned_items = $this->pallet->parcels->all();
+    public function edit(int $id, string $class): void {
+        parent::edit($id, $class);
+        $this->scanned_items = $this->resource->parcels->all();
     }
 
     #[On('scan-result')]
@@ -76,10 +72,7 @@ new class extends FormComponent {
 
     #[Computed]
     protected function recipients(): Collection {
-        return Recipient::query()
-            ->select('id', 'name')
-            ->orderBy('name')
-            ->get();
+        return Recipient::list(['id', 'name'], 'name')->get();
     }
 
     /**
@@ -94,38 +87,51 @@ new class extends FormComponent {
         );
     }
 
+    /**
+     * Create a new pallet from validated form data.
+     * @param array $validated
+     * @return Pallet
+     */
+    protected function createPallet(array $validated): Pallet {
+        $pallet = Pallet::create($validated);
+        if (!$pallet) throw new Exception('toasts.pallet.failed');
+        return $pallet;
+    }
+
+    /**
+     * Update an existing pallet with validated form data.
+     * @param array $validated
+     * @return Pallet
+     */
+    protected function updatePallet(array $validated): Pallet {
+        $result = $this->resource->update($validated);
+        if (!$result) throw new Exception('toasts.pallet.failed');
+        $this->resource->parcels()->update(['pallet_id' => null]);
+        return $this->resource;
+    }
+
+    /**
+     * Handle the form submission event.
+     * @return void
+     */
     public function onSubmit(): void {
         $validated = Arr::except($this->validate(), [
             'scanned_items' // Remove in order not to pass to create and update methods.
         ]);
 
         try {
-            if (isset($this->pallet) && $this->pallet->exists) {
-                if ($this->pallet->update($validated)) {
-                    $this->pallet->parcels()->update([
-                        'pallet_id' => null
-                    ]); // Clear existing parcel relations. This is also useful if switching between types.
+            $pallet = match ($this->formStatus()) {
+                FormStatus::EDITING => $this->updatePallet($validated),
+                FormStatus::CREATING => $this->createPallet($validated),
+            };
 
-                    if ($this->isCalculated()) {
-                        $this->pallet->parcels()->saveMany($this->scanned_items); // Link/re-link the relations.
-                    }
-                } else {
-                    throw new Exception('toasts.pallet.failed');
-                }
-            } else {
-                if ($pallet = Pallet::create($validated)) {
-                    if ($this->isCalculated()) {
-                        $pallet->parcels()->saveMany($this->scanned_items);
-                    }
-                } else {
-                    throw new Exception('toasts.pallet.failed');
-                }
+            if ($this->isCalculated()) {
+                $pallet->parcels()->saveMany($this->scanned_items);
             }
 
             Flux::toast(variant: 'success', text: __('toasts.pallet.saved'));
-
-            $this->dispatch('content-updated');
-            $this->dispatch('modal-close', name: 'pallet-form');
+            $this->dispatch('items-updated');
+            $this->dispatch('modal-close');
         } catch (Exception $e) {
             Flux::toast(variant: 'danger', text: __($e->getMessage()));
         }
@@ -149,9 +155,7 @@ new class extends FormComponent {
     @if ($this->isCalculated)
         <flux:field>
             <flux:label>{{ __('validation.attributes.scanned_items') }}</flux:label>
-            <flux:select wire:model.live="scanned_items" class="hidden" multiple>
-                <flux:select.option value="test">TEST</flux:select.option>
-            </flux:select>
+            <flux:select wire:model.live="scanned_items" class="hidden" multiple></flux:select>
 
             <div>
                 <flux:card class="p-2 bg-gray-50 rounded-lg border-b-0 rounded-b-none">

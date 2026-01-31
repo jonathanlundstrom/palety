@@ -14,7 +14,7 @@ use Livewire\Attributes\Url;
 new class extends TableComponent {
     // TODO: Implement deletion...
 
-    #[On('recipients-updated')]
+    #[On('items-updated')]
     public function refreshList(): void {
         unset($this->items, $this->cities);
     }
@@ -43,10 +43,7 @@ new class extends TableComponent {
 
     #[Computed]
     protected function cities(): Collection {
-        return Recipient::all('city')
-            ->unique('city')
-            ->sortBy('city')
-            ->pluck('city');
+        return Recipient::cities()->pluck('city');
     }
 
     public function render(): View {
@@ -84,7 +81,7 @@ new class extends TableComponent {
             @endforeach
         </flux:select>
 
-        <flux:modal.trigger name="recipient-form">
+        <flux:modal.trigger name="{{ $this->modalName }}">
             <flux:button variant="primary" icon="plus" class="flex-0">{{ __('app.add') }}</flux:button>
         </flux:modal.trigger>
     </div>
@@ -122,10 +119,8 @@ new class extends TableComponent {
                         <flux:dropdown>
                             <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal" inset="top bottom"></flux:button>
                             <flux:menu>
-                                <flux:modal.trigger name="recipient-form">
-                                    <flux:menu.item icon="pencil-square" wire:click="edit({{ $item->id }})">{{ __('app.edit') }}</flux:menu.item>
-                                </flux:modal.trigger>
-                                <flux:menu.item icon="trash" variant="danger">{{ __('app.delete') }}</flux:menu.item>
+                                <x-edit-button form="{{ $this->modalName }}" :object="$item" />
+                                <x-delete-button :object="$item" />
                             </flux:menu>
                         </flux:dropdown>
                     </flux:table.cell>
@@ -138,7 +133,7 @@ new class extends TableComponent {
         </flux:table.rows>
     </flux:table>
 
-    <x-flyout name="recipient-form" title="{{ __('pages.recipients.form.title') }}" subtitle="{{ __('pages.recipients.form.subtitle') }}" position="right">
+    <x-flyout name="{{ $this->modalName }}" title="{{ __('pages.recipients.form.title') }}" subtitle="{{ __('pages.recipients.form.subtitle') }}" position="right">
         <livewire:pages::recipients.recipient-form />
     </x-flyout>
 </section>
