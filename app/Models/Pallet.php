@@ -25,6 +25,7 @@ class Pallet extends Model {
      * @var list<string>
      */
     public $fillable = [
+        'user_id',
         'recipient_id',
         'type',
         'label_en',
@@ -41,6 +42,13 @@ class Pallet extends Model {
     protected $casts = [
         'type' => PalletType::class,
     ];
+
+    /**
+     * Get the user who created this parcel.
+     */
+    public function author(): BelongsTo {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     /**
      * Get the recipient associated with the pallet.

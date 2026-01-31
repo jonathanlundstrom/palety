@@ -1,18 +1,46 @@
 <?php
 
 return [
+    'id' => 'ID',
+    'name' => 'Name',
+    'type' => 'Type',
+    'label' => 'Label',
+    'author' => 'Author',
     'search' => 'Search',
+    'recipient' => 'Recipient',
+    'delivery_type' => 'Delivery type',
+    'nova_poshta_id' => 'Nova Poshta ID',
+    'email' => 'Email address',
+    'phone_number' => 'Phone number',
+    'organisation_number' => 'Organisation number',
+    'reference' => 'Reference',
+    'address' => 'Address',
+    'zipcode' => 'ZIP Code',
+    'label_en' => 'English label',
+    'label_ua' => 'Ukrainian label',
+    'scanned_items' => 'Scanned items',
+    'scanned_parcels' => 'Scanned parcels',
+    'scanned_pallets' => 'Scanned pallets',
+    'notes' => 'Notes',
+    'city' => 'City',
     'add' => 'Add',
     'edit' => 'Edit',
     'delete' => 'Delete',
     'submit' => 'Submit',
     'parent' => [
+        'label' => 'Parent resource',
         'select' => 'Select parent resource',
     ],
     'content' => [
-        'select' => 'Select parcel content',
+        'label' => 'Content',
+        'select' => 'Select content',
+    ],
+    'category' => [
+        'label' => 'Category',
+        'select' => 'Select category',
     ],
     'weight' => [
+        'label' => 'Weight',
         'unit' => 'kg',
     ],
     'scan' => [

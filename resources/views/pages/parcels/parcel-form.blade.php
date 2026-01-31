@@ -7,6 +7,7 @@ use App\Models\Content;
 use App\Models\Parcel;
 use Flux\Flux;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
@@ -61,10 +62,13 @@ new class extends FormComponent {
      * @return void
      */
     public function onSubmit(): void {
-        $validated = $this->validate();
+        $validated = [
+            ...$this->validate(),
+            'user_id' => Auth::id()
+        ];
 
         try {
-            $parcel = match($this->formStatus()) {
+            $parcel = match ($this->formStatus()) {
                 FormStatus::EDITING => $this->updateParcel($validated),
                 FormStatus::CREATING => $this->createParcel($validated),
             };
@@ -83,13 +87,13 @@ new class extends FormComponent {
 }
 ?>
 <form wire:submit="onSubmit" class="space-y-6 min-h-full">
-    <flux:select variant="listbox" wire:model.live="type" label="{{ __('validation.attributes.type') }}">
+    <flux:select variant="listbox" wire:model.live="type" label="{{ __('app.type') }}">
         @foreach (ParcelType::cases() as $case)
             <flux:select.option :value="$case->name">{{ $case->label() }}</flux:select.option>
         @endforeach
     </flux:select>
 
-    <flux:pillbox variant="combobox" wire:model.live="content" label="{{ __('validation.attributes.content') }}"
+    <flux:pillbox variant="combobox" wire:model.live="content" label="{{ __('app.content.label') }}"
                   placeholder="{{ __('app.content.select') }}" multiple>
         @foreach ($this->contentItems as $item)
             <flux:select.option value="{{ $item->id }}">{{ $item->{Content::label()} }}</flux:select.option>
@@ -97,7 +101,7 @@ new class extends FormComponent {
     </flux:pillbox>
 
     <flux:field>
-        <flux:label>{{ __('validation.attributes.weight') }}</flux:label>
+        <flux:label>{{ __('app.weight.label') }}</flux:label>
         <flux:input.group>
             <flux:input type="number" step="0.01" wire:model="weight"/>
             <flux:input.group.suffix>{{ __('app.weight.unit') }}</flux:input.group.suffix>
@@ -105,7 +109,7 @@ new class extends FormComponent {
         <flux:error name="weight"/>
     </flux:field>
 
-    <flux:textarea wire:model="notes" label="{{ __('validation.attributes.notes') }}"/>
+    <flux:textarea wire:model="notes" label="{{ __('app.notes') }}"/>
 
     <div class="flex">
         <flux:spacer/>

@@ -13,5 +13,5 @@ enum PalletType {
     use EnumHelpers;
 
     case CALCULATED;
-    case MANUAL_OVERRIDE;
+    case MANUAL_PALLET;
 }

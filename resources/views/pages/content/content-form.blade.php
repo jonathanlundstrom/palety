@@ -62,10 +62,10 @@ new class extends FormComponent {
 }
 ?>
 <form wire:submit="onSubmit" class="space-y-6 min-h-full">
-    <flux:input wire:model="label_en" label="{{ __('validation.attributes.label_en') }}"/>
-    <flux:input wire:model="label_ua" label="{{ __('validation.attributes.label_ua') }}"/>
+    <flux:input wire:model="label_en" label="{{ __('app.label_en') }}"/>
+    <flux:input wire:model="label_ua" label="{{ __('app.label_ua') }}"/>
 
-    <flux:select variant="listbox" wire:model.live="category" label="{{ __('validation.attributes.category') }}">
+    <flux:select variant="listbox" wire:model.live="category" label="{{ __('app.category.label') }}" placeholder="{{ __('app.category.select') }}">
         @foreach (ImportCategory::cases() as $case)
             <flux:select.option :value="$case->name">{{ $case->label() }}</flux:select.option>
         @endforeach

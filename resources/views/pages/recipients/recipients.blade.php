@@ -48,7 +48,7 @@ new class extends TableComponent {
 
     public function render(): View {
         return view('pages::recipients.recipients')
-            ->title(__('navigation.recipients'));
+            ->title(__('pages.recipients.title'));
     }
 }
 
@@ -63,19 +63,19 @@ new class extends TableComponent {
     <div class="flex flex-wrap gap-4 items-center mb-4">
         <flux:input wire:model.live.debounce.500ms="q" icon-trailing="magnifying-glass" placeholder="{{__('app.search')}}" clearable class="w-full md:flex-1" />
 
-        <flux:select variant="listbox" wire:model.live="type" placeholder="{{ __('validation.attributes.type') }}" clearable class="w-full md:flex-1">
+        <flux:select variant="listbox" wire:model.live="type" placeholder="{{ __('app.type') }}" clearable class="w-full md:flex-1">
             @foreach (RecipientType::cases() as $case)
                 <flux:select.option value="{{ $case->name }}">{{ $case->label() }}</flux:select.option>
             @endforeach
         </flux:select>
 
-        <flux:select variant="listbox" wire:model.live="delivery_type" placeholder="{{ __('validation.attributes.delivery_type') }}" clearable class="w-full md:flex-1">
+        <flux:select variant="listbox" wire:model.live="delivery_type" placeholder="{{ __('app.delivery_type') }}" clearable class="w-full md:flex-1">
             @foreach (DeliveryType::cases() as $case)
                 <flux:select.option  value="{{ $case->name }}">{{ $case->label() }}</flux:select.option>
             @endforeach
         </flux:select>
 
-        <flux:select variant="listbox" wire:model.live="city" placeholder="{{ __('validation.attributes.city') }}" clearable class="flex-1">
+        <flux:select variant="listbox" wire:model.live="city" placeholder="{{ __('app.city') }}" clearable class="flex-1">
             @foreach ($this->cities as $city)
                 <flux:select.option>{{ $city }}</flux:select.option>
             @endforeach
@@ -88,12 +88,12 @@ new class extends TableComponent {
 
     <flux:table :paginate="$this->items">
         <flux:table.columns>
-            <flux:table.column sortable :sorted="$sortBy === 'id'" :direction="$sortDirection" wire:click="sort('id')">{{ __('validation.attributes.id') }}</flux:table.column>
-            <flux:table.column sortable :sorted="$sortBy === 'name'" :direction="$sortDirection" wire:click="sort('name')">{{ __('validation.attributes.name') }}</flux:table.column>
-            <flux:table.column sortable :sorted="$sortBy === 'type'" :direction="$sortDirection" wire:click="sort('type')">{{ __('validation.attributes.type') }}</flux:table.column>
-            <flux:table.column sortable :sorted="$sortBy === 'phone_number'" :direction="$sortDirection" wire:click="sort('phone_number')">{{ __('validation.attributes.phone_number') }}</flux:table.column>
-            <flux:table.column sortable :sorted="$sortBy === 'delivery_type'" :direction="$sortDirection" wire:click="sort('delivery_type')">{{ __('validation.attributes.delivery_type') }}</flux:table.column>
-            <flux:table.column sortable :sorted="$sortBy === 'city'" :direction="$sortDirection" wire:click="sort('city')">{{ __('validation.attributes.city') }}</flux:table.column>
+            <flux:table.column sortable :sorted="$sortBy === 'id'" :direction="$sortDirection" wire:click="sort('id')">{{ __('app.id') }}</flux:table.column>
+            <flux:table.column sortable :sorted="$sortBy === 'name'" :direction="$sortDirection" wire:click="sort('name')">{{ __('app.name') }}</flux:table.column>
+            <flux:table.column sortable :sorted="$sortBy === 'type'" :direction="$sortDirection" wire:click="sort('type')">{{ __('app.type') }}</flux:table.column>
+            <flux:table.column sortable :sorted="$sortBy === 'phone_number'" :direction="$sortDirection" wire:click="sort('phone_number')">{{ __('app.phone_number') }}</flux:table.column>
+            <flux:table.column sortable :sorted="$sortBy === 'delivery_type'" :direction="$sortDirection" wire:click="sort('delivery_type')">{{ __('app.delivery_type') }}</flux:table.column>
+            <flux:table.column sortable :sorted="$sortBy === 'city'" :direction="$sortDirection" wire:click="sort('city')">{{ __('app.city') }}</flux:table.column>
             <flux:table.column></flux:table.column>
         </flux:table.columns>
         <flux:table.rows>

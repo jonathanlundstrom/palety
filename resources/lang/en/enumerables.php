@@ -12,8 +12,8 @@ return [
     RecipientType::INDIVIDUAL->name => 'Individual',
 
     DeliveryType::SELF_PICKUP->name => 'Self-pickup',
-    DeliveryType::ADDRESS_DELIVERY->name => 'Address Delivery',
-    DeliveryType::NOVA_POSHTA_DELIVERY->name => 'Nova Poshta Delivery',
+    DeliveryType::ADDRESS_DELIVERY->name => 'Address delivery',
+    DeliveryType::NOVA_POSHTA_DELIVERY->name => 'Nova Poshta delivery',
 
     ParcelType::BOX->name => 'Box',
     ParcelType::OTHER->name => 'Other',
@@ -28,7 +28,7 @@ return [
     ImportCategory::OTHER->name => 'Other',
 
     PalletType::CALCULATED->name => 'Automatically calculated',
-    PalletType::MANUAL_OVERRIDE->name => 'Manual override',
+    PalletType::MANUAL_PALLET->name => 'Manual pallet',
 
     TransportType::CAR->name => 'Car',
     TransportType::TRUCK->name => 'Truck',

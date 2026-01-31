@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enumerables\ParcelStatus;
 use App\Enumerables\ParcelType;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,6 +26,7 @@ class Parcel extends Model {
      * @var list<string>
      */
     public $fillable = [
+        'user_id',
         'type',
         'weight',
         'recipient_id',
@@ -43,6 +45,13 @@ class Parcel extends Model {
     ];
 
     /**
+     * Get the user who created this parcel.
+     */
+    public function author(): BelongsTo {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
      * Get the content associated with the parcel.
      */
     public function content(): BelongsToMany {
@@ -56,9 +65,9 @@ class Parcel extends Model {
     public function contentList(): string {
         if ($content = $this->content()) {
             return implode(', ', $content->pluck(Content::label())->toArray());
+        } else {
+            return '';
         }
-
-        return '';
     }
 
     /**

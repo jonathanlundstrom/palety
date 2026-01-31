@@ -98,7 +98,7 @@ abstract class TableComponent extends Component {
             ImportCategory::OTHER => 'zinc',
 
             PalletType::CALCULATED => 'lime',
-            PalletType::MANUAL_OVERRIDE => 'blue',
+            PalletType::MANUAL_PALLET => 'blue',
 
             TransportType::CAR => 'yellow',
             TransportType::TRUCK => 'green',

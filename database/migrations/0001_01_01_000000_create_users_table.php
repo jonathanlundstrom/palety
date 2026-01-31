@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string('password');
             $table->string('role')->default('user');
             $table->string('locale')->default('en');
+            $table->string('timezone')->default('Europe/Stockholm');
             $table->rememberToken();
             $table->timestamps();
         });

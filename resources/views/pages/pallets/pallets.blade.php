@@ -46,7 +46,7 @@ new class extends TableComponent {
 
     public function render(): View {
         return view('pages::pallets.pallets')
-            ->title(__('navigation.pallets'));
+            ->title(__('pages.pallets.title'));
     }
 }
 
@@ -61,13 +61,13 @@ new class extends TableComponent {
     <div class="flex flex-wrap gap-4 items-center mb-4">
         <flux:input wire:model.live.debounce.500ms="q" icon-trailing="magnifying-glass" placeholder="{{__('app.search')}}" clearable class="w-full md:flex-1"/>
 
-        <flux:select variant="listbox" wire:model.live="type" placeholder="{{ __('validation.attributes.type') }}" clearable class="w-full md:flex-1">
+        <flux:select variant="listbox" wire:model.live="type" placeholder="{{ __('app.type') }}" clearable class="w-full md:flex-1">
             @foreach (PalletType::cases() as $case)
                 <flux:select.option value="{{ $case->name }}">{{ $case->label() }}</flux:select.option>
             @endforeach
         </flux:select>
 
-        <flux:select variant="listbox" wire:model.live="recipient_id" placeholder="{{ __('validation.attributes.recipient') }}" clearable class="w-full md:flex-1">
+        <flux:select variant="listbox" wire:model.live="recipient_id" placeholder="{{ __('app.recipient') }}" clearable class="w-full md:flex-1">
             @foreach ($this->recipients as $recipient)
                 <flux:select.option value="{{ $recipient->id }}">{{ $recipient->name }}</flux:select.option>
             @endforeach
@@ -81,18 +81,29 @@ new class extends TableComponent {
     <flux:table :paginate="$this->items">
         <flux:table.columns>
             <flux:table.column sortable :sorted="$sortBy === 'id'" :direction="$sortDirection"
-                               wire:click="sort('id')">{{ __('validation.attributes.id') }}</flux:table.column>
-            <flux:table.column>{{ __('validation.attributes.label') }}</flux:table.column>
+                               wire:click="sort('id')">{{ __('app.id') }}</flux:table.column>
+            <flux:table.column sortable :sorted="$sortBy === 'user_id'" :direction="$sortDirection"
+                               wire:click="sort('user_id')">{{ __('app.author') }}</flux:table.column>
+            <flux:table.column>{{ __('app.label') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'type'" :direction="$sortDirection"
-                               wire:click="sort('type')">{{ __('validation.attributes.type') }}</flux:table.column>
-            <flux:table.column>{{ __('validation.attributes.recipient') }}</flux:table.column>
-            <flux:table.column>{{ __('validation.attributes.weight') }}</flux:table.column>
+                               wire:click="sort('type')">{{ __('app.type') }}</flux:table.column>
+            <flux:table.column>{{ __('app.recipient') }}</flux:table.column>
+            <flux:table.column>{{ __('app.weight.label') }}</flux:table.column>
             <flux:table.column></flux:table.column>
         </flux:table.columns>
         <flux:table.rows>
             @forelse ($this->items as $item)
                 <flux:table.row :key="$item->id">
                     <flux:table.cell>{{ $item->id }}</flux:table.cell>
+                    <flux:table.cell>
+                        @if ($item->author)
+                            <flux:badge size="sm" inset="top bottom" color="zinc">
+                                {{ $item->author->name }}
+                            </flux:badge>
+                        @else
+                            –
+                        @endif
+                    </flux:table.cell>
                     <flux:table.cell>{{ $item->{$item::label()} ?? 'N/A' }}</flux:table.cell>
                     <flux:table.cell>
                         <flux:badge size="sm" inset="top bottom" color="{{ $this->color($item->type) }}">

@@ -16,7 +16,8 @@ return new class extends Migration {
             $table->id();
             $table->foreignIdFor(Recipient::class, 'parent_id')
                 ->nullable()
-                ->constrained();
+                ->constrained()
+                ->nullOnDelete();
             $table->string('name');
             $table->string('type')->default(RecipientType::ORGANISATION->name);
             $table->string('reference')->nullable();

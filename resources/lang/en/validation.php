@@ -1,5 +1,9 @@
 <?php
 
+use App\Enumerables\DeliveryType;
+use App\Enumerables\PalletType;
+use App\Enumerables\RecipientType;
+
 return [
 
     /*
@@ -187,6 +191,32 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Conditional Logic Enumerable Translations
+    |--------------------------------------------------------------------------
+    |
+    | These are custom rules designed to allow the system to handle the
+    | enumerables used in the conditional logic in form components. These
+    | should only be placed in the fallback locale since they translate the
+    | labels of the enumerables automatically.
+    |
+    */
+
+    'values' => [
+        'type' => [
+            PalletType::CALCULATED->name => strtolower(PalletType::CALCULATED->label()),
+            PalletType::MANUAL_PALLET->name => strtolower(PalletType::MANUAL_PALLET->label()),
+            RecipientType::ORGANISATION->name => strtolower(RecipientType::ORGANISATION->label()),
+            RecipientType::INDIVIDUAL->name => strtolower(RecipientType::INDIVIDUAL->label()),
+        ],
+        'delivery_type' => [
+            DeliveryType::SELF_PICKUP->name => strtolower(DeliveryType::SELF_PICKUP->label()),
+            DeliveryType::ADDRESS_DELIVERY->name => strtolower(DeliveryType::ADDRESS_DELIVERY->label()),
+            DeliveryType::NOVA_POSHTA_DELIVERY->name => DeliveryType::NOVA_POSHTA_DELIVERY->label(),
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Custom Validation Attributes
     |--------------------------------------------------------------------------
     |
@@ -197,30 +227,9 @@ return [
     */
 
     'attributes' => [
-        'id' => 'ID',
-        'parent_id' => 'Parent ID',
-        'type' => 'Type',
-        'name' => 'Name',
-        'organisation_number' => 'Organisation number',
-        'reference' => 'Contact person',
-        'email' => 'E-mail address',
-        'phone_number' => 'Phone number',
-        'delivery_type' => 'Delivery type',
-        'address' => 'Address',
-        'zipcode' => 'ZIP code',
+        'label_en' => 'english label',
+        'label_ua' => 'ukrainian label',
         'nova_poshta_id' => 'Nova Poshta ID',
-        'city' => 'City',
-        'notes' => 'Notes',
-        'label' => 'Label',
-        'label_en' => 'English label',
-        'label_ua' => 'Ukrainian label',
-        'category' => 'Category',
-        'content' => 'Content',
-        'weight' => 'Weight',
-        'recipient' => 'Recipient',
-        'recipient_id' => 'Recipient',
-        'parcels' => 'Parcels',
-        'scanned_items' => 'Scanned items',
     ],
 
 ];

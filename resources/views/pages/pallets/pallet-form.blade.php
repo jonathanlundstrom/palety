@@ -53,13 +53,13 @@ new class extends FormComponent {
     #[Validate('required_if:type,' . PalletType::CALCULATED->name . '|array')]
     public array $scanned_items = [];
 
-    #[Validate('required_if:type,' . PalletType::MANUAL_OVERRIDE->name)]
+    #[Validate('required_if:type,' . PalletType::MANUAL_PALLET->name)]
     public string $label_en;
 
-    #[Validate('required_if:type,' . PalletType::MANUAL_OVERRIDE->name)]
+    #[Validate('required_if:type,' . PalletType::MANUAL_PALLET->name)]
     public string $label_ua;
 
-    #[Validate('required_if:type,' . PalletType::MANUAL_OVERRIDE->name)]
+    #[Validate('required_if:type,' . PalletType::MANUAL_PALLET->name)]
     public string $weight;
 
     #[Validate('nullable')]
@@ -115,9 +115,10 @@ new class extends FormComponent {
      * @return void
      */
     public function onSubmit(): void {
-        $validated = Arr::except($this->validate(), [
-            'scanned_items' // Remove in order not to pass to create and update methods.
-        ]);
+        $validated = [
+            ...$this->validate(),
+            'user_id' => Auth::id()
+        ];
 
         try {
             $pallet = match ($this->formStatus()) {
@@ -140,13 +141,13 @@ new class extends FormComponent {
 }
 ?>
 <form wire:submit="onSubmit" class="space-y-6 min-h-full">
-    <flux:select variant="listbox" wire:model.live="type" label="{{ __('validation.attributes.type') }}">
+    <flux:select variant="listbox" wire:model.live="type" label="{{ __('app.type') }}">
         @foreach (PalletType::cases() as $case)
             <flux:select.option :value="$case->name">{{ $case->label() }}</flux:select.option>
         @endforeach
     </flux:select>
 
-    <flux:select variant="listbox" wire:model.live="recipient_id" label="{{ __('validation.attributes.recipient') }}">
+    <flux:select variant="listbox" wire:model.live="recipient_id" label="{{ __('app.recipient') }}">
         @foreach ($this->recipients as $recipient)
             <flux:select.option value="{{ $recipient->id }}">{{ $recipient->name }}</flux:select.option>
         @endforeach
@@ -154,7 +155,7 @@ new class extends FormComponent {
 
     @if ($this->isCalculated)
         <flux:field>
-            <flux:label>{{ __('validation.attributes.scanned_items') }}</flux:label>
+            <flux:label>{{ __('app.scanned_items') }}</flux:label>
             <flux:select wire:model.live="scanned_items" class="hidden" multiple></flux:select>
 
             <div>
@@ -184,11 +185,11 @@ new class extends FormComponent {
             <flux:error name="scanned_items"/>
         </flux:field>
     @else
-        <flux:input wire:model="label_en" label="{{ __('validation.attributes.label_en') }}"/>
-        <flux:input wire:model="label_ua" label="{{ __('validation.attributes.label_ua') }}"/>
+        <flux:input wire:model="label_en" label="{{ __('app.label_en') }}"/>
+        <flux:input wire:model="label_ua" label="{{ __('app.label_ua') }}"/>
 
         <flux:field>
-            <flux:label>{{ __('validation.attributes.weight') }}</flux:label>
+            <flux:label>{{ __('app.weight.label') }}</flux:label>
             <flux:input.group>
                 <flux:input type="number" step="0.01" wire:model="weight"/>
                 <flux:input.group.suffix>{{ __('app.weight.unit') }}</flux:input.group.suffix>
@@ -197,7 +198,7 @@ new class extends FormComponent {
         </flux:field>
     @endif
 
-    <flux:textarea wire:model="notes" label="{{ __('validation.attributes.notes') }}"/>
+    <flux:textarea wire:model="notes" label="{{ __('app.notes') }}"/>
 
     <div class="flex">
         <flux:spacer/>
