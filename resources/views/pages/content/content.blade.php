@@ -12,7 +12,7 @@ use Livewire\Attributes\Url;
 new class extends TableComponent {
 
     #[On('items-updated')]
-    public function refreshList(): void {
+    public function onItemsUpdated(): void {
         unset($this->items);
     }
 
@@ -31,7 +31,7 @@ new class extends TableComponent {
     }
 
     public function render(): View {
-        return view('pages::content.content')
+        return view($this->getViewTemplate())
             ->title(__('pages.content.title'));
     }
 }

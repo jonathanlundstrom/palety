@@ -14,7 +14,7 @@ use Livewire\Attributes\Url;
 new class extends TableComponent {
 
     #[On('items-updated')]
-    public function refreshList(): void {
+    public function onItemsUpdated(): void {
         unset($this->items, $this->cities);
     }
 
@@ -46,7 +46,7 @@ new class extends TableComponent {
     }
 
     public function render(): View {
-        return view('pages::recipients.recipients')
+        return view($this->getViewTemplate())
             ->title(__('pages.recipients.title'));
     }
 }

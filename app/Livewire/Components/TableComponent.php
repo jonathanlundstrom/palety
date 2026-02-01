@@ -30,6 +30,8 @@ abstract class TableComponent extends Component {
     /**
      * Get the modal name for this form component.
      * Returns the component name with dots replaced by dashes.
+     *
+     * @return string
      */
     #[Computed]
     public function modalName(): string {
@@ -38,8 +40,19 @@ abstract class TableComponent extends Component {
     }
 
     /**
-     * Handles the sorting logic for the data.
+     * Get the view template for this form component.
+     * Primarily to be used in the render method to avoid hardcoding the view path.
+     * Requires the component to share its name with the containing pages:: folder.
      *
+     * @return string
+     */
+    public function getViewTemplate(): string {
+        $parts = explode('::', $this->getName());
+        $template = array_last($parts);
+        return array_first($parts).'::'.$template.'.'.$template;
+    }
+
+    /**
      * Updates the sorting direction if the current sort key matches the provided key.
      * Otherwise, sets the provided key as the new sort key and defaults the sorting direction to ascending.
      * Resets the pagination state after updating the sorting configuration.
