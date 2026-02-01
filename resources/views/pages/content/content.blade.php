@@ -10,7 +10,6 @@ use Livewire\Attributes\On;
 use Livewire\Attributes\Url;
 
 new class extends TableComponent {
-    // TODO: Implement deletion...
 
     #[On('items-updated')]
     public function refreshList(): void {

@@ -70,6 +70,18 @@ abstract class TableComponent extends Component {
     }
 
     /**
+     * Delete an existing resource based on ID and class.
+     * Dispatches an event to open the confirmation modal.
+     *
+     * @param int $id
+     * @param string $class
+     * @return void
+     */
+    public function delete(int $id, string $class): void {
+        $this->dispatch('confirm-delete', id: $id, class: $class);
+    }
+
+    /**
      * Determines the color associated with a given enumeration value.
      *
      * @param UnitEnum $enum An enumeration instance whose name determines the color mapping.

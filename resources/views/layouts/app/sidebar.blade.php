@@ -122,6 +122,9 @@
             <flux:toast />
         @endpersist
 
+        {{-- Shared components --}}
+        <livewire:delete-modal />
+
         @fluxScripts
     </body>
 </html>
