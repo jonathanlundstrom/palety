@@ -4,6 +4,7 @@ use App\Enumerables\ParcelType;
 use App\Livewire\Components\TableComponent;
 use App\Models\Parcel;
 use App\Models\Content;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Attributes\Computed;
@@ -24,6 +25,9 @@ new class extends TableComponent {
     #[Url(except: '')]
     public string $content_id = '';
 
+    #[Url(except: '')]
+    public string $author_id = '';
+
     #[Computed]
     public function items(): LengthAwarePaginator {
         return Parcel::query()
@@ -31,9 +35,8 @@ new class extends TableComponent {
                 ['weight', 'notes'], 'ILIKE', "%{$this->q}%")
             )
             ->when($this->type, fn($query) => $query->where('type', $this->type))
-            ->when($this->content_id, fn($query) =>
-                $query->whereHas('content', fn($q) => $q->whereKey($this->content_id))
-            )
+            ->when($this->content_id, fn($query) => $query->whereHas('content', fn($q) => $q->whereKey($this->content_id)))
+            ->when($this->author_id, fn($query) => $query->where('user_id', $this->author_id))
             ->with(['content' => fn($query) => $query->orderBy(Content::label())])
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate();
@@ -42,6 +45,11 @@ new class extends TableComponent {
     #[Computed]
     protected function content(): Collection {
         return Content::orderBy(Content::label())->get();
+    }
+
+    #[Computed]
+    protected function users(): Collection {
+        return User::list(['id', 'name'], 'name')->get();
     }
 
     public function render(): View {
@@ -59,17 +67,27 @@ new class extends TableComponent {
     </header>
 
     <div class="flex flex-wrap gap-4 items-center mb-4">
-        <flux:input wire:model.live.debounce.500ms="q" icon-trailing="magnifying-glass" placeholder="{{__('app.search')}}" clearable class="w-full md:flex-1"/>
+        <flux:input wire:model.live.debounce.500ms="q" icon-trailing="magnifying-glass"
+                    placeholder="{{__('app.search')}}" clearable class="w-full md:flex-1"/>
 
-        <flux:select variant="listbox" wire:model.live="type" placeholder="{{ __('app.type') }}" clearable class="w-full md:flex-1">
+        <flux:select variant="listbox" wire:model.live="type" placeholder="{{ __('app.type') }}" clearable
+                     class="w-full md:flex-1">
             @foreach (ParcelType::cases() as $case)
                 <flux:select.option value="{{ $case->name }}">{{ $case->label() }}</flux:select.option>
             @endforeach
         </flux:select>
 
-        <flux:select variant="listbox" wire:model.live="content_id" placeholder="{{ __('app.content.label') }}" clearable class="w-full md:flex-1">
+        <flux:select variant="listbox" wire:model.live="content_id" placeholder="{{ __('app.content.label') }}"
+                     clearable class="w-full md:flex-1">
             @foreach ($this->content as $content)
                 <flux:select.option value="{{ $content->id }}">{{ $content->{Content::label()} }}</flux:select.option>
+            @endforeach
+        </flux:select>
+
+        <flux:select variant="listbox" wire:model.live="author_id" placeholder="{{ __('app.author') }}" clearable
+                     class="w-full md:flex-1">
+            @foreach ($this->users as $user)
+                <flux:select.option value="{{ $user->id }}">{{ $user->name }}</flux:select.option>
             @endforeach
         </flux:select>
 
@@ -125,8 +143,8 @@ new class extends TableComponent {
                             <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal"
                                          inset="top bottom"></flux:button>
                             <flux:menu>
-                                <x-edit-button form="{{ $this->modalName }}" :object="$item" />
-                                <x-delete-button :object="$item" />
+                                <x-edit-button form="{{ $this->modalName }}" :object="$item"/>
+                                <x-delete-button :object="$item"/>
                             </flux:menu>
                         </flux:dropdown>
                     </flux:table.cell>
@@ -139,7 +157,8 @@ new class extends TableComponent {
         </flux:table.rows>
     </flux:table>
 
-    <x-flyout name="{{ $this->modalName }}" title="{{ __('pages.parcels.form.title') }}" subtitle="{{ __('pages.parcels.form.subtitle') }}" position="right">
+    <x-flyout name="{{ $this->modalName }}" title="{{ __('pages.parcels.form.title') }}"
+              subtitle="{{ __('pages.parcels.form.subtitle') }}" position="right">
         <livewire:pages::parcels.parcel-form/>
     </x-flyout>
 </section>

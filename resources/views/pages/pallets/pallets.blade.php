@@ -35,10 +35,8 @@ new class extends TableComponent {
                 ['label_en', 'label_ua', 'weight', 'notes'], 'ILIKE', "%{$this->q}%")
             )
             ->when($this->type, fn($query) => $query->where('type', $this->type))
-            ->when($this->recipient_id, fn($query) => $query->where('recipient_id', $this->recipient_id)
-            )
-            ->when($this->author_id, fn($query) => $query->where('user_id', $this->author_id)
-            )
+            ->when($this->recipient_id, fn($query) => $query->where('recipient_id', $this->recipient_id))
+            ->when($this->author_id, fn($query) => $query->where('user_id', $this->author_id))
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate();
     }
