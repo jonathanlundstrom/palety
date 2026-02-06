@@ -2,9 +2,8 @@
 
 namespace App\Models;
 
-use App\Enumerables\ParcelStatus;
+use App\Enumerables\Availability;
 use App\Enumerables\ParcelType;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -88,12 +87,12 @@ class Parcel extends Model {
     /**
      * Check if the parcel is already loaded on a pallet.
      * Ideally, it should not be able to be added to multiple pallets or transports.
-     * @return ParcelStatus
+     * @return Availability
      */
-    public function getPalletStatus(): ParcelStatus {
+    public function getPalletStatus(): Availability {
         return $this->pallet_id !== null
-            ? ParcelStatus::LOADED_ON_PALLET
-            : ParcelStatus::AVAILABLE;
+            ? Availability::LOADED_ON_PALLET
+            : Availability::AVAILABLE;
     }
 
     /**
@@ -107,22 +106,22 @@ class Parcel extends Model {
     /**
      * Check if the parcel is already loaded on transport.
      * Ideally, it should not be able to be added to multiple pallets or transports.
-     * @return ParcelStatus
+     * @return Availability
      */
-    public function getTransportStatus(): ParcelStatus {
+    public function getTransportStatus(): Availability {
         return $this->transport_id !== null
-            ? ParcelStatus::LOADED_ON_TRANSPORT
-            : ParcelStatus::AVAILABLE;
+            ? Availability::LOADED_ON_TRANSPORT
+            : Availability::AVAILABLE;
     }
 
     /**
      * Check if the parcel is loaded, either on a pallet or transport.
      * Combines checks for both pallet and transport loading states.
-     * @return ParcelStatus
+     * @return Availability
      */
-    public function getAvailability(): ParcelStatus {
-        return $this->getPalletStatus() === ParcelStatus::LOADED_ON_PALLET || $this->getTransportStatus() === ParcelStatus::LOADED_ON_TRANSPORT
-            ? ParcelStatus::ALREADY_LOADED
-            : ParcelStatus::AVAILABLE;
+    public function getAvailability(): Availability {
+        return $this->getPalletStatus() === Availability::LOADED_ON_PALLET || $this->getTransportStatus() === Availability::LOADED_ON_TRANSPORT
+            ? Availability::ALREADY_LOADED
+            : Availability::AVAILABLE;
     }
 }

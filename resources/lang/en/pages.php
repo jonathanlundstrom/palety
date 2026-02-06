@@ -9,19 +9,25 @@ return [
         'headline' => 'All parcels',
         'subtitle' => 'Add, edit and delete the list of parcels.',
         'form' => [
-            'title' => 'Parcel Details',
+            'title' => 'Parcel details',
             'subtitle' => 'Fill in the information below.',
         ],
     ],
     'transports' => [
         'title' => 'Transports',
+        'headline' => 'All transports',
+        'subtitle' => 'Add, edit and delete the list of transports.',
+        'form' => [
+            'title' => 'Transport details',
+            'subtitle' => 'Fill in the information below.',
+        ],
     ],
     'recipients' => [
         'title' => 'Recipients',
         'headline' => 'All recipients',
         'subtitle' => 'Add, edit and delete the list of recipients.',
         'form' => [
-            'title' => 'Recipient Details',
+            'title' => 'Recipient details',
             'subtitle' => 'Fill in the information below.',
             'extras' => [
                 'EDRPOU' => 'EDRPOU',
@@ -33,7 +39,7 @@ return [
         'headline' => 'All content',
         'subtitle' => 'Add, edit and delete the list of parcel content.',
         'form' => [
-            'title' => 'Content Details',
+            'title' => 'Content details',
             'subtitle' => 'Fill in the information below.',
         ],
     ],
@@ -42,7 +48,7 @@ return [
         'headline' => 'All pallets',
         'subtitle' => 'Add, edit and delete the list of pallets.',
         'form' => [
-            'title' => 'Pallet Details',
+            'title' => 'Pallet details',
             'subtitle' => 'Fill in the information below.',
         ],
     ],

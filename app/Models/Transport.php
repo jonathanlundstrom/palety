@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enumerables\TransportStatus;
 use App\Enumerables\TransportType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -24,6 +25,7 @@ class Transport extends Model {
      */
     public $fillable = [
         'type',
+        'status',
         'notes',
         'sent_at',
         'delivered_at',
@@ -36,8 +38,9 @@ class Transport extends Model {
      */
     protected $casts = [
         'type' => TransportType::class,
-        'sent_at' => 'datetime_immutable',
-        'delivered_at' => 'datetime_immutable',
+        'status' => TransportStatus::class,
+        'sent_at' => 'datetime',
+        'delivered_at' => 'datetime',
     ];
 
     /**
@@ -52,5 +55,16 @@ class Transport extends Model {
      */
     public function pallets(): HasMany {
         return $this->hasMany(Pallet::class);
+    }
+
+    /**
+     * Calculate and retrieve the total weight loaded on the transport.
+     *
+     * @return float The calculated weight of the transport.
+     */
+    public function getWeight(): float {
+        $parcels_weight = $this->parcels()->sum('weight');
+        $pallets_weight = $this->pallets()->get()->sum(fn($pallet) => $pallet->getWeight());
+        return floatval($parcels_weight + $pallets_weight);
     }
 }

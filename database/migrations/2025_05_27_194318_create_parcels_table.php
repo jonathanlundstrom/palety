@@ -19,8 +19,6 @@ return new class extends Migration {
                 ->nullable()
                 ->constrained()
                 ->nullOnDelete();
-            $table->string('type');
-            $table->float('weight');
             $table->foreignIdFor(Recipient::class)
                 ->nullable()
                 ->constrained()
@@ -33,6 +31,8 @@ return new class extends Migration {
                 ->nullable()
                 ->constrained()
                 ->nullOnDelete();
+            $table->string('type');
+            $table->float('weight');
             $table->string('notes')->nullable();
             $table->timestamps();
         });

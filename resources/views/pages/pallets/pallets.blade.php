@@ -4,6 +4,7 @@ use App\Enumerables\PalletType;
 use App\Livewire\Components\TableComponent;
 use App\Models\Pallet;
 use App\Models\Recipient;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Attributes\Computed;
@@ -13,8 +14,8 @@ use Livewire\Attributes\Url;
 
 new class extends TableComponent {
 
-    #[On('content-updated')]
-    public function onItemsUpdated(): void {
+    #[On('items-updated')]
+    public function refreshList(): void {
         unset($this->items);
     }
 
@@ -24,6 +25,9 @@ new class extends TableComponent {
     #[Url(except: '')]
     public string $recipient_id = '';
 
+    #[Url(except: '')]
+    public string $author_id = '';
+
     #[Computed]
     public function items(): LengthAwarePaginator {
         return Pallet::query()
@@ -31,16 +35,22 @@ new class extends TableComponent {
                 ['label_en', 'label_ua', 'weight', 'notes'], 'ILIKE', "%{$this->q}%")
             )
             ->when($this->type, fn($query) => $query->where('type', $this->type))
-            ->when($this->recipient_id, fn($query) =>
-                $query->where('recipient_id', $this->recipient_id)
+            ->when($this->recipient_id, fn($query) => $query->where('recipient_id', $this->recipient_id)
+            )
+            ->when($this->author_id, fn($query) => $query->where('user_id', $this->author_id)
             )
             ->orderBy($this->sortBy, $this->sortDirection)
-            ->paginate(20);
+            ->paginate();
     }
 
     #[Computed]
     protected function recipients(): Collection {
         return Recipient::list(['id', 'name'], 'name')->get();
+    }
+
+    #[Computed]
+    protected function users(): Collection {
+        return User::list(['id', 'name'], 'name')->get();
     }
 
     public function render(): View {
@@ -58,17 +68,27 @@ new class extends TableComponent {
     </header>
 
     <div class="flex flex-wrap gap-4 items-center mb-4">
-        <flux:input wire:model.live.debounce.500ms="q" icon-trailing="magnifying-glass" placeholder="{{__('app.search')}}" clearable class="w-full md:flex-1"/>
+        <flux:input wire:model.live.debounce.500ms="q" icon-trailing="magnifying-glass"
+                    placeholder="{{__('app.search')}}" clearable class="w-full md:flex-1"/>
 
-        <flux:select variant="listbox" wire:model.live="type" placeholder="{{ __('app.type') }}" clearable class="w-full md:flex-1">
+        <flux:select variant="listbox" wire:model.live="type" placeholder="{{ __('app.type') }}" clearable
+                     class="w-full md:flex-1">
             @foreach (PalletType::cases() as $case)
                 <flux:select.option value="{{ $case->name }}">{{ $case->label() }}</flux:select.option>
             @endforeach
         </flux:select>
 
-        <flux:select variant="listbox" wire:model.live="recipient_id" placeholder="{{ __('app.recipient') }}" clearable class="w-full md:flex-1">
+        <flux:select variant="listbox" wire:model.live="recipient_id" placeholder="{{ __('app.recipient') }}" clearable
+                     class="w-full md:flex-1">
             @foreach ($this->recipients as $recipient)
                 <flux:select.option value="{{ $recipient->id }}">{{ $recipient->name }}</flux:select.option>
+            @endforeach
+        </flux:select>
+
+        <flux:select variant="listbox" wire:model.live="author_id" placeholder="{{ __('app.author') }}" clearable
+                     class="w-full md:flex-1">
+            @foreach ($this->users as $user)
+                <flux:select.option value="{{ $user->id }}">{{ $user->name }}</flux:select.option>
             @endforeach
         </flux:select>
 
@@ -81,12 +101,11 @@ new class extends TableComponent {
         <flux:table.columns>
             <flux:table.column sortable :sorted="$sortBy === 'id'" :direction="$sortDirection"
                                wire:click="sort('id')">{{ __('app.id') }}</flux:table.column>
-            <flux:table.column sortable :sorted="$sortBy === 'user_id'" :direction="$sortDirection"
-                               wire:click="sort('user_id')">{{ __('app.author') }}</flux:table.column>
             <flux:table.column>{{ __('app.label') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'type'" :direction="$sortDirection"
                                wire:click="sort('type')">{{ __('app.type') }}</flux:table.column>
             <flux:table.column>{{ __('app.recipient') }}</flux:table.column>
+            <flux:table.column>{{ trans_choice('app.category.label', 2) }}</flux:table.column>
             <flux:table.column>{{ __('app.weight.label') }}</flux:table.column>
             <flux:table.column></flux:table.column>
         </flux:table.columns>
@@ -94,16 +113,7 @@ new class extends TableComponent {
             @forelse ($this->items as $item)
                 <flux:table.row :key="$item->id">
                     <flux:table.cell>{{ $item->id }}</flux:table.cell>
-                    <flux:table.cell>
-                        @if ($item->author)
-                            <flux:badge size="sm" inset="top bottom" color="zinc">
-                                {{ $item->author->name }}
-                            </flux:badge>
-                        @else
-                            –
-                        @endif
-                    </flux:table.cell>
-                    <flux:table.cell>{{ $item->{$item::label()} ?? 'N/A' }}</flux:table.cell>
+                    <flux:table.cell>{{ $item->{$item::label()} ?? '–' }}</flux:table.cell>
                     <flux:table.cell>
                         <flux:badge size="sm" inset="top bottom" color="{{ $this->color($item->type) }}">
                             {{ $item->type->label() }}
@@ -113,6 +123,13 @@ new class extends TableComponent {
                         <flux:badge size="sm" inset="top bottom" color="zinc">
                             {{ $item->recipient->name }}
                         </flux:badge>
+                    </flux:table.cell>
+                    <flux:table.cell>
+                        @foreach ($item->getCategories() as $category)
+                            <flux:badge size="sm" inset="top bottom" color="zinc">
+                                {{ $category->label() }}
+                            </flux:badge>
+                        @endforeach
                     </flux:table.cell>
                     <flux:table.cell>
                         {{ $item->getWeight() }} {{ __('app.weight.unit') }}
@@ -127,8 +144,8 @@ new class extends TableComponent {
                             <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal"
                                          inset="top bottom"></flux:button>
                             <flux:menu>
-                                <x-edit-button form="{{ $this->modalName }}" :object="$item" />
-                                <x-delete-button :object="$item" />
+                                <x-edit-button form="{{ $this->modalName }}" :object="$item"/>
+                                <x-delete-button :object="$item"/>
                             </flux:menu>
                         </flux:dropdown>
                     </flux:table.cell>
@@ -141,7 +158,8 @@ new class extends TableComponent {
         </flux:table.rows>
     </flux:table>
 
-    <x-flyout name="{{ $this->modalName }}" title="{{ __('pages.pallets.form.title') }}" subtitle="{{ __('pages.pallets.form.subtitle') }}" position="right">
+    <x-flyout name="{{ $this->modalName }}" title="{{ __('pages.pallets.form.title') }}"
+              subtitle="{{ __('pages.pallets.form.subtitle') }}" position="right">
         <livewire:pages::pallets.pallet-form/>
     </x-flyout>
 

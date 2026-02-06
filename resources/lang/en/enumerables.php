@@ -3,8 +3,10 @@
 use App\Enumerables\DeliveryType;
 use App\Enumerables\ImportCategory;
 use App\Enumerables\PalletType;
+use App\Enumerables\Availability;
 use App\Enumerables\ParcelType;
 use App\Enumerables\RecipientType;
+use App\Enumerables\TransportStatus;
 use App\Enumerables\TransportType;
 
 return [
@@ -30,7 +32,16 @@ return [
     PalletType::CALCULATED->name => 'Automatically calculated',
     PalletType::MANUAL_PALLET->name => 'Manual pallet',
 
+    Availability::AVAILABLE->name => 'Available',
+    Availability::ALREADY_LOADED->name => 'Already loaded',
+    Availability::LOADED_ON_PALLET->name => 'Loaded on pallet',
+    Availability::LOADED_ON_TRANSPORT->name => 'Loaded on transport',
+
     TransportType::CAR->name => 'Car',
     TransportType::TRUCK->name => 'Truck',
     TransportType::OTHER->name => 'Other',
+
+    TransportStatus::IN_PROGRESS->name => 'In progress',
+    TransportStatus::SENT->name => 'Has been sent',
+    TransportStatus::DELIVERED->name => 'Delivered',
 ];

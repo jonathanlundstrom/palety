@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enumerables\DeliveryType;
 use App\Enumerables\RecipientType;
+use App\Models\Traits\ModelHelpers;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Recipient extends Model {
-    use HasFactory;
+    use ModelHelpers, HasFactory;
 
     /**
      * The table associated with the model.
@@ -85,19 +86,5 @@ class Recipient extends Model {
         return $query->select('city')
             ->distinct()
             ->orderBy('city');
-    }
-
-    /**
-     * Apply a query scope to list records with specified columns and order.
-     *
-     * @param Builder $query The query builder instance.
-     * @param array $columns The columns to select in the query.
-     * @param string $order_by The column to order the results by.
-     *
-     * @return Builder The modified query builder instance.
-     */
-    public function scopeList(Builder $query, array $columns, string $order_by): Builder {
-        return $query->select(...$columns)
-            ->orderBy($order_by);
     }
 }

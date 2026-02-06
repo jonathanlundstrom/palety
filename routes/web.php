@@ -13,6 +13,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::livewire('/parcels', 'pages::parcels')->name('parcels');
     Route::livewire('/pallets', 'pages::pallets')->name('pallets');
     Route::livewire('/recipients', 'pages::recipients')->name('recipients');
+    Route::livewire('/transports', 'pages::transports')->name('transports');
 });
 
 Route::middleware(['auth'])->group(function () {

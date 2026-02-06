@@ -65,7 +65,7 @@ new class extends FormComponent {
     <flux:input wire:model="label_en" label="{{ __('app.label_en') }}"/>
     <flux:input wire:model="label_ua" label="{{ __('app.label_ua') }}"/>
 
-    <flux:select variant="listbox" wire:model.live="category" label="{{ __('app.category.label') }}" placeholder="{{ __('app.category.select') }}">
+    <flux:select variant="listbox" wire:model.live="category" label="{{ trans_choice('app.category.label', 1) }}" placeholder="{{ __('app.category.select') }}">
         @foreach (ImportCategory::cases() as $case)
             <flux:select.option :value="$case->name">{{ $case->label() }}</flux:select.option>
         @endforeach

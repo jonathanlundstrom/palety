@@ -36,12 +36,4 @@ abstract class FormComponent extends Component {
             ? FormStatus::EDITING
             : FormStatus::CREATING;
     }
-
-    /**
-     * Dispatch the event which initializes the QR code scanner.
-     * @return void
-     */
-    public function scan(): void {
-        $this->dispatch('scan');
-    }
 }

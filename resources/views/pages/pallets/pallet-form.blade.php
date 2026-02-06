@@ -1,18 +1,17 @@
 <?php
 
 use App\Enumerables\FormStatus;
+use App\Enumerables\ImportCategory;
 use App\Enumerables\PalletType;
-use App\Enumerables\ParcelStatus;
+use App\Enumerables\Availability;
 use App\Livewire\Components\FormComponent;
 use App\Models\Pallet;
 use App\Models\Parcel;
 use App\Models\Recipient;
 use Flux\Flux;
 use Illuminate\Database\QueryException;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Livewire\Attributes\Computed;
-use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 
@@ -30,7 +29,7 @@ new class extends FormComponent {
             try {
                 $abstract = app()->make($payload['class']);
                 $object = $abstract::find($payload['id']);
-                if ($object->getAvailability() === ParcelStatus::AVAILABLE) {
+                if ($object->getAvailability() === Availability::AVAILABLE) {
                     if (!in_array($object->id, array_column($this->scanned_items, 'id'), true)) {
                         $this->scanned_items[] = $object;
                         Flux::toast(variant: 'success', text: __('toasts.parcel.scanned'));
@@ -44,8 +43,25 @@ new class extends FormComponent {
         }
     }
 
+    /**
+     * Remove provided resource from the list of scanned items.
+     * @param int $id
+     * @param string $class
+     * @return void
+     */
+    #[On('undo-scan')]
+    public function undoScan(int $id, string $class): void {
+        $this->scanned_items = array_filter(
+            $this->scanned_items,
+            fn($item) => $item->id !== $id
+        );
+    }
+
     #[Validate('required')]
     public string $type = PalletType::CALCULATED->name;
+
+    #[Validate('required_if:type,' . PalletType::MANUAL_PALLET->name)]
+    public string $category;
 
     #[Validate('required|integer')]
     public int $recipient_id;
@@ -73,18 +89,6 @@ new class extends FormComponent {
     #[Computed]
     protected function recipients(): Collection {
         return Recipient::list(['id', 'name'], 'name')->get();
-    }
-
-    /**
-     * Remove provided resource from the list of scanned items.
-     * @param int $resource_id
-     * @return void
-     */
-    public function undoScan(int $resource_id): void {
-        $this->scanned_items = array_filter(
-            $this->scanned_items,
-            fn($item) => $item->id !== $resource_id
-        );
     }
 
     /**
@@ -155,36 +159,19 @@ new class extends FormComponent {
 
     @if ($this->isCalculated)
         <flux:field>
-            <flux:label>{{ __('app.scanned_items') }}</flux:label>
             <flux:select wire:model.live="scanned_items" class="hidden" multiple></flux:select>
-
-            <div>
-                <flux:card class="p-2 bg-gray-50 rounded-lg border-b-0 rounded-b-none">
-                    @forelse ($scanned_items as $parcel)
-                        <flux:card class="p-3 space-y-3 rounded-md">
-                            <div class="flex gap-3 items-center">
-                                <flux:badge color="zinc" size="sm">#{{ $parcel->id }}</flux:badge>
-                                <div class="flex-1">
-                                    <flux:text class="flex-1">{{ $parcel->contentList() }}</flux:text>
-                                </div>
-                                <flux:button variant="ghost" icon="trash" color="red" size="xs"
-                                             wire:click="undoScan({{ $parcel->id }})"/>
-                            </div>
-                        </flux:card>
-                    @empty
-                        <flux:text class="py-4 text-center">No items have been scanned</flux:text>
-                    @endforelse
-                </flux:card>
-
-                <flux:modal.trigger name="scanner-modal">
-                    <flux:button icon="qr-code" class="rounded-t-none w-full" wire:click="scan">Scan parcels
-                    </flux:button>
-                </flux:modal.trigger>
-            </div>
-
+            <flux:label>{{ __('app.scanned_items') }}</flux:label>
+            <livewire:scanner-field :items="$scanned_items" buttonText="{{ __('app.scan.scan_parcels') }}"
+                                    :key="'parcels-'.count($scanned_items)"/>
             <flux:error name="scanned_items"/>
         </flux:field>
     @else
+        <flux:select variant="listbox" wire:model.live="category" label="{{ trans_choice('app.category.label', 1) }}" placeholder="{{ __('app.category.select') }}">
+            @foreach (ImportCategory::cases() as $case)
+                <flux:select.option :value="$case->name">{{ $case->label() }}</flux:select.option>
+            @endforeach
+        </flux:select>
+
         <flux:input wire:model="label_en" label="{{ __('app.label_en') }}"/>
         <flux:input wire:model="label_ua" label="{{ __('app.label_ua') }}"/>
 

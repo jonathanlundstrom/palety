@@ -12,7 +12,8 @@ return new class extends Migration {
         Schema::create('transports', function (Blueprint $table) {
             $table->id();
             $table->string('type');
-            $table->string('notes');
+            $table->string('status');
+            $table->string('notes')->nullable();
             $table->timestamp('sent_at')->nullable();
             $table->timestamp('delivered_at')->nullable();
             $table->timestamps();

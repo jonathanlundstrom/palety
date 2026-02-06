@@ -6,6 +6,9 @@ return [
     'type' => 'Type',
     'label' => 'Label',
     'author' => 'Author',
+    'status' => 'Status',
+    'parcel' => 'Parcel|Parcels',
+    'pallet' => 'Pallet|Pallets',
     'search' => 'Search',
     'recipient' => 'Recipient',
     'delivery_type' => 'Delivery type',
@@ -27,6 +30,7 @@ return [
     'edit' => 'Edit',
     'delete' => 'Delete',
     'submit' => 'Submit',
+    'pieces' => 'pc|pcs',
     'parent' => [
         'label' => 'Parent resource',
         'select' => 'Select parent resource',
@@ -36,7 +40,7 @@ return [
         'select' => 'Select content',
     ],
     'category' => [
-        'label' => 'Category',
+        'label' => 'Category|Categories',
         'select' => 'Select category',
     ],
     'weight' => [
@@ -47,6 +51,9 @@ return [
         'title' => 'Scan QR Code',
         'subtitle' => 'Point your camera at the QR code to scan it.',
         'toggle_flash' => 'Toggle Flash',
+        'no_items' => 'No items have been scanned',
+        'scan_parcels' => 'Scan parcels',
+        'scan_pallets' => 'Scan pallets',
     ],
     'no_items' => 'No items found',
 ];

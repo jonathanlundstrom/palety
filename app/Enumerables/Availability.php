@@ -5,10 +5,10 @@ namespace App\Enumerables;
 use App\Enumerables\Traits\EnumHelpers;
 
 /**
- * This enum represents the parcel status
- * For instance, is this parcel free to be loaded or not?
+ * This enum represents the availability status of a parcel or pallet.
+ * For instance, is this parcel or pallet free to be loaded or not?
  */
-enum ParcelStatus {
+enum Availability {
     use EnumHelpers;
 
     case AVAILABLE;

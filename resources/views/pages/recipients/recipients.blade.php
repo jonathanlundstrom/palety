@@ -37,7 +37,7 @@ new class extends TableComponent {
             ->when($this->delivery_type, fn($query) => $query->where('delivery_type', $this->delivery_type))
             ->when($this->city, fn($query) => $query->where('city', $this->city))
             ->orderBy($this->sortBy, $this->sortDirection)
-            ->paginate(20);
+            ->paginate();
     }
 
     #[Computed]

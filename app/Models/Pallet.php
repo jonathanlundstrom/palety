@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enumerables\Availability;
+use App\Enumerables\ImportCategory;
 use App\Enumerables\PalletType;
 use App\Models\Traits\ModelHelpers;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,6 +30,7 @@ class Pallet extends Model {
         'user_id',
         'recipient_id',
         'type',
+        'category',
         'label_en',
         'label_ua',
         'weight',
@@ -41,6 +44,7 @@ class Pallet extends Model {
      */
     protected $casts = [
         'type' => PalletType::class,
+        'category' => ImportCategory::class,
     ];
 
     /**
@@ -73,14 +77,47 @@ class Pallet extends Model {
     }
 
     /**
+     * Check if the pallet is already loaded on transport.
+     * Ideally, it should not be able to be added to multiple transports.
+     * @return Availability
+     */
+    public function getTransportStatus(): Availability {
+        return $this->transport_id !== null
+            ? Availability::LOADED_ON_TRANSPORT
+            : Availability::AVAILABLE;
+    }
+
+    /**
      * Get the weight of the pallet based on type and content.
      */
     public function getWeight(): float {
         $weight = $this->weight;
         if ($this->type === PalletType::CALCULATED) {
-            $weight = $this->parcels->sum('weight');
+            $weight = $this->parcels()->sum('weight');
         }
 
         return floatval($weight);
+    }
+
+    /**
+     * Check if the pallet is loaded on transport or available.
+     * @return Availability
+     */
+    public function getAvailability(): Availability {
+        return $this->getTransportStatus() === Availability::LOADED_ON_TRANSPORT
+            ? Availability::ALREADY_LOADED
+            : Availability::AVAILABLE;
+    }
+
+    public function getCategories(): array {
+        if ($this->type === PalletType::CALCULATED) {
+            return Content::query()
+                ->whereHas('parcels', fn($q) => $q->where('pallet_id', $this->id))
+                ->distinct()
+                ->pluck('category')
+                ->toArray();
+        } else {
+            return [$this->category];
+        }
     }
 }

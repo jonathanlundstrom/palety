@@ -27,7 +27,7 @@ new class extends TableComponent {
             )
             ->when($this->category, fn($query) => $query->where('category', $this->category))
             ->orderBy($this->sortBy, $this->sortDirection)
-            ->paginate(20);
+            ->paginate();
     }
 
     public function render(): View {
@@ -47,7 +47,7 @@ new class extends TableComponent {
     <div class="flex flex-wrap gap-4 items-center mb-4">
         <flux:input wire:model.live.debounce.500ms="q" icon-trailing="magnifying-glass" placeholder="{{__('app.search')}}" clearable class="w-full md:flex-1" />
 
-        <flux:select variant="listbox" wire:model.live="category" placeholder="{{ __('app.category.label') }}" clearable class="w-full md:flex-1">
+        <flux:select variant="listbox" wire:model.live="category" placeholder="{{ trans_choice('app.category.label', 1) }}" clearable class="w-full md:flex-1">
             @foreach (ImportCategory::cases() as $case)
                 <flux:select.option value="{{ $case->name }}">{{ $case->label() }}</flux:select.option>
             @endforeach
@@ -63,7 +63,7 @@ new class extends TableComponent {
             <flux:table.column sortable :sorted="$sortBy === 'id'" :direction="$sortDirection" wire:click="sort('id')">{{ __('app.id') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'label_en'" :direction="$sortDirection" wire:click="sort('label_en')">{{ __('app.label_en') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'label_ua'" :direction="$sortDirection" wire:click="sort('label_ua')">{{ __('app.label_ua') }}</flux:table.column>
-            <flux:table.column sortable :sorted="$sortBy === 'category'" :direction="$sortDirection" wire:click="sort('category')">{{ __('app.category.label') }}</flux:table.column>
+            <flux:table.column sortable :sorted="$sortBy === 'category'" :direction="$sortDirection" wire:click="sort('category')">{{ trans_choice('app.category.label', 1) }}</flux:table.column>
             <flux:table.column></flux:table.column>
         </flux:table.columns>
         <flux:table.rows>

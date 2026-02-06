@@ -44,9 +44,11 @@ abstract class TableComponent extends Component {
      * Primarily to be used in the render method to avoid hardcoding the view path.
      * Requires the component to share its name with the containing pages:: folder.
      *
+     * Note: This can be avoided by using the full path name when registering the route.
+     *
      * @return string
      */
-    public function getViewTemplate(): string {
+    protected function getViewTemplate(): string {
         $parts = explode('::', $this->getName());
         $template = array_last($parts);
         return array_first($parts).'::'.$template.'.'.$template;
