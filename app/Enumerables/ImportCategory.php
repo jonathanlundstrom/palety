@@ -2,6 +2,7 @@
 
 namespace App\Enumerables;
 
+use App\Enumerables\Interfaces\ColoredEnum;
 use App\Enumerables\Traits\EnumHelpers;
 
 /**
@@ -10,7 +11,7 @@ use App\Enumerables\Traits\EnumHelpers;
  *
  * See https://ips.ligazakon.net/document/KP230953?an=1 for full list.
  */
-enum ImportCategory {
+enum ImportCategory implements ColoredEnum {
     use EnumHelpers;
 
     case FOOD;
@@ -21,4 +22,22 @@ enum ImportCategory {
     case VEHICLES;
     case FUEL;
     case OTHER;
+
+    /**
+     * Return the color associated with the current case.
+     *
+     * @return string
+     */
+    public function color(): string {
+        return match($this) {
+            self::FOOD => 'lime',
+            self::SANITARY_HYGIENE => 'cyan',
+            self::MEDICAL => 'red',
+            self::CLOTHING => 'emerald',
+            self::TECHNICAL => 'purple',
+            self::VEHICLES => 'orange',
+            self::FUEL => 'yellow',
+            self::OTHER => 'zinc',
+        };
+    }
 }

@@ -95,43 +95,4 @@ abstract class TableComponent extends Component {
     public function delete(int $id, string $class): void {
         $this->dispatch('confirm-delete', id: $id, class: $class);
     }
-
-    /**
-     * Determines the color associated with a given enumeration value.
-     *
-     * @param UnitEnum $enum An enumeration instance whose name determines the color mapping.
-     * @return string The color associated with the provided enum value.
-     */
-    public function color(UnitEnum $enum): string {
-        // TODO: Replace this terrible method...
-        return match($enum) {
-            RecipientType::INDIVIDUAL => 'lime',
-            RecipientType::ORGANISATION => 'blue',
-
-            DeliveryType::SELF_PICKUP => 'yellow',
-            DeliveryType::ADDRESS_DELIVERY => 'green',
-            DeliveryType::NOVA_POSHTA_DELIVERY => 'red',
-
-            ParcelType::BOX => 'lime',
-            ParcelType::OTHER => 'blue',
-
-            ImportCategory::FOOD => 'lime',
-            ImportCategory::SANITARY_HYGIENE => 'cyan',
-            ImportCategory::MEDICAL => 'red',
-            ImportCategory::CLOTHING => 'emerald',
-            ImportCategory::TECHNICAL => 'purple',
-            ImportCategory::VEHICLES => 'orange',
-            ImportCategory::FUEL => 'yellow',
-            ImportCategory::OTHER => 'zinc',
-
-            PalletType::CALCULATED => 'lime',
-            PalletType::MANUAL_PALLET => 'blue',
-
-            TransportType::CAR => 'yellow',
-            TransportType::TRUCK => 'green',
-            TransportType::OTHER => 'red',
-
-            default => 'zinc',
-        };
-    }
 }

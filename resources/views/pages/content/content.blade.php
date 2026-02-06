@@ -73,7 +73,7 @@ new class extends TableComponent {
                     <flux:table.cell>{{ $item->label_en }}</flux:table.cell>
                     <flux:table.cell>{{ $item->label_ua }}</flux:table.cell>
                     <flux:table.cell>
-                        <flux:badge size="sm" inset="top bottom" color="{{ $this->color($item->category) }}">
+                        <flux:badge size="sm" inset="top bottom" color="{{ $item->category->color() }}">
                             {{ $item->category->label() }}
                         </flux:badge>
                     </flux:table.cell>

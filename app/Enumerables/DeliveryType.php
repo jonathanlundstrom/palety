@@ -2,12 +2,13 @@
 
 namespace App\Enumerables;
 
+use App\Enumerables\Interfaces\ColoredEnum;
 use App\Enumerables\Traits\EnumHelpers;
 
 /**
  * This enum represents the type of delivery.
  */
-enum DeliveryType {
+enum DeliveryType implements ColoredEnum {
     use EnumHelpers;
 
     case SELF_PICKUP;
@@ -33,5 +34,18 @@ enum DeliveryType {
         return in_array($this, [
             self::ADDRESS_DELIVERY,
         ]);
+    }
+
+    /**
+     * Return the color associated with the current case.
+     *
+     * @return string
+     */
+    public function color(): string {
+        return match($this) {
+            self::SELF_PICKUP => 'yellow',
+            self::ADDRESS_DELIVERY => 'orange',
+            self::NOVA_POSHTA_DELIVERY => 'red',
+        };
     }
 }

@@ -13,4 +13,16 @@ enum ParcelType {
 
     case BOX;
     case OTHER;
+
+    /**
+     * Return the color associated with the current case.
+     *
+     * @return string
+     */
+    public function color(): string {
+        return match($this) {
+            self::BOX => 'lime',
+            self::OTHER => 'blue',
+        };
+    }
 }

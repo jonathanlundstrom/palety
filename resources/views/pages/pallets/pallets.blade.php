@@ -113,7 +113,7 @@ new class extends TableComponent {
                     <flux:table.cell>{{ $item->id }}</flux:table.cell>
                     <flux:table.cell>{{ $item->{$item::label()} ?? '–' }}</flux:table.cell>
                     <flux:table.cell>
-                        <flux:badge size="sm" inset="top bottom" color="{{ $this->color($item->type) }}">
+                        <flux:badge size="sm" inset="top bottom" color="{{ $item->type->color() }}">
                             {{ $item->type->label() }}
                         </flux:badge>
                     </flux:table.cell>
@@ -124,7 +124,7 @@ new class extends TableComponent {
                     </flux:table.cell>
                     <flux:table.cell>
                         @foreach ($item->getCategories() as $category)
-                            <flux:badge size="sm" inset="top bottom" color="zinc">
+                            <flux:badge size="sm" inset="top bottom" color="{{ $category->color() }}">
                                 {{ $category->label() }}
                             </flux:badge>
                         @endforeach

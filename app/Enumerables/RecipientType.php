@@ -2,12 +2,13 @@
 
 namespace App\Enumerables;
 
+use App\Enumerables\Interfaces\ColoredEnum;
 use App\Enumerables\Traits\EnumHelpers;
 
 /**
  * This enum represents the type of recipient.
  */
-enum RecipientType {
+enum RecipientType implements ColoredEnum{
     use EnumHelpers;
 
     case INDIVIDUAL;
@@ -21,5 +22,17 @@ enum RecipientType {
         return in_array($this, [
             self::ORGANISATION,
         ]);
+    }
+
+    /**
+     * Return the color associated with the current case.
+     *
+     * @return string
+     */
+    public function color(): string {
+        return match($this) {
+            self::INDIVIDUAL => 'lime',
+            self::ORGANISATION => 'blue',
+        };
     }
 }

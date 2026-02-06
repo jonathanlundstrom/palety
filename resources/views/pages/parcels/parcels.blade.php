@@ -125,7 +125,7 @@ new class extends TableComponent {
                         @endif
                     </flux:table.cell>
                     <flux:table.cell>
-                        <flux:badge size="sm" inset="top bottom" color="{{ $this->color($item->type) }}">
+                        <flux:badge size="sm" inset="top bottom" color="{{ $item->type->color() }}">
                             {{ $item->type->label() }}
                         </flux:badge>
                     </flux:table.cell>

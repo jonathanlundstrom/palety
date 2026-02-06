@@ -101,7 +101,7 @@ new class extends TableComponent {
                     <flux:table.cell>{{ $item->id }}</flux:table.cell>
                     <flux:table.cell>{{ $item->name }}</flux:table.cell>
                     <flux:table.cell>
-                        <flux:badge size="sm" inset="top bottom" color="{{ $this->color($item->type) }}">
+                        <flux:badge size="sm" inset="top bottom" color="{{ $item->type->color() }}">
                             {{ $item->type->label() }}
                         </flux:badge>
                     </flux:table.cell>
@@ -109,7 +109,7 @@ new class extends TableComponent {
                         <a href="tel:{{ $item->phone_number }}">{{ phone($item->phone_number)->formatInternational() }}</a>
                     </flux:table.cell>
                     <flux:table.cell>
-                        <flux:badge size="sm" inset="top bottom" color="{{ $this->color($item->delivery_type) }}">
+                        <flux:badge size="sm" inset="top bottom" color="{{ $item->delivery_type->color() }}">
                             {{ $item->delivery_type->label() }}
                         </flux:badge>
                     </flux:table.cell>

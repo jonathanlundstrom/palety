@@ -94,7 +94,7 @@ new class extends TableComponent {
                 <flux:table.row :key="$item->id">
                     <flux:table.cell>{{ $item->id }}</flux:table.cell>
                     <flux:table.cell>
-                        <flux:badge size="sm" inset="top bottom" color="{{ $this->color($item->type) }}">
+                        <flux:badge size="sm" inset="top bottom" color="{{ $item->type->color() }}">
                             {{ $item->type->label() }}
                         </flux:badge>
                     </flux:table.cell>
@@ -102,7 +102,7 @@ new class extends TableComponent {
                     <flux:table.cell>{{ $item->parcels_count ?: '–' }} {{ trans_choice('app.pieces', $item->parcels_count) }}</flux:table.cell>
                     <flux:table.cell>{{ $item->getWeight() }} {{ __('app.weight.unit') }}</flux:table.cell>
                     <flux:table.cell>
-                        <flux:badge size="sm" inset="top bottom" color="{{ $this->color($item->status) }}">
+                        <flux:badge size="sm" inset="top bottom" color="{{ $item->status->color() }}">
                             {{ $item->status->label() }}
                         </flux:badge>
                     </flux:table.cell>
