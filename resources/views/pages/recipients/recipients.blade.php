@@ -106,7 +106,7 @@ new class extends TableComponent {
                         </flux:badge>
                     </flux:table.cell>
                     <flux:table.cell>
-                        <a href="tel:{{ $item->phone_number }}">{{ phone($item->phone_number)->formatInternational() }}</a>
+                        <a href="tel:{{ str_replace(' ', '', $item->phone_number) }}">{{ phone($item->phone_number)->formatInternational() }}</a>
                     </flux:table.cell>
                     <flux:table.cell>
                         <flux:badge size="sm" inset="top bottom" color="{{ $item->delivery_type->color() }}">
