@@ -1,6 +1,14 @@
 <?php
 
 return [
+    'user' => [
+        'failed' => 'Failed to update user',
+        'saved' => 'User saved successfully!',
+        'password' => [
+            'failed' => 'Failed to update password',
+            'saved' => 'Password updated successfully!',
+        ]
+    ],
     'recipient' => [
         'failed' => 'Failed to save recipient',
         'saved' => 'Recipient saved successfully!',

@@ -24,12 +24,20 @@ return [
     'scanned_items' => 'Scanned items',
     'scanned_parcels' => 'Scanned parcels',
     'scanned_pallets' => 'Scanned pallets',
+    'password' => 'Password',
+    'new_password' => 'New password',
+    'current_password' => 'Current password',
+    'confirm_password' => 'Confirm password',
     'notes' => 'Notes',
     'city' => 'City',
     'add' => 'Add',
     'edit' => 'Edit',
+    'save' => 'Save',
+    'cancel' => 'Cancel',
     'delete' => 'Delete',
     'submit' => 'Submit',
+    'login' => 'Log in',
+    'logout' => 'Log out',
     'pieces' => 'pc|pcs',
     'parent' => [
         'label' => 'Parent resource',
@@ -42,6 +50,14 @@ return [
     'category' => [
         'label' => 'Category|Categories',
         'select' => 'Select category',
+    ],
+    'locale' => [
+        'label' => 'Locale',
+        'select' => 'Select locale',
+    ],
+    'timezone' => [
+        'label' => 'Timezone',
+        'select' => 'Select timezone',
     ],
     'weight' => [
         'label' => 'Weight',
@@ -56,4 +72,10 @@ return [
         'scan_pallets' => 'Scan pallets',
     ],
     'no_items' => 'No items found',
+
+    // Available locales:
+    'locales' => [
+        'en' => 'English',
+        'ua' => 'Ukrainian',
+    ]
 ];
