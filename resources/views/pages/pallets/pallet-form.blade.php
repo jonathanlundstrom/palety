@@ -4,6 +4,7 @@ use App\Enumerables\FormStatus;
 use App\Enumerables\ImportCategory;
 use App\Enumerables\PalletType;
 use App\Enumerables\Availability;
+use App\Events\PalletSaved;
 use App\Livewire\Components\FormComponent;
 use App\Models\Pallet;
 use App\Models\Parcel;
@@ -11,6 +12,7 @@ use App\Models\Recipient;
 use Flux\Flux;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
@@ -125,14 +127,25 @@ new class extends FormComponent {
         ];
 
         try {
-            $pallet = match ($this->formStatus()) {
-                FormStatus::EDITING => $this->updatePallet($validated),
-                FormStatus::CREATING => $this->createPallet($validated),
-            };
+            $is_creating = $this->formStatus() === FormStatus::CREATING;
+            $previous_weight = $is_creating ? null : $this->resource->getWeight();
 
-            if ($this->isCalculated()) {
-                $pallet->parcels()->saveMany($this->scanned_items);
-            }
+            DB::transaction(function () use ($validated, $is_creating, $previous_weight) {
+                $pallet = match ($this->formStatus()) {
+                    FormStatus::EDITING => $this->updatePallet($validated),
+                    FormStatus::CREATING => $this->createPallet($validated),
+                };
+
+                if ($this->isCalculated()) {
+                    $pallet->parcels()->saveMany($this->scanned_items);
+                    $pallet->refresh(); // Refresh model after saving relations.
+                }
+
+                // Fire event if created or on weight change:
+                if ($is_creating || $pallet->getWeight() != $previous_weight) {
+                    event(new PalletSaved($pallet));
+                }
+            });
 
             Flux::toast(variant: 'success', text: __('toasts.pallet.saved'));
             $this->dispatch('items-updated');
@@ -166,7 +179,8 @@ new class extends FormComponent {
             <flux:error name="scanned_items"/>
         </flux:field>
     @else
-        <flux:select variant="listbox" wire:model.live="category" label="{{ trans_choice('app.category.label', 1) }}" placeholder="{{ __('app.category.select') }}">
+        <flux:select variant="listbox" wire:model.live="category" label="{{ trans_choice('app.category.label', 1) }}"
+                     placeholder="{{ __('app.category.select') }}">
             @foreach (ImportCategory::cases() as $case)
                 <flux:select.option :value="$case->name">{{ $case->label() }}</flux:select.option>
             @endforeach

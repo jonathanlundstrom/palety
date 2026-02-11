@@ -2,12 +2,14 @@
 
 use App\Enumerables\FormStatus;
 use App\Enumerables\ParcelType;
+use App\Events\ParcelSaved;
 use App\Livewire\Components\FormComponent;
 use App\Models\Content;
 use App\Models\Parcel;
 use Flux\Flux;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
@@ -68,13 +70,23 @@ new class extends FormComponent {
         ];
 
         try {
-            $parcel = match ($this->formStatus()) {
-                FormStatus::EDITING => $this->updateParcel($validated),
-                FormStatus::CREATING => $this->createParcel($validated),
-            };
+            $is_creating = $this->formStatus() === FormStatus::CREATING;
+            $previous_weight = $is_creating ? null : $this->resource->weight;
 
-            // Sync attached content after create/edit
-            $parcel->content()->sync($this->content);
+            DB::transaction(function () use ($validated, $is_creating, $previous_weight) {
+                $parcel = match ($this->formStatus()) {
+                    FormStatus::EDITING => $this->updateParcel($validated),
+                    FormStatus::CREATING => $this->createParcel($validated),
+                };
+
+                // Sync attached content after create/edit
+                $parcel->content()->sync($this->content);
+
+                // Fire event if created or on weight change:
+                if ($is_creating || $parcel->weight != $previous_weight) {
+                    event(new ParcelSaved($parcel));
+                }
+            });
 
             Flux::toast(variant: 'success', text: __('toasts.parcel.saved'));
             $this->dispatch('items-updated');

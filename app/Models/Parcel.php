@@ -124,4 +124,12 @@ class Parcel extends Model {
             ? Availability::ALREADY_LOADED
             : Availability::AVAILABLE;
     }
+
+    /**
+     * Get the weight of the pallet based on type and content.
+     */
+    public function getWeight(): float {
+        $weight = $this->weight;
+        return floatval($weight);
+    }
 }
