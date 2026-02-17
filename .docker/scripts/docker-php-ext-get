@@ -1,0 +1,44 @@
+#!/bin/sh
+# adapted from https://olvlvl.com/2019-06-docker-pecl-without-pecl
+# added to support multiple modules in format name=version instead
+set -e
+
+dir=/usr/src/php
+
+if [ ! -f "$dir/.docker-extracted" ]; then
+    echo >&2 "error: PHP source required, run 'docker-php-source extract' first"
+    exit 1
+fi
+
+dir="$dir/ext"
+
+usage() {
+    echo "usage: $0 module-name=module-version [module-name=module-version ...]"
+    echo "   ie: $0 redis=4.3.0"
+}
+
+fetch_module() {
+  name=$1
+  version=$2
+
+  if [ -z "$name" ]; then
+      usage >&2
+      exit 1
+  fi
+
+  if [ -z "$version" ]; then
+      usage >&2
+      exit 1
+  fi
+
+  mkdir -p "$dir/$name"
+  curl -fsSL "https://pecl.php.net/get/$name-$version.tgz" | tar xvz -C "$dir/$name" --strip 1
+}
+
+# loop over args and split them to name version pairs
+for module in "$@"
+do
+  # shellcheck disable=SC2046
+  fetch_module $(echo "$module" | sed 's/=/ /')
+done
+
