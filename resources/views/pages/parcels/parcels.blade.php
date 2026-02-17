@@ -104,6 +104,7 @@ new class extends TableComponent {
                                wire:click="sort('user_id')">{{ __('app.author') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'type'" :direction="$sortDirection"
                                wire:click="sort('type')">{{ __('app.type') }}</flux:table.column>
+            <flux:table.column>{{ __('app.recipient') }}</flux:table.column>
             <flux:table.column>{{ __('app.content.label') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'weight'" :direction="$sortDirection"
                                wire:click="sort('weight')">{{ __('app.weight.label') }}</flux:table.column>
@@ -130,6 +131,17 @@ new class extends TableComponent {
                         </flux:badge>
                     </flux:table.cell>
                     <flux:table.cell>
+                        @if ($item->recipient)
+                            <flux:badge size="sm" inset="top bottom" color="lime">
+                                {{ $item->recipient->name }}
+                            </flux:badge>
+                        @elseif ($item->pallet)
+                            <flux:badge size="sm" inset="top bottom" color="zinc" icon="rectangle-group">
+                                {{ $item->pallet->recipient->name }}
+                            </flux:badge>
+                        @endif
+                    </flux:table.cell>
+                    <flux:table.cell>
                         @foreach ($item->content as $type)
                             <flux:badge size="sm" inset="top bottom" color="zinc">
                                 {{ $type->{Content::label()} }}
@@ -137,7 +149,7 @@ new class extends TableComponent {
                         @endforeach
                     </flux:table.cell>
                     <flux:table.cell>{{ $item->weight }} {{ __('app.weight.unit') }}</flux:table.cell>
-                    <flux:table.cell>{{ $item->notes ?? '–' }}</flux:table.cell>
+                    <flux:table.cell>{{ $item->notes }}</flux:table.cell>
                     <flux:table.cell>
                         <flux:dropdown>
                             <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal"

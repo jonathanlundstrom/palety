@@ -39,8 +39,12 @@ new class extends FormComponent {
 
                 if ($object->getAvailability() === Availability::AVAILABLE) {
                     if (!in_array($object->id, array_column($this->{$target}, 'id'), true)) {
-                        $this->{$target}[] = $object;
-                        Flux::toast(variant: 'success', text: __($toast_key . '.scanned'));
+                        if ($object->recipient) {
+                            $this->{$target}[] = $object;
+                            Flux::toast(variant: 'success', text: __($toast_key . '.scanned'));
+                        } else {
+                            Flux::toast(variant: 'warning', text: __($toast_key . '.no_recipient'));
+                        }
                     }
                 } else {
                     Flux::toast(variant: 'danger', text: __($toast_key . '.loaded'));

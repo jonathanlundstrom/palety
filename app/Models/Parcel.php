@@ -61,9 +61,10 @@ class Parcel extends Model {
      * Get a comma-separated list of parcel content for display.
      * @return string
      */
-    public function contentList(): string {
+    public function contentList(?string $locale = null): string {
         if ($content = $this->content()) {
-            return implode(', ', $content->pluck(Content::label())->toArray());
+            $field = $locale !== null ? 'label_'.$locale : Content::label();
+            return implode(', ', $content->pluck($field)->toArray());
         } else {
             return '';
         }
@@ -129,7 +130,6 @@ class Parcel extends Model {
      * Get the weight of the pallet based on type and content.
      */
     public function getWeight(): float {
-        $weight = $this->weight;
-        return floatval($weight);
+        return number_format($this->weight, 2);
     }
 }

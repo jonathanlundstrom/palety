@@ -6,6 +6,7 @@ use App\Events\ParcelSaved;
 use App\Livewire\Components\FormComponent;
 use App\Models\Content;
 use App\Models\Parcel;
+use App\Models\Recipient;
 use Flux\Flux;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
@@ -29,12 +30,29 @@ new class extends FormComponent {
     #[Validate('nullable')]
     public string $notes;
 
+    #[Validate('nullable|integer')]
+    public int $recipient_id;
+
     #[Computed]
     protected function contentItems(): Collection {
         return Content::query()
             ->select('id', Content::label())
             ->orderBy(Content::label())
             ->get();
+    }
+
+    #[Computed]
+    protected function recipients(): Collection {
+        return Recipient::list(['id', 'name'], 'name')->get();
+    }
+
+    #[Computed]
+    protected function canSelectRecipient(): bool {
+        if ($this->formStatus() === FormStatus::EDITING && $this->resource->pallet) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**
@@ -120,6 +138,14 @@ new class extends FormComponent {
         </flux:input.group>
         <flux:error name="weight"/>
     </flux:field>
+
+    @if ($this->canSelectRecipient)
+        <flux:select variant="listbox" wire:model.live="recipient_id" label="{{ __('app.recipient') }}" clearable>
+            @foreach ($this->recipients as $recipient)
+                <flux:select.option value="{{ $recipient->id }}">{{ $recipient->name }}</flux:select.option>
+            @endforeach
+        </flux:select>
+    @endif
 
     <flux:textarea wire:model="notes" label="{{ __('app.notes') }}"/>
 

@@ -1,7 +1,7 @@
 <?php
 
+use App\Models\Transport;
 use Illuminate\Support\Facades\Route;
-use Livewire\Volt\Volt;
 
 Route::view('/', 'dashboard')
     ->middleware(['auth', 'verified'])
@@ -14,6 +14,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::livewire('/pallets', 'pages::pallets')->name('pallets');
     Route::livewire('/recipients', 'pages::recipients')->name('recipients');
     Route::livewire('/transports', 'pages::transports')->name('transports');
+
+    // Export packing list for transport:
+    Route::livewire('/transports/{transport}/packing-list', 'pages::transports.packing-list')->name('transports.packing-list');
 });
 
 Route::middleware(['auth'])->group(function () {

@@ -96,7 +96,7 @@ class Pallet extends Model {
             $weight = $this->parcels()->sum('weight');
         }
 
-        return floatval($weight);
+        return number_format($weight, 2);
     }
 
     /**

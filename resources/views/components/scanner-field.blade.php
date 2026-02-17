@@ -41,7 +41,7 @@ new class extends Component {
 
 ?>
 <scanner-field>
-    <flux:card class="p-2 bg-gray-50 dark:bg-white/10 rounded-lg border-b-0 rounded-b-none space-y-1">
+    <flux:card class="p-2 bg-gray-50 dark:bg-white/10 rounded-lg border-b-0 rounded-b-none space-y-2">
         @forelse ($items as $item)
             @if ($item::class === Parcel::class)
                 <flux:card class="p-3 space-y-3 rounded-md">

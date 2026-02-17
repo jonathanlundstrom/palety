@@ -1,0 +1,21 @@
+.declaration {
+    table {
+        @apply border border-gray-300 divide-y divide-gray-300 text-left flex-10/12;
+
+        tbody {
+            @apply divide-y divide-gray-300;
+        }
+
+        tr {
+            @apply divide-x divide-gray-300;
+        }
+
+        th, td {
+            @apply px-2 py-2 text-base text-black;
+        }
+
+        thead, tfoot {
+            @apply bg-gray-100;
+        }
+    }
+}
