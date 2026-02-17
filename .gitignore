@@ -22,3 +22,9 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+
+# AI Development tools
+.ai
+.junie
+CLAUDE.md
+boost.json
