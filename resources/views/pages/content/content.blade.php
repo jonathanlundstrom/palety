@@ -47,7 +47,7 @@ new class extends TableComponent {
     <div class="flex flex-wrap gap-4 items-center mb-4">
         <flux:input wire:model.live.debounce.500ms="q" icon-trailing="magnifying-glass" placeholder="{{__('app.search')}}" clearable class="w-full md:flex-1" />
 
-        <flux:select variant="listbox" wire:model.live="category" placeholder="{{ trans_choice('app.category.label', 1) }}" clearable class="w-full md:flex-1">
+        <flux:select variant="listbox" wire:model.live="category" placeholder="{{ trans_choice('app.category.label', 1) }}" clearable class="flex-1">
             @foreach (ImportCategory::cases() as $case)
                 <flux:select.option value="{{ $case->name }}">{{ $case->label() }}</flux:select.option>
             @endforeach
@@ -95,7 +95,7 @@ new class extends TableComponent {
         </flux:table.rows>
     </flux:table>
 
-    <x-flyout name="{{ $this->modalName }}" title="{{ __('pages.content.form.title') }}" subtitle="{{ __('pages.content.form.subtitle') }}" position="right">
+    <x-flyout name="{{ $this->modalName }}" title="{{ __('pages.content.form.title') }}" subtitle="{{ __('pages.content.form.subtitle') }}" position="{{ $this->modalPosition }}">
         <livewire:pages::content.content-form />
     </x-flyout>
 </section>

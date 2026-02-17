@@ -2,21 +2,14 @@
 
 namespace App\Livewire\Components;
 
-use App\Enumerables\DeliveryType;
-use App\Enumerables\ImportCategory;
-use App\Enumerables\PalletType;
-use App\Enumerables\ParcelType;
-use App\Enumerables\RecipientType;
-use App\Enumerables\TransportType;
+use hisorange\BrowserDetect\Facade as Browser;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
-use UnitEnum;
 
 abstract class TableComponent extends Component {
     use WithPagination;
-
 
     #[Url(except: '')]
     public string $q = '';
@@ -28,7 +21,7 @@ abstract class TableComponent extends Component {
     public ?string $sortDirection = 'asc';
 
     /**
-     * Get the modal name for this form component.
+     * Get the modal name for the attached form component.
      * Returns the component name with dots replaced by dashes.
      *
      * @return string
@@ -37,6 +30,16 @@ abstract class TableComponent extends Component {
     public function modalName(): string {
         $component_name = explode('::', $this->getName());
         return array_last($component_name) . '-modal';
+    }
+
+    /**
+     * Get the modal position to use for the attached form component.
+     * Returns 'right' for desktop devices and 'bottom' for mobile devices.
+     * @return string
+     */
+    #[Computed]
+    public function modalPosition(): string {
+        return Browser::isDesktop() ? 'right' : 'bottom';
     }
 
     /**

@@ -64,7 +64,7 @@ new class extends TableComponent {
         </flux:select>
 
         <flux:select variant="listbox" wire:model.live="status" placeholder="{{ __('app.status') }}" clearable
-                     class="w-full md:flex-1">
+                     class="flex-1">
             @foreach (TransportStatus::cases() as $case)
                 <flux:select.option value="{{ $case->name }}">{{ $case->label() }}</flux:select.option>
             @endforeach
@@ -127,7 +127,7 @@ new class extends TableComponent {
     </flux:table>
 
     <x-flyout name="{{ $this->modalName }}" title="{{ __('pages.transports.form.title') }}"
-              subtitle="{{ __('pages.transports.form.subtitle') }}" position="right">
+              subtitle="{{ __('pages.transports.form.subtitle') }}" position="{{ $this->modalPosition }}">
         <livewire:pages::transports.transport-form/>
     </x-flyout>
 
