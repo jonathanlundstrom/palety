@@ -8,6 +8,7 @@ use App\Enumerables\ParcelType;
 use App\Enumerables\RecipientType;
 use App\Enumerables\TransportStatus;
 use App\Enumerables\TransportType;
+use App\Enumerables\UserRole;
 
 return [
     RecipientType::ORGANISATION->name => 'Organisation',
@@ -44,4 +45,7 @@ return [
     TransportStatus::IN_PROGRESS->name => 'In progress',
     TransportStatus::SENT->name => 'Has been sent',
     TransportStatus::DELIVERED->name => 'Delivered',
+
+    UserRole::ADMIN->name => 'Admin',
+    UserRole::USER->name => 'User',
 ];
