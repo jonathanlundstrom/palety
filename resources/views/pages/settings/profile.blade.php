@@ -1,5 +1,6 @@
 <?php
 
+use App\Enumerables\UserRole;
 use App\Models\User;
 use Flux\Flux;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -80,7 +81,8 @@ new class extends Component {
 <section class="w-full">
     @include('partials.settings-heading')
 
-    <x-settings.layout :heading="__('pages.settings.subpages.profile.headline')" :subheading="__('pages.settings.subpages.profile.subtitle')">
+    <x-settings.layout :heading="__('pages.settings.subpages.profile.headline')"
+                       :subheading="__('pages.settings.subpages.profile.subtitle')">
         <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
             <flux:input wire:model="name" :label="__('app.name')" type="text" required autofocus autocomplete="name"/>
 
@@ -91,7 +93,8 @@ new class extends Component {
                         <flux:text class="mt-4">
                             {{ __('pages.settings.subpages.profile.extras.email_unverified') }}
 
-                            <flux:link class="text-sm cursor-pointer" wire:click.prevent="resendVerificationNotification">
+                            <flux:link class="text-sm cursor-pointer"
+                                       wire:click.prevent="resendVerificationNotification">
                                 {{ __('pages.settings.subpages.profile.extras.resend_verification') }}
                             </flux:link>
                         </flux:text>
@@ -123,7 +126,7 @@ new class extends Component {
             </div>
         </form>
 
-        @if (Auth::user()->role === 'admin')
+        @if (Auth::user()->role === UserRole::ADMIN)
             <livewire:pages::settings.delete-user-form/>
         @endif
     </x-settings.layout>

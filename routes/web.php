@@ -9,11 +9,14 @@ Route::view('/', 'dashboard')
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('/', 'dashboard')->name('dashboard');
-    Route::livewire('/content', 'pages::content')->name('content');
     Route::livewire('/parcels', 'pages::parcels')->name('parcels');
     Route::livewire('/pallets', 'pages::pallets')->name('pallets');
-    Route::livewire('/recipients', 'pages::recipients')->name('recipients');
     Route::livewire('/transports', 'pages::transports')->name('transports');
+
+    Route::middleware(['admin'])->group(function () {
+        Route::livewire('/recipients', 'pages::recipients')->name('recipients');
+        Route::livewire('/content', 'pages::content')->name('content');
+    });
 
     // Export packing list for transport:
     Route::livewire('/transports/{transport}/packing-list', 'pages::transports.packing-list')->name('transports.packing-list');

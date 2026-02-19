@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enumerables\UserRole;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -15,7 +16,7 @@ class UserSeeder extends Seeder {
             'name' => 'Palety Developer',
             'email' => 'developer@palety.se',
             'password' => Hash::make('12345678'),
-            'role' => 'admin',
+            'role' => UserRole::ADMIN->name,
             'locale' => 'en',
         ]);
     }

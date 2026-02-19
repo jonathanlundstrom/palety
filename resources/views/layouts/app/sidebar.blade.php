@@ -1,3 +1,4 @@
+@php use App\Enumerables\UserRole; @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
     <head>
@@ -18,8 +19,10 @@
                 <flux:navlist.item icon="archive-box" :href="route('parcels')" wire:navigate>{{ __('pages.parcels.title') }}</flux:navlist.item>
                 <flux:navlist.item icon="rectangle-group" :href="route('pallets')" wire:navigate>{{ __('pages.pallets.title') }}</flux:navlist.item>
                 <flux:navlist.item icon="truck" :href="route('transports')" wire:navigate>{{ __('pages.transports.title') }}</flux:navlist.item>
-                <flux:navlist.item icon="list-bullet" :href="route('content')" wire:navigate>{{ __('pages.content.title') }}</flux:navlist.item>
-                <flux:navlist.item icon="map-pin" :href="route('recipients')" wire:navigate>{{ __('pages.recipients.title') }}</flux:navlist.item>
+                @if (Auth::user()->role === UserRole::ADMIN)
+                    <flux:navlist.item icon="list-bullet" :href="route('content')" wire:navigate>{{ __('pages.content.title') }}</flux:navlist.item>
+                    <flux:navlist.item icon="map-pin" :href="route('recipients')" wire:navigate>{{ __('pages.recipients.title') }}</flux:navlist.item>
+                @endif
             </flux:navlist>
 
             <flux:spacer />
