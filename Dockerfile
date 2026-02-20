@@ -213,7 +213,9 @@ RUN mkdir -p /var/log/supervisor
 # configure cron
 RUN echo '* * * * * php /var/www/html/artisan schedule:run' >> /etc/crontabs/root
 
-COPY --chmod=744 .docker/scripts/entrypoint.sh /entrypoint.sh
+COPY .docker/scripts/entrypoint.sh /entrypoint.sh
+RUN chmod 744 /entrypoint.sh
+
 ENTRYPOINT ["/bin/sh", "/entrypoint.sh"]
 
 CMD ["supervisord", "--nodaemon", "--configuration", "/etc/supervisord.conf"]
