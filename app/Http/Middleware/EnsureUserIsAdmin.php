@@ -2,21 +2,20 @@
 
 namespace App\Http\Middleware;
 
-use App\Enumerables\UserRole;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class EnsureUserIsAdmin {
+class EnsureUserIsAdmin
+{
     /**
      * Handle an incoming request.
      *
-     * @param Request $request
-     * @param Closure $next
-     * @return Response
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next): Response {
-        if (!$request->user() || $request->user()->role !== UserRole::ADMIN) {
+    public function handle(Request $request, Closure $next): Response
+    {
+        if (!$request->user() || $request->user()->role !== 'admin') {
             abort(403);
         }
 

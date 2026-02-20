@@ -36,6 +36,7 @@ RUN apk --update add \
     libpq-dev \
     freetype-dev \
     icu-dev \
+    linux-headers \
  && docker-php-source extract \
  && docker-php-ext-configure \
     calendar \
@@ -45,6 +46,7 @@ RUN apk --update add \
     --with-webp \
     --with-freetype \
  && docker-php-ext-install \
+    sockets \
     calendar \
     pcntl \
     bcmath \
