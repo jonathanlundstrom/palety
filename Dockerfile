@@ -103,11 +103,18 @@ COPY composer.json \
 
 # only install packages for now – for docker caching purposes, run scripts
 # and autoload once all the sourcecode is copied over
-RUN --mount=type=secret,id=FLUX_AUTH_JSON_FILE,target=auth.json \
-    composer install \
+# @Note: Balena doesn't support docker secrets, so we copy the
+# auth.json here, then just make sure to remove it after we don't
+# need it anymore (currently only needed for installing Flux).
+# Since we're using Multistage build, we don't risk leaking it in
+# the final image.
+COPY auth.json auth.json
+RUN composer install \
     --no-dev \
     --no-scripts \
     --no-autoloader
+
+RUN rm auth.json
 
 # node dependencies – more likely to change than composer
 COPY package.json \
