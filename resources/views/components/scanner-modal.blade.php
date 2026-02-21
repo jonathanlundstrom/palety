@@ -24,20 +24,20 @@ new class extends Component {
 }
 
 ?>
-<flux:modal name="scanner-modal" x-data="qrScanner" class="md:w-128" x-on:scan.window="startScanning()" x-on:close="stopScanning()">
+<flux:modal name="scanner-modal" x-data="qrScanner" class="w-xs sm:w-10/12 md:w-128" x-on:scan.window="startScanning()" x-on:close="stopScanning()">
     <div class="space-y-6">
         <div>
             <flux:heading size="lg">{{ __('app.scan.title')  }}</flux:heading>
             <flux:text class="mt-2">{{ __('app.scan.subtitle')  }}</flux:text>
         </div>
 
-        <div x-show="scanning">
-            <div class="rounded-lg overflow-hidden">
-                <video class="camera_preview w-full"></video>
+        <div class="rounded-lg overflow-hidden w-full">
+            <div x-show="scanning">
+                <video class="camera_preview"></video>
             </div>
-        </div>
 
-        <flux:skeleton animate="shimmer" class="aspect-[16/9] size-full rounded-lg" x-show="!scanning"/>
+            <flux:skeleton animate="shimmer" class="aspect-[16/9] size-full" x-show="!scanning"/>
+        </div>
 
         <div class="flex gap-6">
             <flux:button x-on:click="toggleFlash()" x-show="hasFlash" icon="bolt" class="flex-1">{{ __('app.scan.toggle_flash') }}</flux:button>
