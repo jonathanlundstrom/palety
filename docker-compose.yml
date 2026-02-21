@@ -8,6 +8,8 @@ services:
         build:
             context: .
         privileged: true
+        ports:
+            - "80:80"
 
     postgres:
         image: postgres:17-alpine

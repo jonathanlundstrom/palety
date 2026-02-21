@@ -144,7 +144,8 @@ COPY public      public
 COPY resources   resources
 COPY routes      routes
 
-RUN mkdir -p storage/app/public \
+RUN mkdir -p bootstrap/cache \
+ && mkdir -p storage/app/public \
  && mkdir -p storage/framework/cache/data \
  && mkdir -p storage/framework/sessions \
  && mkdir -p storage/framework/testing \
