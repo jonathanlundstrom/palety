@@ -96,8 +96,12 @@ new class extends TableComponent {
         </flux:modal.trigger>
     </div>
 
+    <div class="mt-6 mb-6 lg:hidden">
+        <flux:separator variant="subtle" text="{{ __('app.all_items') }}" />
+    </div>
+
     <flux:table :paginate="$this->items">
-        <flux:table.columns>
+        <flux:table.columns class="hidden lg:table-header-group">
             <flux:table.column sortable :sorted="$sortBy === 'id'" :direction="$sortDirection"
                                wire:click="sort('id')">{{ __('app.id') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'user_id'" :direction="$sortDirection"
@@ -114,7 +118,17 @@ new class extends TableComponent {
         </flux:table.columns>
         <flux:table.rows>
             @forelse ($this->items as $item)
-                <flux:table.row :key="$item->id">
+                <livewire:pages::parcels.parcel-card :item="$item">
+                    <flux:dropdown class="relative top-1">
+                        <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal" inset="top bottom"></flux:button>
+                        <flux:menu>
+                            <x-edit-button form="{{ $this->modalName }}" :object="$item"/>
+                            <x-delete-button :object="$item"/>
+                        </flux:menu>
+                    </flux:dropdown>
+                </livewire:pages::parcels.parcel-card>
+
+                <flux:table.row :key="$item->id" class="hidden lg:table-row">
                     <flux:table.cell>{{ $item->id }}</flux:table.cell>
                     <flux:table.cell>
                         @if ($item->author)

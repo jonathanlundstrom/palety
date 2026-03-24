@@ -6,6 +6,7 @@ use App\Models\Parcel;
 use App\Models\Recipient;
 use App\Models\Transport;
 use Flux\Flux;
+use hisorange\BrowserDetect\Facade as Browser;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
@@ -30,6 +31,11 @@ new class extends Component {
     #[Computed]
     public function confirmed(): bool {
         return $this->confirmation_text === 'DELETE';
+    }
+
+    #[Computed]
+    public function isFlyout() {
+        return !Browser::isDesktop();
     }
 
     /**
@@ -65,24 +71,22 @@ new class extends Component {
 }
 
 ?>
-<flux:modal name="delete-confirmation" class="md:w-128">
+<flux:modal name="delete-confirmation" class="w-xs sm:w-10/12 md:w-128" :flyout="$this->isFlyout" position="bottom">
     <div class="space-y-6">
         <div>
-            <flux:heading size="lg">Delete resource</flux:heading>
-            <flux:text class="mt-2">You are about to delete this resource. This action cannot be reversed. In order to
-                continue, please confirm by typing the word "DELETE" in the input field below.
-            </flux:text>
+            <flux:heading size="lg">{{ __('modals.delete.title') }}</flux:heading>
+            <flux:text class="mt-2">{{ __('modals.delete.subtitle') }}</flux:text>
         </div>
 
         <form wire:submit="onSubmit" class="space-y-6">
-            <flux:input wire:model.live="confirmation_text" placeholder="DELETE"/>
+            <flux:input wire:model.live="confirmation_text" placeholder="DELETE" />
 
             <div class="flex justify-between">
                 <flux:modal.close>
-                    <flux:button variant="ghost">Cancel</flux:button>
+                    <flux:button variant="ghost">{{ __('app.cancel') }}</flux:button>
                 </flux:modal.close>
 
-                <flux:button type="submit" variant="danger" :disabled="!$this->confirmed()">Delete</flux:button>
+                <flux:button type="submit" variant="danger" :disabled="!$this->confirmed()">{{ __('app.delete') }}</flux:button>
             </div>
         </form>
     </div>
