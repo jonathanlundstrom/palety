@@ -68,7 +68,7 @@ new class extends TableComponent {
         </flux:table.columns>
         <flux:table.rows>
             @forelse ($this->items as $item)
-                <flux:table.row :key="$item->id">
+                <flux:table.row key="row-{{$item->id}}">
                     <flux:table.cell>{{ $item->id }}</flux:table.cell>
                     <flux:table.cell>{{ $item->label_en }}</flux:table.cell>
                     <flux:table.cell>{{ $item->label_ua }}</flux:table.cell>

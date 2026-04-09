@@ -59,6 +59,7 @@ class Parcel extends Model {
 
     /**
      * Get a comma-separated list of parcel content for display.
+     * @param string|null $locale
      * @return string
      */
     public function contentList(?string $locale = null): string {

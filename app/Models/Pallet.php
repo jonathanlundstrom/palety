@@ -88,6 +88,16 @@ class Pallet extends Model {
     }
 
     /**
+     * Get the manual content description for the pallet.
+     * @param string|null $locale
+     * @return string
+     */
+    public function getLabel(?string $locale = null): string {
+        $field = $locale !== null ? 'label_'.$locale : 'label_'.config('app.locale');
+        return $this->{$field};
+    }
+
+    /**
      * Get the weight of the pallet based on type and content.
      */
     public function getWeight(): float {
@@ -109,6 +119,12 @@ class Pallet extends Model {
             : Availability::AVAILABLE;
     }
 
+    /**
+     * Get the categories associated with the pallet.
+     * If the pallet is calculated, it will return the categories of the parcels in the pallet.
+     * Otherwise, it will return the category of the pallet itself.
+     * @return array
+     */
     public function getCategories(): array {
         if ($this->type === PalletType::CALCULATED) {
             return Content::query()

@@ -15,4 +15,17 @@ enum Availability {
     case LOADED_ON_PALLET;
     case LOADED_ON_TRANSPORT;
     case ALREADY_LOADED;
+
+    /**
+     * Return the color associated with the current case.
+     *
+     * @return string
+     */
+    public function color(): string {
+        return match($this) {
+            self::AVAILABLE => 'lime',
+            self::ALREADY_LOADED => 'red',
+            default => 'zinc',
+        };
+    }
 }

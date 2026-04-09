@@ -30,11 +30,11 @@ return [
     ImportCategory::FUEL->name => 'Fuel',
     ImportCategory::OTHER->name => 'Other',
 
-    PalletType::CALCULATED->name => 'Automatically calculated',
-    PalletType::MANUAL_PALLET->name => 'Manual pallet',
+    PalletType::CALCULATED->name => 'Calculated',
+    PalletType::MANUAL_PALLET->name => 'Manual',
 
     Availability::AVAILABLE->name => 'Available',
-    Availability::ALREADY_LOADED->name => 'Already loaded',
+    Availability::ALREADY_LOADED->name => 'Not available',
     Availability::LOADED_ON_PALLET->name => 'Loaded on pallet',
     Availability::LOADED_ON_TRANSPORT->name => 'Loaded on transport',
 
