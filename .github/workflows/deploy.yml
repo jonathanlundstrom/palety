@@ -1,0 +1,214 @@
+name: deploy
+run-name: Deploy ${{ github.sha }} to ${{ inputs.environment }}
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        type: string
+        required: true
+      artifact_name:
+        type: string
+        required: true
+      image_tar_name:
+        type: string
+        required: true
+      image_tag:
+        type: string
+        required: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ inputs.environment != null }}
+
+    name: Deploy ${{ github.sha }} to ${{ inputs.environment }}
+
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - name: Download image artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: ${{ inputs.artifact_name }}
+          path: ${{ runner.temp }}
+
+      - name: Install Scaleway CLI & Create Config
+        uses: scaleway/action-scw@v0
+        with:
+          save-config: true
+          export-config: true
+          access-key: ${{ vars.SCW_ACCESS_KEY }}
+          secret-key: ${{ secrets.SCW_SECRET_KEY }}
+          default-project-id: ${{ vars.SCW_DEFAULT_PROJECT_ID }}
+          default-organization-id: ${{ vars.SCW_DEFAULT_ORGANIZATION_ID }}
+
+      - name: Fetch container name and registry
+        run: |
+          python - <<"END_OF_PY"
+          import json
+          import os
+          import subprocess
+
+          container_cmd = ["scw", "container", "container", "get", "--output", "json", "${{ vars.SCW_CONTAINER_ID }}", "region=${{ vars.SCW_REGION }}"]
+          container_res = json.loads(subprocess.check_output(container_cmd))
+
+          container_name = container_res["name"]
+          namespace_id = container_res["namespace_id"]
+
+          namespace_cmd = ["scw", "container", "namespace", "get", "--output", "json", namespace_id, "region=${{ vars.SCW_REGION }}"]
+          namespace_res = json.loads(subprocess.check_output(namespace_cmd))
+
+          registry_endpoint = namespace_res["registry_endpoint"]
+
+          with open(os.environ["GITHUB_ENV"], "a") as github_env:
+              github_env.write(
+                  f"registry_endpoint={registry_endpoint}\n"
+                  f"container_name={container_name}\n"
+              )
+          END_OF_PY
+
+      - name: Login to Scaleway Container Registry
+        uses: docker/login-action@v4
+        with:
+          username: nologin
+          password: ${{ secrets.SCW_SECRET_KEY }}
+          registry: ${{ env.registry_endpoint }}
+
+      - name: Load image from artifact and tag for registry
+        run: |
+          docker load --input ${{ runner.temp }}/${{ inputs.image_tar_name }}
+          tag=$(docker images ${{ inputs.image_tag }} --format '{{.Tag}}')
+          registry_image="${{ env.registry_endpoint }}/${{ env.container_name }}:${tag}"
+          echo "registry_image=${registry_image}" | tee -a $GITHUB_ENV
+
+          # Tag the image for upload
+          docker tag ${{ inputs.image_tag }} ${registry_image}
+
+      - name: Prepare deploy args and prepare env file for migration
+        id: deployment-args
+        env:
+          CONTAINER_PORT: ${{ vars.CONTAINER_PORT }}
+          CONTAINER_DEPLOY_VARS_KEYS: ${{ vars.CONTAINER_DEPLOY_VARS_KEYS }}
+          CONTAINER_DEPLOY_SECRETS_KEYS: ${{ vars.CONTAINER_DEPLOY_SECRETS_KEYS }}
+          vars_json:  ${{ toJson(vars) }}
+          secrets_json: ${{ toJson(secrets) }}
+        run: |
+          python - <<"END_OF_PY"
+          import json
+          import os
+          import sys
+          import shlex
+
+          def parse_keys(keys_string: str) -> set[str]:
+              return {
+                  line
+                  for line in (l.strip() for l in keys_string.splitlines(keepends=False))
+                  if not line.startswith("#") and line != ""
+              }
+
+          port = os.environ["CONTAINER_PORT"]
+          registry_image = os.environ["registry_image"]
+          deploy_vars = parse_keys(os.environ["CONTAINER_DEPLOY_VARS_KEYS"])
+          deploy_secrets = parse_keys(os.environ["CONTAINER_DEPLOY_SECRETS_KEYS"])
+          all_vars = json.loads(os.environ["vars_json"])
+          all_secrets = json.loads(os.environ["secrets_json"])
+
+          error = False
+          if missing_vars := {k for k in deploy_vars if k not in all_vars}:
+               print(f"ERROR: Keys from CONTAINER_DEPLOY_VARS_KEYS, missing from 'vars': {missing_vars}", file=sys.stderr)
+               error = True
+          if missing_secrets := {k for k in deploy_secrets if k not in all_secrets}:
+               print(f"ERROR: Keys from CONTAINER_DEPLOY_SECRETS_KEYS, missing from 'secrets': {missing_secrets}", file=sys.stderr)
+               error = True
+          if error:
+              exit(1)
+
+          vars_to_deploy = {k: all_vars[k] for k in deploy_vars}
+          secrets_to_deploy = {k: all_secrets[k] for k in deploy_secrets}
+
+          with open("/tmp/.env.migration", "w") as f:
+              for k, v in {**vars_to_deploy, **secrets_to_deploy}.items():
+                  f.write(f"{k}={v}\n")
+
+          deployment_args = [
+              f"port={port}",
+              f"registry-image={registry_image}",
+              # Environment variables
+              *(
+                  f"environment-variables.{k}={v}"
+                  for k, v in vars_to_deploy.items()
+              ),
+              # Secret environment variables
+              *(
+                  f"secret-environment-variables.{idx}.{k}={v}"
+                  for idx, (key, value) in enumerate(secrets_to_deploy.items())
+                  for k, v in {'key': key, 'value': value}.items()
+              ),
+          ]
+          with open(os.environ["GITHUB_OUTPUT"], "a") as github_output:
+              github_output.write(
+                  f"deployment_args={shlex.join(deployment_args)}\n"
+              )
+          END_OF_PY
+
+      - name: Push image to Scaleway container registry
+        # @Note: this will overwrite if the image is already present and immutable tags aren't enabled
+        run: docker push ${{ env.registry_image }}
+
+      - name: Set database expiration
+        run: >-
+          echo "SCW_BACKUP_EXPIRATION=$(date -d "+7 days" --iso-8601=seconds)" >> $GITHUB_ENV
+
+      - name: Create database backup
+        id: database-backup
+        # @TODO: Later, we probably only care about it for production
+        # if: ${{ inputs.environment == 'production' }}
+        run: >-
+            scw rdb backup create
+            database-name="${{ vars.DB_DATABASE }}"
+            region="${{ vars.SCW_REGION }}"
+            instance-id="${{ vars.SCW_DATABASE_ID }}"
+            name="deployment-${{ vars.DB_DATABASE }}-${{ github.sha }}-${{ inputs.environment }}"
+            expires-at="${{ env.SCW_BACKUP_EXPIRATION }}"
+            --wait
+            --output template="backup_id={{.ID}}" >> "$GITHUB_OUTPUT"
+
+      # @TODO: probably stop the current container before migrating the database?
+      - name: Run through database migrations
+        id: database-migration
+        run: >-
+          docker run --rm
+          --env-file=/tmp/.env.migration
+          --env DB_HOST=${{ vars.DB_PUBLIC_HOST }}
+          --env DB_PORT=${{ vars.DB_PUBLIC_PORT }}
+          --env DB_DATABASE=${{ vars.DB_DATABASE }}
+          --env DB_USERNAME=${{ vars.DB_USERNAME_CI }}
+          --env DB_PASSWORD='${{ secrets.DB_PASSWORD_CI }}'
+          ${{ env.registry_image }}
+          php artisan migrate --force
+
+      - name: Deploy Image
+        run: >-
+          scw container container update ${{ vars.SCW_CONTAINER_ID }} region=${{ vars.SCW_REGION }}
+          ${{ steps.deployment-args.outputs.deployment_args }}
+          private-network-id=${{ vars.SCW_PRIVATE_NETWORK_ID }}
+          http-option=redirected
+          --wait --output json
+          | tee ${{ runner.temp }}/output.json
+          | jq .
+          && jq '.status == "ready"' -e ${{ runner.temp }}/output.json
+
+      - name: Restore database on failure
+        if: >-
+           ${{ failure()
+               && steps.database-backup.outcome == 'success'
+               && steps.database-migration.outcome == 'success'
+           }}
+        run: >-
+          scw rdb backup restore
+          "${{ steps.database-backup.outputs.backup_id }}"
+          database-name="${{ vars.DB_DATABASE }}"
+          region="${{ vars.SCW_REGION }}"
+          instance-id="${{ vars.SCW_DATABASE_ID }}"
+          --wait

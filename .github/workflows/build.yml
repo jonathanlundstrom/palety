@@ -1,0 +1,171 @@
+name: build
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        type: string
+        required: true
+    outputs:
+      artifact_name:
+        description: "Name of the build artifact produced"
+        value: ${{ jobs.build.outputs.artifact_name }}
+      image_tar_name:
+        description: "Name of the exported docker image tar file"
+        value: ${{ jobs.build.outputs.image_tar_name }}
+      image_tag:
+        description: "Docker image <name>:<tag>"
+        value: ${{ jobs.build.outputs.image_tag }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build
+
+    environment: ${{ inputs.environment }}
+
+    outputs:
+      artifact_name: ${{ steps.export_info.outputs.artifact_name }}
+      image_tar_name: ${{ steps.export_info.outputs.image_tar_name }}
+      image_tag: ${{ steps.export_info.outputs.image_tag }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # @TODO Should tests against the code run here?
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Get Git commit timestamps
+        run: echo "TIMESTAMP=$(git log -1 --pretty=%ct)" >> $GITHUB_ENV
+
+      - name: Export artifact info
+        id: export_info
+        env:
+          artifact_name: dockerimage
+          artifact_dir: /tmp/artifacts
+          image_tar_name: dockerimage.tar
+          image_tag: palety-web:${{ inputs.environment }}-${{ github.sha }}
+        run: |
+          mkdir -p "${artifact_dir}"
+          echo "artifact_dir=${artifact_dir}" >> $GITHUB_ENV
+          # Append variables to both ENV and OUTPUT
+          tee -a $GITHUB_ENV $GITHUB_OUTPUT <<EOF
+          artifact_name=${artifact_name}
+          image_tar_name=${image_tar_name}
+          image_tag=${image_tag}
+          EOF
+
+      - name: Prepare build args and secrets
+        id: build-args-and-secrets
+        env:
+          CONTAINER_BUILD_VARS_KEYS: ${{ vars.CONTAINER_BUILD_VARS_KEYS }}
+          CONTAINER_BUILD_SECRETS_KEYS: ${{ vars.CONTAINER_BUILD_SECRETS_KEYS }}
+          vars_json: ${{ toJson(vars) }}
+          secrets_json: ${{ toJson(secrets) }}
+        run: |
+          python - <<"END_OF_PY"
+          import csv
+          import json
+          import io
+          import os
+          import sys
+
+          def parse_keys(keys_string: str) -> set[str]:
+              return {
+                  line
+                  for line in (l.strip() for l in keys_string.splitlines(keepends=False))
+                  if not line.startswith("#") and line != ""
+              }
+
+          build_var_keys = parse_keys(os.environ["CONTAINER_BUILD_VARS_KEYS"])
+          build_secret_keys = parse_keys(os.environ["CONTAINER_BUILD_SECRETS_KEYS"])
+          all_vars = json.loads(os.environ["vars_json"])
+          all_secrets = json.loads(os.environ["secrets_json"])
+
+          error = False
+          if missing_vars := {k for k in build_var_keys if k not in all_vars}:
+              print(f"ERROR: Keys from CONTAINER_BUILD_VARS_KEYS, missing from 'vars': {missing_vars}", file=sys.stderr)
+              error = True
+          if missing_secrets := {k for k in build_secret_keys if k not in all_secrets}:
+              print(f"ERROR: Keys from CONTAINER_BUILD_SECRETS_KEYS, missing from 'secrets': {missing_secrets}", file=sys.stderr)
+              error = True
+          if error:
+              exit(1)
+
+          build_args = [f"{k}={all_vars[k]}" for k in build_var_keys]
+
+          with (
+              open(os.environ["GITHUB_OUTPUT"], "a") as github_output,
+              io.StringIO() as build_args_sio,
+              io.StringIO() as build_secrets_sio,
+          ):
+              # All of this csv is because docker/build-push-action@v6 is written
+              # so incredibly stupid when it to comes to parsing the build-args input.
+              csv_writer = csv.writer(build_args_sio, quoting=csv.QUOTE_ALL)
+              for ba in build_args:
+                  csv_writer.writerow([ba])
+              build_args_csv = build_args_sio.getvalue()
+
+              github_output.write(
+                  # And here we now must use multiline var syntax to not break github actions parsing
+                  # of output vars due to the csv having to use newlines
+                  f"build_args<<EOF\n{build_args_csv}\nEOF\n"
+              )
+
+
+          # We expose the secrets in the GITHUB_ENV, prefixed with secret_<name>=<value>
+          #  This is to more easily pass it to build-push-action.
+          with (
+              open(os.environ["GITHUB_OUTPUT"], "a") as github_output,
+              open(os.environ["GITHUB_ENV"], "a") as github_env,
+              io.StringIO() as secrets_envs_sio,
+          ):
+              # All of this csv is because docker/build-push-action@v6 is written
+              # so incredibly stupid when it to comes to parsing the secret-envs input.
+              csv_writer = csv.writer(secrets_envs_sio, quoting=csv.QUOTE_ALL)
+
+              for key in build_secret_keys:
+                  # We're prefixing secrets_ to avoid potential clashes
+                  github_env_secret_key = f"secret_{key}"
+                  secret_value = all_secrets[key]
+                  # Exposing the secret
+                  github_env.write(
+                      f"{github_env_secret_key}<<EOF\n{secret_value}\nEOF\n"
+                  )
+                  # Note: We're mapping the docker secrets id to the envs above.
+                  csv_writer.writerow([f"{key}={github_env_secret_key}"])
+
+              secrets_envs_csv = secrets_envs_sio.getvalue()
+              github_output.write(
+                  # And here we now must use multiline var syntax to not break github actions parsing
+                  # of output vars due to the csv having to use newlines
+                  f"secret_envs<<EOF\n{secrets_envs_csv}\nEOF\n"
+              )
+          END_OF_PY
+
+      - name: Build and export
+        id: build_step
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: ${{ env.image_tag }}
+          platforms: linux/amd64  # be explicit: this is what's used on Scaleway
+          outputs: type=docker,dest=${{ env.artifact_dir }}/${{ env.image_tar_name }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: ${{ steps.build-args-and-secrets.outputs.build_args }}
+          secret-envs: ${{ steps.build-args-and-secrets.outputs.secret_envs }}
+        env:
+          SOURCE_DATE_EPOCH: ${{ env.TIMESTAMP }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          if-no-files-found: error
+          retention-days: ${{ vars.BUILD_ARTIFACT_RETENTION_DAYS || 0 }}
+          name: ${{ env.artifact_name }}
+          path: ${{ env.artifact_dir }}/${{ env.image_tar_name }}
