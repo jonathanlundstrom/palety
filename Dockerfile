@@ -198,7 +198,7 @@ WORKDIR /var/www/html
 
 # copy builder files and configurations
 COPY --from=builder --chown=www-data:www-data /var/www/html ./
-COPY .docker/config/supervisor/app.conf /etc/supervisord.conf
+COPY .docker/config/supervisor/cloud.conf /etc/supervisord.conf
 COPY .docker/config/nginx/default.conf /etc/nginx/http.d/default.conf
 COPY .docker/config/php/php.ini /usr/local/etc/php/conf.d/99-custom.ini
 

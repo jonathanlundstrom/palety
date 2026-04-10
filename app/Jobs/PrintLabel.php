@@ -12,6 +12,12 @@ class PrintLabel implements ShouldQueue {
     use Queueable;
 
     /**
+     * The queue to use for this job.
+     * @var string
+     */
+    public $queue = 'local';
+
+    /**
      * The resource to print the label for.
      * @var Parcel|Pallet $resource
      */
