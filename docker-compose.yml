@@ -1,19 +1,9 @@
 version: "2"
 
-volumes:
-    db:
-
 services:
     app:
         build:
             context: .
-        privileged: true
+            dockerfile: Dockerfile.balena
         ports:
             - "80:80"
-
-    postgres:
-        image: postgres:17-alpine
-        environment:
-            PGDATA: "/home/postgres/pgdata/data"
-        volumes:
-            - "db:/home/postgres/pgdata/data"

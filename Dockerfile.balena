@@ -1,0 +1,154 @@
+ARG php_version="8.4.5"
+ARG alpine_version="3.21"
+ARG composer_version="2.8.6"
+ARG supervisor_version="=~4.2"
+
+ARG APP_NAME="Palety"
+
+# @Workaround: Template replace not working in 'COPY --from=' syntax
+#  COPY --from=composer:${composer_version}
+FROM composer:${composer_version} AS composer
+
+
+##################################################
+###   Base build, shared by all app services   ###
+##################################################
+FROM php:${php_version}-fpm-alpine${alpine_version} AS base
+
+ARG supervisor_version
+# helper scripts for docker
+COPY .docker/scripts/docker-php-ext-get /usr/local/bin
+
+# install php extensions
+RUN apk --update add \
+    zlib-dev \
+    libpng-dev \
+    libxpm-dev \
+    libwebp-dev \
+    libxml2-dev \
+    libjpeg-turbo-dev \
+    libpq-dev \
+    freetype-dev \
+    icu-dev \
+    linux-headers \
+    && docker-php-source extract \
+    && docker-php-ext-configure \
+    calendar \
+    && docker-php-ext-install \
+    sockets \
+    calendar \
+    pcntl \
+    bcmath \
+    opcache \
+    pdo \
+    pdo_pgsql \
+    gd \
+    && docker-php-ext-configure \
+    intl \
+    && docker-php-ext-install \
+    intl \
+    && docker-php-source delete \
+    && rm -rf /tmp/* /var/cache/apk/*
+
+# install editors and supervisor
+RUN apk --update add \
+    less \
+    nano \
+    "supervisor${supervisor_version}" \
+    && rm -rf /tmp/* /var/cache/apk/*
+
+# grab composer
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+
+#############################################
+###   Builder step, set up common stuff   ###
+#############################################
+FROM base AS builder
+
+ARG APP_NAME
+
+WORKDIR /var/www/html
+
+# composer dependencies
+COPY composer.json \
+    composer.lock \
+    ./
+
+# only install packages for now – for docker caching purposes, run scripts
+# and autoload once all the sourcecode is copied over
+# @Note: Balena doesn't support docker secrets, so we copy the
+# auth.json here, then just make sure to remove it after we don't
+# need it anymore (currently only needed for installing Flux).
+# Since we're using Multistage build, we don't risk leaking it in
+# the final image.
+COPY auth.json auth.json
+RUN composer install \
+    --no-dev \
+    --no-scripts \
+    --no-autoloader
+
+RUN rm auth.json
+
+
+# copy all the sourcecode – relying on .dockerignore to not get unwanted files
+COPY artisan ./
+COPY app         app
+COPY bootstrap   bootstrap
+COPY config      config
+COPY database    database
+COPY public      public
+COPY resources   resources
+COPY routes      routes
+
+RUN mkdir -p bootstrap/cache \
+    && mkdir -p storage/app/public \
+    && mkdir -p storage/framework/cache/data \
+    && mkdir -p storage/framework/sessions \
+    && mkdir -p storage/framework/testing \
+    && mkdir -p storage/framework/views \
+    && mkdir -p storage/logs
+
+# create autoload files for composer
+RUN composer dump-autoload --optimize --no-dev \
+    && composer run-script --no-dev post-update-cmd
+
+#################################################
+###   Steps for building the main app image   ###
+#################################################
+FROM base AS app
+
+ENV APP_LOCALE=en
+ENV APP_FALLBACK_LOCALE=en
+ENV BCRYPT_ROUNDS=12
+ARG APP_NAME
+ENV APP_NAME="${APP_NAME}"
+
+ENV LOG_STACK=stderr
+
+EXPOSE 80
+
+WORKDIR /var/www/html
+
+# copy builder files and configurations
+COPY --from=builder --chown=www-data:www-data /var/www/html ./
+COPY .docker/config/supervisor/local.conf /etc/supervisord.conf
+COPY .docker/config/php/php.ini /usr/local/etc/php/conf.d/99-custom.ini
+
+# export vendor resources
+RUN php artisan vendor:publish -n --provider='Pine\I18n\I18nServiceProvider'
+
+# set correct file ownership
+RUN chown -R www-data:www-data .
+
+# create directory required by supervisor
+RUN mkdir -p /var/log/supervisor
+
+# configure cron
+RUN echo '* * * * * php /var/www/html/artisan schedule:run' >> /etc/crontabs/root
+
+COPY .docker/scripts/entrypoint.sh /entrypoint.sh
+RUN chmod 744 /entrypoint.sh
+
+ENTRYPOINT ["/bin/sh", "/entrypoint.sh"]
+
+CMD ["supervisord", "--nodaemon", "--configuration", "/etc/supervisord.conf"]
