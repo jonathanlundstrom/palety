@@ -12,12 +12,6 @@ class PrintLabel implements ShouldQueue {
     use Queueable;
 
     /**
-     * The queue to use for this job.
-     * @var string
-     */
-    public $queue = 'local';
-
-    /**
      * The resource to print the label for.
      * @var Parcel|Pallet $resource
      */
@@ -45,6 +39,7 @@ class PrintLabel implements ShouldQueue {
         $this->resource = $resource;
         $this->printer_ip = $printer_ip;
         $this->printer_port = $printer_port;
+        $this->onQueue('local'); // Should be handled by onsite queue worker.
     }
 
     /**
