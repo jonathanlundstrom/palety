@@ -32,13 +32,12 @@ class PrintLabel implements ShouldQueue {
     /**
      * Create a new job instance.
      * @param Parcel|Pallet $resource
-     * @param string $printer_ip
-     * @param int $printer_port
      */
-    public function __construct(Parcel|Pallet $resource, string $printer_ip, int $printer_port) {
+    public function __construct(Parcel|Pallet $resource) {
         $this->resource = $resource;
-        $this->printer_ip = $printer_ip;
-        $this->printer_port = $printer_port;
+        $this->printer_ip = config('printing.printer_ip');
+        $this->printer_port = config('printing.printer_port');
+
         $this->onQueue('local'); // Should be handled by onsite queue worker.
     }
 
@@ -53,7 +52,7 @@ class PrintLabel implements ShouldQueue {
      * @throws Exception
      * @return void
      */
-    private function print(string $zpl, string $ip, int $port = 9100): void {
+    private function print(string $zpl, string $ip, int $port): void {
         $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
         if ($socket === false) {
             throw new Exception('Failed to create socket: ' . socket_strerror(socket_last_error()));
@@ -63,7 +62,6 @@ class PrintLabel implements ShouldQueue {
             $error = socket_strerror(socket_last_error($socket));
             socket_close($socket);
             throw new Exception("Could not connect to printer at {$ip}:{$port} - {$error}");
-
         }
 
         socket_write($socket, $zpl, strlen($zpl));
@@ -76,7 +74,7 @@ class PrintLabel implements ShouldQueue {
     public function handle(): void {
         $zpl = view('labels.76_51_compact', [
             'id' => $this->resource->id,
-            'type' => $this->resource instanceof Parcel ? 'PARCEL' : 'PALLET',
+            'type' => strtoupper(class_basename($this->resource)),
             'data' => $this->resource::class . ':' . $this->resource->id,
             'weight' => $this->resource->getWeight(),
         ])->render();
@@ -84,7 +82,7 @@ class PrintLabel implements ShouldQueue {
         try {
             $this->print($zpl, $this->printer_ip, $this->printer_port);
         } catch (Exception $e) {
-            report($e); // Forward to error handler. Silent failure.
+            report($e); // Forward to the error handler. Silent failure.
         }
     }
 }

@@ -15,9 +15,8 @@ class HandlePalletSaved {
      * @return void
      */
     public function handle(PalletSaved $event): void {
-        if ($config = $this->getLabelPrinter()) {
-            list($printer_ip, $printer_port) = $config;
-            PrintLabel::dispatch($event->pallet, $printer_ip, $printer_port);
+        if (config('printing.enabled')) {
+            PrintLabel::dispatch($event->pallet);
         } else {
             logger()->info('No label printer configured. Discarding label print event.');
         }
