@@ -25,6 +25,15 @@ new class extends FormComponent {
      * @return void
      */
     protected function createContent(array $validated): void {
+        $existing = Content::query()
+            ->where('label_en', $validated['label_en'])
+            ->orWhere('label_ua', $validated['label_ua'])
+            ->first();
+
+        if ($existing) {
+            throw new Exception('toasts.content.duplicate');
+        }
+
         $content = Content::create($validated);
         if (!$content) throw new Exception('toasts.content.failed');
     }

@@ -20,6 +20,7 @@ return [
     'content' => [
         'failed' => 'Failed to save content',
         'saved' => 'Content saved successfully!',
+        'duplicate' => 'The provided content already exists!',
         'delete' => [
             'success' => 'Content deleted successfully!',
             'failed' => 'Failed to delete content',
