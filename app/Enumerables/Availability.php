@@ -11,10 +11,11 @@ use App\Enumerables\Traits\EnumHelpers;
 enum Availability {
     use EnumHelpers;
 
+    case ANY_STATUS;
     case AVAILABLE;
+    case ALREADY_LOADED;
     case LOADED_ON_PALLET;
     case LOADED_ON_TRANSPORT;
-    case ALREADY_LOADED;
 
     /**
      * Return the color associated with the current case.
@@ -25,7 +26,30 @@ enum Availability {
         return match($this) {
             self::AVAILABLE => 'lime',
             self::ALREADY_LOADED => 'red',
+            self::LOADED_ON_PALLET => 'red',
+            self::LOADED_ON_TRANSPORT => 'red',
             default => 'zinc',
         };
+    }
+
+    /**
+     * Get all the valid cases for filtering parcels based on availability.
+     *
+     * @return Availability[]
+     */
+    public static function parcelFilters(): array {
+        return array_filter(self::cases(), fn($case) => $case !== self::AVAILABLE);
+    }
+
+    /**
+     * Get all the valid cases for filtering pallets based on availability.
+     *
+     * @return Availability[]
+     */
+    public static function palletFilters(): array {
+        return [
+            self::ANY_STATUS,
+            self::LOADED_ON_TRANSPORT,
+        ];
     }
 }

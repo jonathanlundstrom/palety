@@ -1,5 +1,6 @@
 <?php
 
+use App\Enumerables\Availability;
 use App\Enumerables\PalletType;
 use App\Livewire\Components\TableComponent;
 use App\Models\Pallet;
@@ -23,10 +24,23 @@ new class extends TableComponent {
     public string $type = '';
 
     #[Url(except: '')]
+    public string $availability = '';
+
+    #[Url(except: '')]
     public string $recipient_id = '';
 
     #[Url(except: '')]
     public string $author_id = '';
+
+    /**
+     * Mount the Livewire component.
+     * Currently used to override parent sorting properties.
+     * @return void
+     */
+    public function mount(): void {
+        $this->sortBy = 'created_at';
+        $this->sortDirection = 'desc';
+    }
 
     #[Computed]
     public function items(): LengthAwarePaginator {
@@ -37,6 +51,13 @@ new class extends TableComponent {
             ->when($this->type, fn($query) => $query->where('type', $this->type))
             ->when($this->recipient_id, fn($query) => $query->where('recipient_id', $this->recipient_id))
             ->when($this->author_id, fn($query) => $query->where('user_id', $this->author_id))
+            ->when(true, function ($query) {
+                return match ($this->availability) {
+                    Availability::ANY_STATUS->name => $query,
+                    Availability::LOADED_ON_TRANSPORT->name => $query->whereNotNull('transport_id'),
+                    default => $query->whereNull('transport_id'),
+                };
+            })
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate();
     }
@@ -76,6 +97,13 @@ new class extends TableComponent {
             @endforeach
         </flux:select>
 
+        <flux:select variant="listbox" wire:model.live="availability" placeholder="{{ __('app.availability') }}"
+                     clearable class="w-full md:flex-1">
+            @foreach (Availability::palletFilters() as $case)
+                <flux:select.option value="{{ $case->name }}">{{ $case->label() }}</flux:select.option>
+            @endforeach
+        </flux:select>
+
         <flux:select variant="listbox" wire:model.live="recipient_id" placeholder="{{ __('app.recipient') }}" clearable
                      class="w-full md:flex-1">
             @foreach ($this->recipients as $recipient)
@@ -96,7 +124,7 @@ new class extends TableComponent {
     </div>
 
     <div class="mt-6 mb-6 lg:hidden">
-        <flux:separator variant="subtle" text="{{ __('app.all_items') }}" />
+        <flux:separator variant="subtle" text="{{ __('app.all_items') }}"/>
     </div>
 
     <flux:table :paginate="$this->items">
@@ -105,6 +133,7 @@ new class extends TableComponent {
                                wire:click="sort('id')">{{ __('app.id') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'type'" :direction="$sortDirection"
                                wire:click="sort('type')">{{ __('app.type') }}</flux:table.column>
+            <flux:table.column>{{ __('app.availability') }}</flux:table.column>
             <flux:table.column>{{ __('app.label') }}</flux:table.column>
             <flux:table.column>{{ __('app.recipient') }}</flux:table.column>
             <flux:table.column>{{ trans_choice('app.category.label', 2) }}</flux:table.column>
@@ -122,12 +151,14 @@ new class extends TableComponent {
                                         {{ $item->id }}
                                     </flux:badge>
 
-                                    <flux:badge size="sm" inset="top bottom" color="{{ $item->type->color() }}" class="rounded-l-none">
+                                    <flux:badge size="sm" inset="top bottom" color="{{ $item->type->color() }}"
+                                                class="rounded-l-none">
                                         {{ $item->type->label() }}
                                     </flux:badge>
                                 </div>
 
-                                <flux:badge size="sm" inset="top bottom" color="{{ $item->getAvailability()->color() }}">
+                                <flux:badge size="sm" inset="top bottom"
+                                            color="{{ $item->getAvailability()->color() }}">
                                     {{ $item->getAvailability()->label() }}
                                 </flux:badge>
                             </div>
@@ -140,7 +171,8 @@ new class extends TableComponent {
                             </flux:text>
 
                             <flux:dropdown class="relative top-1">
-                                <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal" inset="top bottom"></flux:button>
+                                <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal"
+                                             inset="top bottom"></flux:button>
                                 <flux:menu>
                                     <x-edit-button form="{{ $this->modalName }}" :object="$item"/>
                                     <x-delete-button :object="$item"/>
@@ -199,6 +231,11 @@ new class extends TableComponent {
                     <flux:table.cell>
                         <flux:badge size="sm" inset="top bottom" color="{{ $item->type->color() }}">
                             {{ $item->type->label() }}
+                        </flux:badge>
+                    </flux:table.cell>
+                    <flux:table.cell>
+                        <flux:badge size="sm" inset="top bottom" color="{{ $item->getAvailability()->color() }}">
+                            {{ $item->getAvailability()->label() }}
                         </flux:badge>
                     </flux:table.cell>
                     <flux:table.cell>{{ $item->{$item::label()} ?? '–' }}</flux:table.cell>

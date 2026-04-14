@@ -1,5 +1,6 @@
 <?php
 
+use App\Enumerables\Availability;
 use App\Enumerables\FormStatus;
 use App\Enumerables\ParcelType;
 use App\Events\ParcelSaved;
@@ -117,6 +118,10 @@ new class extends FormComponent {
 }
 ?>
 <form wire:submit="onSubmit" class="space-y-6 min-h-full">
+    @if ($this->formStatus() === FormStatus::EDITING && $resource->getAvailability() === Availability::ALREADY_LOADED)
+        <flux:callout variant="danger" heading="{!! __('app.parcel_loaded') !!}" icon="exclamation-circle" />
+    @endif
+
     <flux:select variant="listbox" wire:model.live="type" label="{{ __('app.type') }}">
         @foreach (ParcelType::cases() as $case)
             <flux:select.option :value="$case->name">{{ $case->label() }}</flux:select.option>

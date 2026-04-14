@@ -11,6 +11,7 @@ return [
     'pallet' => 'Pallet|Pallets',
     'search' => 'Search',
     'recipient' => 'Recipient',
+    'availability' => 'Availability',
     'delivery_type' => 'Delivery type',
     'nova_poshta_id' => 'Nova Poshta ID',
     'email' => 'Email address',
@@ -73,6 +74,9 @@ return [
         'scan_pallets' => 'Scan pallets',
     ],
     'no_items' => 'No items found',
+    'parcel_loaded' => 'This parcel has already been loaded on a pallet or transport. Only make changes if you know what you\'re doing!',
+    'pallet_loaded' => 'This pallet has already been loaded on a transport. Only make changes if you know what you\'re doing!',
+    'via_pallet' => 'via pallet',
 
     // Available locales:
     'locales' => [

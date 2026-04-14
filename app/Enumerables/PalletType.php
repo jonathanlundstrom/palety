@@ -23,7 +23,7 @@ enum PalletType implements ColoredEnum {
      */
     public function color(): string {
         return match($this) {
-            self::CALCULATED => 'lime',
+            self::CALCULATED => 'teal',
             self::MANUAL_PALLET => 'blue',
         };
     }

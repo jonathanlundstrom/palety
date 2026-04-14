@@ -77,17 +77,6 @@ class Pallet extends Model {
     }
 
     /**
-     * Check if the pallet is already loaded on transport.
-     * Ideally, it should not be able to be added to multiple transports.
-     * @return Availability
-     */
-    public function getTransportStatus(): Availability {
-        return $this->transport_id !== null
-            ? Availability::LOADED_ON_TRANSPORT
-            : Availability::AVAILABLE;
-    }
-
-    /**
      * Get the manual content description for the pallet.
      * @param string|null $locale
      * @return string
@@ -114,8 +103,8 @@ class Pallet extends Model {
      * @return Availability
      */
     public function getAvailability(): Availability {
-        return $this->getTransportStatus() === Availability::LOADED_ON_TRANSPORT
-            ? Availability::ALREADY_LOADED
+        return $this->transport_id !== null
+            ? Availability::LOADED_ON_TRANSPORT
             : Availability::AVAILABLE;
     }
 

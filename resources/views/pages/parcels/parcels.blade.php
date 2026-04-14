@@ -1,5 +1,6 @@
 <?php
 
+use App\Enumerables\Availability;
 use App\Enumerables\ParcelType;
 use App\Livewire\Components\TableComponent;
 use App\Models\Parcel;
@@ -23,10 +24,23 @@ new class extends TableComponent {
     public string $type = '';
 
     #[Url(except: '')]
+    public string $availability = '';
+
+    #[Url(except: '')]
     public string $content_id = '';
 
     #[Url(except: '')]
     public string $author_id = '';
+
+    /**
+     * Mount the Livewire component.
+     * Currently used to override parent sorting properties.
+     * @return void
+     */
+    public function mount(): void {
+        $this->sortBy = 'created_at';
+        $this->sortDirection = 'desc';
+    }
 
     #[Computed]
     public function items(): LengthAwarePaginator {
@@ -37,6 +51,15 @@ new class extends TableComponent {
             ->when($this->type, fn($query) => $query->where('type', $this->type))
             ->when($this->content_id, fn($query) => $query->whereHas('content', fn($q) => $q->whereKey($this->content_id)))
             ->when($this->author_id, fn($query) => $query->where('user_id', $this->author_id))
+            ->when(true, function ($query) {
+                return match ($this->availability) {
+                    Availability::ANY_STATUS->name => $query,
+                    Availability::LOADED_ON_PALLET->name => $query->whereNotNull('pallet_id'),
+                    Availability::LOADED_ON_TRANSPORT->name => $query->whereNotNull('transport_id'),
+                    Availability::ALREADY_LOADED->name => $query->where(fn ($q) => $q->whereNotNull('pallet_id')->orWhereNotNull('transport_id')),
+                    default => $query->whereNull('pallet_id')->whereNull('transport_id'),
+                };
+            })
             ->with(['content' => fn($query) => $query->orderBy(Content::label())])
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate();
@@ -77,8 +100,15 @@ new class extends TableComponent {
             @endforeach
         </flux:select>
 
+        <flux:select variant="listbox" wire:model.live="availability" placeholder="{{ __('app.availability') }}" clearable
+                     class="w-full md:flex-1">
+            @foreach (Availability::parcelFilters() as $case)
+                <flux:select.option value="{{ $case->name }}">{{ $case->label() }}</flux:select.option>
+            @endforeach
+        </flux:select>
+
         <flux:select variant="listbox" wire:model.live="content_id" placeholder="{{ __('app.content.label') }}"
-                     clearable class="w-full md:flex-1">
+                     searchable clearable class="w-full md:flex-1">
             @foreach ($this->content as $content)
                 <flux:select.option value="{{ $content->id }}">{{ $content->{Content::label()} }}</flux:select.option>
             @endforeach
@@ -106,6 +136,7 @@ new class extends TableComponent {
                                wire:click="sort('id')">{{ __('app.id') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'type'" :direction="$sortDirection"
                                wire:click="sort('type')">{{ __('app.type') }}</flux:table.column>
+            <flux:table.column>{{ __('app.availability') }}</flux:table.column>
             <flux:table.column>{{ __('app.recipient') }}</flux:table.column>
             <flux:table.column>{{ __('app.content.label') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'weight'" :direction="$sortDirection"
@@ -158,8 +189,8 @@ new class extends TableComponent {
                                 <flux:icon.user class="flex-none size-4 mt-0.5 mr-2"/>
                                 <flux:text class="flex-auto text-sm">
                                     {{ $recipient->name }}
-                                    @if($item->pallet)
-                                        (via pallet)
+                                    @if ($item->pallet)
+                                        ({{ __('app.via_pallet') }})
                                     @endif
                                 </flux:text>
                             </li>
@@ -196,12 +227,17 @@ new class extends TableComponent {
                         </flux:badge>
                     </flux:table.cell>
                     <flux:table.cell>
+                        <flux:badge size="sm" inset="top bottom" color="{{ $item->getAvailability()->color() }}">
+                            {{ $item->getAvailability()->label() }}
+                        </flux:badge>
+                    </flux:table.cell>
+                    <flux:table.cell>
                         @if ($item->recipient)
-                            <flux:badge size="sm" inset="top bottom" color="lime">
+                            <flux:badge size="sm" inset="top bottom" color="zinc">
                                 {{ $item->recipient->name }}
                             </flux:badge>
                         @elseif ($item->pallet)
-                            <flux:badge size="sm" inset="top bottom" color="zinc" icon="rectangle-group">
+                            <flux:badge size="sm" inset="top bottom" color="zinc" icon="square-3-stack-3d">
                                 {{ $item->pallet->recipient->name }}
                             </flux:badge>
                         @endif

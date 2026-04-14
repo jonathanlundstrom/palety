@@ -87,17 +87,6 @@ class Parcel extends Model {
     }
 
     /**
-     * Check if the parcel is already loaded on a pallet.
-     * Ideally, it should not be able to be added to multiple pallets or transports.
-     * @return Availability
-     */
-    public function getPalletStatus(): Availability {
-        return $this->pallet_id !== null
-            ? Availability::LOADED_ON_PALLET
-            : Availability::AVAILABLE;
-    }
-
-    /**
      * Get the transport associated with the parcel.
      * This relationship is used to track which transport a parcel is on, if not on a pallet.
      */
@@ -106,25 +95,16 @@ class Parcel extends Model {
     }
 
     /**
-     * Check if the parcel is already loaded on transport.
-     * Ideally, it should not be able to be added to multiple pallets or transports.
-     * @return Availability
-     */
-    public function getTransportStatus(): Availability {
-        return $this->transport_id !== null
-            ? Availability::LOADED_ON_TRANSPORT
-            : Availability::AVAILABLE;
-    }
-
-    /**
      * Check if the parcel is loaded, either on a pallet or transport.
      * Combines checks for both pallet and transport loading states.
      * @return Availability
      */
     public function getAvailability(): Availability {
-        return $this->getPalletStatus() === Availability::LOADED_ON_PALLET || $this->getTransportStatus() === Availability::LOADED_ON_TRANSPORT
-            ? Availability::ALREADY_LOADED
-            : Availability::AVAILABLE;
+        return match(true) {
+            $this->pallet_id !== null => Availability::LOADED_ON_PALLET,
+            $this->transport_id !== null => Availability::LOADED_ON_TRANSPORT,
+            default => Availability::AVAILABLE,
+        };
     }
 
     /**

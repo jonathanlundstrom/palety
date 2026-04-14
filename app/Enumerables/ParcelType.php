@@ -21,7 +21,7 @@ enum ParcelType {
      */
     public function color(): string {
         return match($this) {
-            self::BOX => 'lime',
+            self::BOX => 'amber',
             self::OTHER => 'blue',
         };
     }

@@ -33,8 +33,9 @@ return [
     PalletType::CALCULATED->name => 'Calculated',
     PalletType::MANUAL_PALLET->name => 'Manual',
 
+    Availability::ANY_STATUS->name => 'Any status',
     Availability::AVAILABLE->name => 'Available',
-    Availability::ALREADY_LOADED->name => 'Not available',
+    Availability::ALREADY_LOADED->name => 'Unavailable',
     Availability::LOADED_ON_PALLET->name => 'Loaded on pallet',
     Availability::LOADED_ON_TRANSPORT->name => 'Loaded on transport',
 
