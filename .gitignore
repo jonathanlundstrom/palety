@@ -25,6 +25,7 @@ yarn-error.log
 
 # AI Development tools
 .ai
+.claude
 .junie
 CLAUDE.md
 boost.json

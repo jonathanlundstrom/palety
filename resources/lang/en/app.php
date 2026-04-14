@@ -31,6 +31,8 @@ return [
     'confirm_password' => 'Confirm password',
     'notes' => 'Notes',
     'city' => 'City',
+    'created_at' => 'Created',
+    'updated_at' => 'Updated',
     'add' => 'Add',
     'edit' => 'Edit',
     'save' => 'Save',
@@ -52,6 +54,10 @@ return [
     'category' => [
         'label' => 'Category|Categories',
         'select' => 'Select category',
+    ],
+    'role' => [
+        'label' => 'Role|Roles',
+        'select' => 'Select role',
     ],
     'locale' => [
         'label' => 'Locale',
