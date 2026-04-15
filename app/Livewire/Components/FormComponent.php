@@ -12,7 +12,7 @@ abstract class FormComponent extends Component {
     use ComponentHelpers;
 
     #[Locked]
-    public Model $resource;
+    public ?Model $resource = null;
 
     #[On('edit-resource')]
     public function edit(int $id, string $class): void {

@@ -7,6 +7,7 @@ use App\Livewire\Components\FormComponent;
 use App\Models\User;
 use Flux\Flux;
 use Illuminate\Validation\Rule;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
@@ -67,12 +68,16 @@ new class extends FormComponent {
      * @return void
      */
     public function onSubmit(): void {
-        $validated = $this->validate();
+        // Append validation rule for e-mail uniqueness:
+        $this->withValidator(function ($validator) {
+            $validator->addRules([
+                'email' => $this->formStatus() === FormStatus::EDITING
+                    ? Rule::unique('users')->ignore($this->resource->id)
+                    : Rule::unique('users'),
+            ]);
+        });
 
-        // Extra validation for e-mail uniqueness:
-        $this->validateOnly('email', [
-            'email' => ['required', 'email', Rule::unique('users')->ignore($this->resource?->id)],
-        ]);
+        $validated = $this->validate();
 
         try {
             match ($this->formStatus()) {
@@ -88,6 +93,15 @@ new class extends FormComponent {
         }
     }
 
+    /**
+     * Validate if the currently logged-in user is the user being edited.
+     * @return bool
+     */
+    #[Computed]
+    public function isCurrentUser(): bool {
+        return Auth::user()->id === $this->resource?->id;
+    }
+
 }
 ?>
 <form wire:submit="onSubmit" class="space-y-6 min-h-full">
@@ -95,7 +109,7 @@ new class extends FormComponent {
     <flux:input wire:model="email" label="{{ __('app.email') }}"/>
 
     <flux:select variant="listbox" wire:model.live="role" label="{{ trans_choice('app.role.label', 1) }}"
-                 placeholder="{{ __('app.role.select') }}">
+                 placeholder="{{ __('app.role.select') }}" :disabled="$this->isCurrentUser">
         @foreach (UserRole::cases() as $case)
             <flux:select.option :value="$case->name">{{ $case->label() }}</flux:select.option>
         @endforeach
