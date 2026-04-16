@@ -12,22 +12,18 @@ class PrintLabel implements ShouldQueue {
     use Queueable;
 
     /**
+     * The maximum number of times the job may be attempted.
+     * Failed jobs are most likely caused by errors in printer configuration
+     * or network issues, at which point re-attempting may not resolve the issue.
+     * @var int $tries
+     */
+    public int $tries = 1;
+
+    /**
      * The resource to print the label for.
      * @var Parcel|Pallet $resource
      */
     private Parcel|Pallet $resource;
-
-    /**
-     * The IP address of the printer to print the label on.
-     * @var string $printer_ip
-     */
-    private string $printer_ip;
-
-    /**
-     * The port of the printer to print the label on.
-     * @var int $printer_port
-     */
-    private int $printer_port;
 
     /**
      * Create a new job instance.
@@ -35,9 +31,6 @@ class PrintLabel implements ShouldQueue {
      */
     public function __construct(Parcel|Pallet $resource) {
         $this->resource = $resource;
-        $this->printer_ip = config('printing.printer_ip');
-        $this->printer_port = config('printing.printer_port');
-
         $this->onQueue('local'); // Should be handled by onsite queue worker.
     }
 
@@ -49,8 +42,8 @@ class PrintLabel implements ShouldQueue {
      * @param string $zpl
      * @param string $ip
      * @param int $port
-     * @throws Exception
      * @return void
+     * @throws Exception
      */
     private function print(string $zpl, string $ip, int $port): void {
         $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
@@ -70,8 +63,16 @@ class PrintLabel implements ShouldQueue {
 
     /**
      * Execute the job.
+     * @throws Exception
      */
     public function handle(): void {
+        $printer_ip = config('printing.printer_ip');
+        $printer_port = config('printing.printer_port');
+
+        if (empty($printer_ip) || empty($printer_port)) {
+            throw new Exception('Printer IP or port is not configured.');
+        }
+
         $zpl = view('labels.76_51_compact', [
             'id' => $this->resource->id,
             'type' => strtoupper(class_basename($this->resource)),
@@ -79,10 +80,7 @@ class PrintLabel implements ShouldQueue {
             'weight' => $this->resource->getWeight(),
         ])->render();
 
-        try {
-            $this->print($zpl, $this->printer_ip, $this->printer_port);
-        } catch (Exception $e) {
-            report($e); // Forward to the error handler. Silent failure.
-        }
+        // Attempt to print label on provided printer:
+        $this->print($zpl, $printer_ip, (int) $printer_port);
     }
 }
