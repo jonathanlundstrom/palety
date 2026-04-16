@@ -27,13 +27,7 @@
                 {{ $item->getWeight() }} {{ __('app.weight.unit') }}
             </flux:text>
 
-            <flux:dropdown class="relative top-1">
-                <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal" inset="top bottom"></flux:button>
-                <flux:menu>
-                    <x-edit-button form="{{ $this->modalName }}" :object="$item"/>
-                    <x-delete-button :object="$item"/>
-                </flux:menu>
-            </flux:dropdown>
+            <x-item-actions :form="$this->modalName" :object="$item" class="relative top-1"/>
         </div>
     </div>
 

@@ -34,13 +34,6 @@
     <flux:table.cell>{{ $item->weight }} {{ __('app.weight.unit') }}</flux:table.cell>
     <flux:table.cell>{{ $item->notes }}</flux:table.cell>
     <flux:table.cell>
-        <flux:dropdown>
-            <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal"
-                inset="top bottom"></flux:button>
-            <flux:menu>
-                <x-edit-button form="{{ $this->modalName }}" :object="$item"/>
-                <x-delete-button :object="$item"/>
-            </flux:menu>
-        </flux:dropdown>
+        <x-item-actions :form="$this->modalName" :object="$item"/>
     </flux:table.cell>
 </flux:table.row>
