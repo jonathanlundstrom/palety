@@ -33,6 +33,7 @@ new class extends TableComponent {
                 ['notes'], 'ILIKE', "%{$this->q}%")
             )
             ->when($this->type, fn($query) => $query->where('type', $this->type))
+            ->when($this->status, fn($query) => $query->where('status', $this->status))
             ->withCount(['pallets', 'parcels'])
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate();
