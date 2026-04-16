@@ -148,8 +148,6 @@ new class extends TableComponent {
         <flux:table.rows>
             @forelse ($this->items as $item)
                 @include('pages.parcels._parcel-card')
-
-                <!-- Table row for desktop devices -->
                 @include('pages.parcels._parcel-row')
             @empty
                 <flux:table.row>
