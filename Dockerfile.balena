@@ -143,9 +143,6 @@ RUN chown -R www-data:www-data .
 # create directory required by supervisor
 RUN mkdir -p /var/log/supervisor
 
-# configure cron
-RUN echo '* * * * * php /var/www/html/artisan schedule:run' >> /etc/crontabs/root
-
 COPY .docker/scripts/entrypoint.sh /entrypoint.sh
 RUN chmod 744 /entrypoint.sh
 
