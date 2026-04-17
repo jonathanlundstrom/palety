@@ -27,6 +27,16 @@ new class extends TableComponent {
     #[Url(except: '')]
     public string $city = '';
 
+    /**
+     * Mount the Livewire component.
+     * Currently used to override parent sorting properties.
+     * @return void
+     */
+    public function mount(): void {
+        $this->sortBy = 'name';
+        $this->sortDirection = 'asc';
+    }
+
     #[Computed]
     public function items(): LengthAwarePaginator {
         return Recipient::query()
@@ -85,8 +95,12 @@ new class extends TableComponent {
         </flux:modal.trigger>
     </div>
 
+    <div class="mt-6 mb-6 lg:hidden">
+        <flux:separator variant="subtle" text="{{ __('app.all_items') }}"/>
+    </div>
+
     <flux:table :paginate="$this->items">
-        <flux:table.columns>
+        <flux:table.columns class="hidden lg:table-header-group">
             <flux:table.column sortable :sorted="$sortBy === 'id'" :direction="$sortDirection" wire:click="sort('id')">{{ __('app.id') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'name'" :direction="$sortDirection" wire:click="sort('name')">{{ __('app.name') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'type'" :direction="$sortDirection" wire:click="sort('type')">{{ __('app.type') }}</flux:table.column>
@@ -97,33 +111,8 @@ new class extends TableComponent {
         </flux:table.columns>
         <flux:table.rows>
             @forelse ($this->items as $item)
-                <flux:table.row key="row-{{$item->id}}">
-                    <flux:table.cell>{{ $item->id }}</flux:table.cell>
-                    <flux:table.cell>{{ $item->name }}</flux:table.cell>
-                    <flux:table.cell>
-                        <flux:badge size="sm" inset="top bottom" color="{{ $item->type->color() }}">
-                            {{ $item->type->label() }}
-                        </flux:badge>
-                    </flux:table.cell>
-                    <flux:table.cell>
-                        <a href="tel:{{ str_replace(' ', '', $item->phone_number) }}">{{ phone($item->phone_number)->formatInternational() }}</a>
-                    </flux:table.cell>
-                    <flux:table.cell>
-                        <flux:badge size="sm" inset="top bottom" color="{{ $item->delivery_type->color() }}">
-                            {{ $item->delivery_type->label() }}
-                        </flux:badge>
-                    </flux:table.cell>
-                    <flux:table.cell>{{ $item->city }}</flux:table.cell>
-                    <flux:table.cell>
-                        <flux:dropdown>
-                            <flux:button variant="ghost" size="sm" icon="ellipsis-horizontal" inset="top bottom"></flux:button>
-                            <flux:menu>
-                                <x-edit-button form="{{ $this->modalName }}" :object="$item" />
-                                <x-delete-button :object="$item" />
-                            </flux:menu>
-                        </flux:dropdown>
-                    </flux:table.cell>
-                </flux:table.row>
+                @include('pages.recipients._recipient-card')
+                @include('pages.recipients._recipient-row')
             @empty
                 <flux:table.row>
                     <flux:table.cell>{{ __('app.no_items') }}</flux:table.cell>

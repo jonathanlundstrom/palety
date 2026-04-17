@@ -13,6 +13,7 @@ return [
     'recipient' => 'Recipient',
     'availability' => 'Availability',
     'delivery_type' => 'Delivery type',
+    'nova_poshta' => 'Nova Poshta',
     'nova_poshta_id' => 'Nova Poshta ID',
     'email' => 'Email address',
     'phone_number' => 'Phone number',

@@ -49,8 +49,8 @@ new class extends FormComponent {
 
     #[Computed]
     protected function canSelectRecipient(): bool {
-        if ($this->formStatus() === FormStatus::EDITING && $this->resource->pallet) {
-            return false;
+        if ($this->formStatus() === FormStatus::EDITING) {
+            return $this->resource->getAvailability() === Availability::AVAILABLE;
         } else {
             return true;
         }
