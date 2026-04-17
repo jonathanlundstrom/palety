@@ -83,7 +83,7 @@ new #[Layout('layouts.auth')] class extends Component {
         <!-- Email Address -->
         <flux:input
             wire:model="email"
-            :label="__('Email address')"
+            label="{{ __('app.email') }}"
             type="email"
             required
             autofocus
@@ -95,11 +95,11 @@ new #[Layout('layouts.auth')] class extends Component {
         <div class="relative">
             <flux:input
                 wire:model="password"
-                :label="__('Password')"
+                label="{{ __('app.password') }}"
                 type="password"
                 required
                 autocomplete="current-password"
-                :placeholder="__('Password')"
+                placeholder="{{ __('app.password') }}"
                 viewable
             />
 
