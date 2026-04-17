@@ -8,9 +8,9 @@
         <flux:sidebar sticky stashable class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
             <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
-            <flux:brand href="{{ route('dashboard') }}" name="{{ config('app.name') }}" class="me-5 flex items-center space-x-2 rtl:space-x-reverse" wire:navigate>
+            <flux:brand href="{{ route('dashboard') }}" name="{{ config('app.name') }}" class="px-3 me-5 flex items-center space-x-1 rtl:space-x-reverse" wire:navigate>
                 <x-slot name="logo" class="size-6 rounded-full bg-blue-700 text-yellow-300 text-xs font-bold">
-                    <flux:icon name="archive-box" variant="micro" />
+                    <flux:icon name="square-3-stack-3d" variant="micro" />
                 </x-slot>
             </flux:brand>
 
