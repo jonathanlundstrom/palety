@@ -76,7 +76,7 @@
         </flux:sidebar>
 
         <!-- Mobile User Menu -->
-        <flux:header class="lg:hidden" class="bg-white dark:bg-neutral-800 border-b-1 dark:border-b-white/10" sticky>
+        <flux:header class="lg:hidden bg-white dark:bg-neutral-800 border-b-1 dark:border-b-white/10" sticky>
             <flux:sidebar.toggle class="lg:hidden" icon="bars-2" inset="left" />
 
             <flux:spacer />
@@ -130,7 +130,7 @@
         @endpersist
 
         {{-- Shared components --}}
-        <livewire:delete-modal />
+        <livewire:modals.delete-modal />
 
         @fluxScripts
     </body>

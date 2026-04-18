@@ -184,7 +184,7 @@ new class extends FormComponent {
     <flux:field>
         <flux:select wire:model.live="scanned_pallets" class="hidden" multiple></flux:select>
         <flux:label>{{ __('app.scanned_pallets') }}</flux:label>
-        <livewire:scanner-field :items="$scanned_pallets" buttonText="{{ __('app.scan.scan_pallets') }}"
+        <livewire:fields.scanner-field :items="$scanned_pallets" buttonText="{{ __('app.scan.scan_pallets') }}"
                                 :key="'pallets-'.count($scanned_pallets)"/>
         <flux:error name="scanned_pallets"/>
     </flux:field>
@@ -192,7 +192,7 @@ new class extends FormComponent {
     <flux:field>
         <flux:select wire:model.live="scanned_parcels" class="hidden" multiple></flux:select>
         <flux:label>{{ __('app.scanned_parcels') }}</flux:label>
-        <livewire:scanner-field :items="$scanned_parcels" buttonText="{{ __('app.scan.scan_parcels') }}"
+        <livewire:fields.scanner-field :items="$scanned_parcels" buttonText="{{ __('app.scan.scan_parcels') }}"
                                 :key="'parcels-'.count($scanned_parcels)"/>
         <flux:error name="scanned_parcels"/>
     </flux:field>

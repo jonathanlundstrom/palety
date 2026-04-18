@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TransportController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'dashboard')
@@ -18,9 +19,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::livewire('/users', 'pages::users')->name('users');
     });
 
-    // Export packing list for transport:
-    Route::livewire('/transports/{transport}/packing-list', 'pages::transports.packing-list')->name('transports.packing-list');
+    // Download packing list PDF for transport:
+    Route::get('/transports/{transport}/packing-list/download', [TransportController::class, 'printPackingList'])
+        ->name('transports.packing-list.pdf');
 });
+
+// Signed URL access for packing list HTML (used by Browsershot, no auth required):
+Route::get('/transports/{transport}/packing-list', [TransportController::class, 'showPackingList'])
+    ->name('transports.packing-list.show')
+    ->middleware(['signed']);
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');

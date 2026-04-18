@@ -152,10 +152,10 @@ new class extends TableComponent {
         </flux:table.rows>
     </flux:table>
 
-    <x-flyout name="{{ $this->modalName }}" title="{{ __('pages.pallets.form.title') }}"
+    <x-modals.flyout name="{{ $this->modalName }}" title="{{ __('pages.pallets.form.title') }}"
               subtitle="{{ __('pages.pallets.form.subtitle') }}" position="{{ $this->modalPosition }}">
         <livewire:pages::pallets.pallet-form/>
-    </x-flyout>
+    </x-modals.flyout>
 
-    <livewire:scanner-modal/>
+    <livewire:modals.scanner-modal/>
 </section>
