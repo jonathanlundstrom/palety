@@ -27,5 +27,6 @@ yarn-error.log
 .ai
 .claude
 .junie
+.mcp.json
 CLAUDE.md
 boost.json

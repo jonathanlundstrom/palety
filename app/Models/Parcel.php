@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enumerables\Availability;
 use App\Enumerables\ParcelType;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -112,5 +113,16 @@ class Parcel extends Model {
      */
     public function getWeight(): float {
         return number_format($this->weight, 2);
+    }
+
+    /**
+     * Scope to parcels that have been sent, either directly
+     * via transport or via a pallet on transport.
+     */
+    public function scopeSent(Builder $query): Builder {
+        return $query->where(function ($q) {
+            $q->whereHas('transport', fn ($t) => $t->whereNotNull('sent_at'))
+                ->orWhereHas('pallet', fn ($p) => $p->whereHas('transport', fn ($t) => $t->whereNotNull('sent_at')));
+        });
     }
 }

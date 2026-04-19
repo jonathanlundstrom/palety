@@ -8,7 +8,7 @@ Route::view('/', 'dashboard')
     ->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::view('/', 'dashboard')->name('dashboard');
+    Route::livewire('/', 'pages::dashboard')->name('dashboard');
     Route::livewire('/parcels', 'pages::parcels')->name('parcels');
     Route::livewire('/pallets', 'pages::pallets')->name('pallets');
     Route::livewire('/transports', 'pages::transports')->name('transports');

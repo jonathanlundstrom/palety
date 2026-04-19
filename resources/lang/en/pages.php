@@ -3,6 +3,7 @@
 return [
     'dashboard' => [
         'title' => 'Dashboard',
+        'headline' => 'Global statistics',
     ],
     'parcels' => [
         'title' => 'Parcels',
