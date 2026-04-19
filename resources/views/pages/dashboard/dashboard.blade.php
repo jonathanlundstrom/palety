@@ -40,7 +40,7 @@ new class extends Component {
             <flux:heading size="xl" level="1">{{ __('pages.dashboard.headline') }}</flux:heading>
 
             <div>
-                <flux:select wire:model.live="year" variant="listbox" size="sm" class="w-24">
+                <flux:select wire:model.live="year" variant="listbox" size="sm">
                     @foreach ($this->availableYears as $y)
                         <flux:select.option value="{{ $y }}">{{ $y }}</flux:select.option>
                     @endforeach
@@ -53,9 +53,7 @@ new class extends Component {
 
     <div class="grid sm:grid-cols-12 grid-cols-1 gap-6">
         <livewire:pages::dashboard.cards.parcels :year="$year" />
-
         <livewire:pages::dashboard.cards.pallets :year="$year" />
-
         <livewire:pages::dashboard.cards.transports :year="$year" />
     </div>
 
