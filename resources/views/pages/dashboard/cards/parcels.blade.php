@@ -98,7 +98,7 @@ new class extends Component {
     </div>
 
     <flux:chart class="-mx-6 -mb-6 mt-4 h-10" :value="$this->monthlyTrend">
-        <flux:chart.svg gutter="0">
+        <flux:chart.svg gutter="1 0 0 0">
             <flux:chart.line class="text-sky-200 dark:text-amber-400"/>
             <flux:chart.area class="text-sky-100 dark:text-amber-200"/>
         </flux:chart.svg>
