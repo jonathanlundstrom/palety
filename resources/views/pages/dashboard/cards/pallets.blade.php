@@ -83,24 +83,19 @@ new class extends Component {
                             'total' => number_format($this->totalCount),
                         ])
                     }}
-                    <strong>({{ round($this->sentCount / $this->totalCount * 100) }}%)</strong>
+                    ({{ round($this->sentCount / $this->totalCount * 100) }}%)
                 </flux:text>
             @endif
         </div>
 
-        <div class="tabular-nums">
-            @if ($this->changePercentage !== null)
+        @if ($this->changePercentage !== null)
+            <div class="tabular-nums">
                 <div class="flex items-center gap-1 font-medium text-sm {{ $this->changePercentage >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
                     <flux:icon icon="{{ $this->changePercentage >= 0 ? 'arrow-trending-up' : 'arrow-trending-down' }}" variant="micro"/>
                     {{ $this->changePercentage >= 0 ? '+' : '' }}{{ $this->changePercentage }}%
                 </div>
-            @elseif ($this->totalCount > 0)
-                <div class="flex items-center gap-1 font-medium text-sm text-green-600 dark:text-green-400">
-                    <flux:icon icon="arrow-trending-up" variant="micro"/>
-                    100%
-                </div>
-            @endif
-        </div>
+            </div>
+        @endif
     </div>
 
     <flux:chart class="-mx-6 -mb-6 mt-4 h-10" :value="$this->monthlyTrend">

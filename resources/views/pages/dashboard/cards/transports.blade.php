@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Parcel;
+use App\Models\Transport;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
@@ -11,11 +11,11 @@ new class extends Component {
     public int $year;
 
     /**
-     * Get the total number of parcels within the selected year.
+     * Get the total number of transports within the selected year.
      */
     #[Computed]
     public function totalCount(): int {
-        return Parcel::query()
+        return Transport::query()
             ->whereYear('created_at', $this->year)
             ->count();
     }
@@ -25,7 +25,7 @@ new class extends Component {
      */
     #[Computed]
     public function changePercentage(): ?float {
-        $previousTotal = Parcel::query()
+        $previousTotal = Transport::query()
             ->whereYear('created_at', $this->year - 1)
             ->count();
 
@@ -37,13 +37,13 @@ new class extends Component {
     }
 
     /**
-     * Get the total number of sent parcels within the selected year.
+     * Get the total number of sent transports within the selected year.
      */
     #[Computed]
     public function sentCount(): int {
-        return Parcel::query()
+        return Transport::query()
             ->whereYear('created_at', $this->year)
-            ->sent()
+            ->whereNotNull('sent_at')
             ->count();
     }
 
@@ -52,13 +52,14 @@ new class extends Component {
      */
     #[Computed]
     public function monthlyTrend(): array {
-        $counts = Parcel::query()
+        $counts = Transport::query()
             ->whereYear('created_at', $this->year)
             ->selectRaw('EXTRACT(MONTH FROM created_at)::int AS month, COUNT(*) AS count')
             ->groupByRaw('EXTRACT(MONTH FROM created_at)')
             ->pluck('count', 'month');
 
         $months = $this->year === now()->year ? now()->month : 12;
+
         return collect(range(1, $months))
             ->map(fn ($m) => (int) $counts->get($m, 0))
             ->all();
@@ -67,11 +68,11 @@ new class extends Component {
 }
 ?>
 <flux:card class="col-span-4 overflow-hidden">
-    <flux:subheading class="mb-1">{{ __('app.parcel_statistics') }}</flux:subheading>
+    <flux:subheading class="mb-1">{{ __('app.transport_statistics') }}</flux:subheading>
     <div class="flex items-center justify-between">
         <div>
             <flux:heading size="xl" class="tabular-nums">
-                {{ number_format($this->totalCount) }} {{ mb_strtolower(trans_choice('app.parcel', $this->totalCount)) }}
+                {{ number_format($this->totalCount) }} {{ mb_strtolower(trans_choice('app.transport', $this->totalCount)) }}
             </flux:heading>
 
             @if ($this->totalCount > 0)
@@ -90,8 +91,8 @@ new class extends Component {
         @if ($this->changePercentage !== null)
             <div class="tabular-nums">
                 <div class="flex items-center gap-1 font-medium text-sm {{ $this->changePercentage >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
-                    <flux:icon icon="arrow-trending-{{ $this->changePercentage >= 0 ? 'up' : 'down' }}" variant="micro"/>
-                    {{ $this->changePercentage }}%
+                    <flux:icon icon="{{ $this->changePercentage >= 0 ? 'arrow-trending-up' : 'arrow-trending-down' }}" variant="micro"/>
+                    {{ $this->changePercentage >= 0 ? '+' : '' }}{{ $this->changePercentage }}%
                 </div>
             </div>
         @endif

@@ -56,10 +56,7 @@ new class extends Component {
 
         <livewire:pages::dashboard.cards.pallets :year="$year" />
 
-        <flux:card class="col-span-4">
-            <flux:subheading>Transports sent</flux:subheading>
-            <flux:heading size="xl" class="tabular-nums">0</flux:heading>
-        </flux:card>
+        <livewire:pages::dashboard.cards.transports :year="$year" />
     </div>
 
     <div class="relative h-full flex-1 overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
