@@ -9,6 +9,7 @@ return [
     'status' => 'Status',
     'parcel' => 'Parcel|Parcels',
     'pallet' => 'Pallet|Pallets',
+    'transport' => 'Transport|Transports',
     'search' => 'Search',
     'recipient' => 'Recipient',
     'availability' => 'Availability',
@@ -26,6 +27,9 @@ return [
     'scanned_items' => 'Scanned items',
     'scanned_parcels' => 'Scanned parcels',
     'scanned_pallets' => 'Scanned pallets',
+    'parcel_statistics' => 'Parcel statistics',
+    'pallet_statistics' => 'Pallet statistics',
+    'transport_statistics' => 'Transport statistics',
     'password' => 'Password',
     'new_password' => 'New password',
     'current_password' => 'Current password',
@@ -85,6 +89,8 @@ return [
     'parcel_loaded' => 'This parcel has already been loaded on a pallet or transport. Only make changes if you know what you\'re doing!',
     'pallet_loaded' => 'This pallet has already been loaded on a transport. Only make changes if you know what you\'re doing!',
     'via_pallet' => 'via pallet',
+    'statistics' => 'Statistics',
+    'sent_count' => ':sent out of :total sent',
 
     // Available locales:
     'locales' => [

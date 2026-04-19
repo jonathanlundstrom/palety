@@ -54,10 +54,7 @@ new class extends Component {
     <div class="grid sm:grid-cols-12 grid-cols-1 gap-6">
         <livewire:pages::dashboard.cards.parcels :year="$year" />
 
-        <flux:card class="col-span-4">
-            <flux:subheading>Pallets packed</flux:subheading>
-            <flux:heading size="xl" class="tabular-nums">0</flux:heading>
-        </flux:card>
+        <livewire:pages::dashboard.cards.pallets :year="$year" />
 
         <flux:card class="col-span-4">
             <flux:subheading>Transports sent</flux:subheading>

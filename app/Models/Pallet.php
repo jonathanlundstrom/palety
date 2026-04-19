@@ -6,6 +6,7 @@ use App\Enumerables\Availability;
 use App\Enumerables\ImportCategory;
 use App\Enumerables\PalletType;
 use App\Models\Traits\ModelHelpers;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -106,6 +107,13 @@ class Pallet extends Model {
         return $this->transport_id !== null
             ? Availability::LOADED_ON_TRANSPORT
             : Availability::AVAILABLE;
+    }
+
+    /**
+     * Scope to pallets that have been sent on a transport.
+     */
+    public function scopeSent(Builder $query): Builder {
+        return $query->whereIn('transport_id', Transport::whereNotNull('sent_at')->select('id'));
     }
 
     /**
