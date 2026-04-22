@@ -22,6 +22,8 @@
             <flux:badge size="sm" inset="top bottom" color="zinc" icon="square-3-stack-3d">
                 {{ $item->pallet->recipient->name }}
             </flux:badge>
+        @else
+            --
         @endif
     </flux:table.cell>
     <flux:table.cell>
@@ -32,7 +34,7 @@
         @endforeach
     </flux:table.cell>
     <flux:table.cell>{{ $item->weight }} {{ __('app.weight.unit') }}</flux:table.cell>
-    <flux:table.cell>{{ $item->notes }}</flux:table.cell>
+    <flux:table.cell>{{ $item->notes ?: '--' }}</flux:table.cell>
     <flux:table.cell>
         <x-item-actions :form="$this->modalName" :object="$item"/>
     </flux:table.cell>

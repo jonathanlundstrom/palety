@@ -27,9 +27,6 @@ return [
     'scanned_items' => 'Scanned items',
     'scanned_parcels' => 'Scanned parcels',
     'scanned_pallets' => 'Scanned pallets',
-    'parcel_statistics' => 'Parcel statistics',
-    'pallet_statistics' => 'Pallet statistics',
-    'transport_statistics' => 'Transport statistics',
     'password' => 'Password',
     'new_password' => 'New password',
     'current_password' => 'Current password',
@@ -77,6 +74,8 @@ return [
         'label' => 'Weight',
         'unit' => 'kg',
     ],
+    'weight_per_month' => 'Kilos packed per month',
+    'month_abbr' => 'mo',
     'scan' => [
         'title' => 'Scan QR Code',
         'subtitle' => 'Point your camera at the QR code to scan it.',

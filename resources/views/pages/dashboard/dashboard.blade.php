@@ -34,7 +34,7 @@ new class extends Component {
 
 }
 ?>
-<div class="flex h-full w-full flex-1 flex-col gap-6 rounded-xl">
+<div class="flex w-full flex-1 flex-col gap-6 rounded-xl">
     <header>
         <div class="flex flex-wrap items-center justify-between pb-4">
             <flux:heading size="xl" level="1">{{ __('pages.dashboard.headline') }}</flux:heading>
@@ -51,13 +51,18 @@ new class extends Component {
         <flux:separator variant="subtle"/>
     </header>
 
-    <div class="grid sm:grid-cols-12 grid-cols-1 gap-6">
+    <div class="grid lg:grid-cols-12 grid-cols-1 gap-6">
         <livewire:pages::dashboard.cards.parcels :year="$year" />
         <livewire:pages::dashboard.cards.pallets :year="$year" />
         <livewire:pages::dashboard.cards.transports :year="$year" />
     </div>
 
-    <div class="relative h-full flex-1 overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-700">
-        <x-placeholder-pattern class="absolute inset-0 size-full stroke-gray-900/20 dark:stroke-neutral-100/20"/>
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full flex-1">
+        <div class="col-span-12 lg:col-span-4 gap-6">
+            <livewire:pages::dashboard.cards.kilos :year="$year" />
+            <livewire:pages::dashboard.cards.kilos-chart :year="$year" />
+        </div>
+
+        <livewire:pages::dashboard.cards.weight-by-category :year="$year" />
     </div>
 </div>

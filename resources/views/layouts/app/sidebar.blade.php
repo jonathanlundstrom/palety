@@ -16,8 +16,8 @@
 
             <flux:navlist variant="outline">
                 <flux:navlist.item icon="chart-bar-square" :href="route('dashboard')" wire:navigate>{{ __('pages.dashboard.title') }}</flux:navlist.item>
-                <flux:navlist.item icon="archive-box" :href="route('parcels')" wire:navigate>{{ __('pages.parcels.title') }}</flux:navlist.item>
-                <flux:navlist.item icon="rectangle-group" :href="route('pallets')" wire:navigate>{{ __('pages.pallets.title') }}</flux:navlist.item>
+                <flux:navlist.item icon="cube" :href="route('parcels')" wire:navigate>{{ __('pages.parcels.title') }}</flux:navlist.item>
+                <flux:navlist.item icon="square-3-stack-3d" :href="route('pallets')" wire:navigate>{{ __('pages.pallets.title') }}</flux:navlist.item>
                 <flux:navlist.item icon="truck" :href="route('transports')" wire:navigate>{{ __('pages.transports.title') }}</flux:navlist.item>
                 @if (Auth::user()->role === UserRole::ADMIN)
                     <br />

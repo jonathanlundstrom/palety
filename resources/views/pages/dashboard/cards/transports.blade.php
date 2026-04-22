@@ -1,5 +1,8 @@
 <?php
 
+use App\Enumerables\PalletType;
+use App\Models\Pallet;
+use App\Models\Parcel;
 use App\Models\Transport;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
@@ -21,19 +24,33 @@ new class extends Component {
     }
 
     /**
-     * Calculate the increase or decrease compared to the same period the year before.
+     * Get the total weight loaded across transports within the selected year.
+     * Mirrors Transport::getWeight() but aggregated across all transports for the year.
      */
     #[Computed]
-    public function changePercentage(): ?float {
-        $previousTotal = Transport::query()
-            ->whereYear('created_at', $this->year - 1)
-            ->count();
+    public function totalWeight(): float {
+        $transportIds = Transport::query()
+            ->whereYear('created_at', $this->year)
+            ->select('id');
 
-        if ($previousTotal === 0) {
-            return null;
-        }
+        $directParcels = (float) Parcel::query()
+            ->whereIn('transport_id', $transportIds)
+            ->whereNull('pallet_id')
+            ->sum('weight');
 
-        return round((($this->totalCount - $previousTotal) / $previousTotal) * 100, 1);
+        $calculatedPalletParcels = (float) Parcel::query()
+            ->whereHas('pallet', fn ($p) => $p
+                ->where('type', PalletType::CALCULATED)
+                ->whereIn('transport_id', $transportIds)
+            )
+            ->sum('weight');
+
+        $manualPallets = (float) Pallet::query()
+            ->where('type', PalletType::MANUAL_PALLET)
+            ->whereIn('transport_id', $transportIds)
+            ->sum('weight');
+
+        return $directParcels + $calculatedPalletParcels + $manualPallets;
     }
 
     /**
@@ -68,7 +85,6 @@ new class extends Component {
 }
 ?>
 <flux:card class="col-span-4 overflow-hidden">
-    <flux:subheading class="mb-1">{{ __('app.transport_statistics') }}</flux:subheading>
     <div class="flex items-center justify-between">
         <div>
             <flux:heading size="xl" class="tabular-nums">
@@ -88,17 +104,15 @@ new class extends Component {
             @endif
         </div>
 
-        @if ($this->changePercentage !== null)
-            <div class="tabular-nums">
-                <div class="flex items-center gap-1 font-medium text-sm {{ $this->changePercentage >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }}">
-                    <flux:icon icon="{{ $this->changePercentage >= 0 ? 'arrow-trending-up' : 'arrow-trending-down' }}" variant="micro"/>
-                    {{ $this->changePercentage >= 0 ? '+' : '' }}{{ $this->changePercentage }}%
-                </div>
+        @if ($this->totalWeight > 0)
+            <div class="flex items-center gap-1 font-medium text-md text-green-600 dark:text-green-400">
+                <flux:icon icon="scale" variant="mini"/>
+                {{ number_format($this->totalWeight) }} {{ __('app.weight.unit') }}
             </div>
         @endif
     </div>
 
-    <flux:chart class="-mx-6 -mb-6 mt-4 h-10" :value="$this->monthlyTrend">
+    <flux:chart class="-mx-6 -mb-6 mt-6 h-14" :value="$this->monthlyTrend">
         <flux:chart.svg gutter="1 0 0 0">
             <flux:chart.line class="text-sky-200 dark:text-amber-400"/>
             <flux:chart.area class="text-sky-100 dark:text-amber-200"/>
