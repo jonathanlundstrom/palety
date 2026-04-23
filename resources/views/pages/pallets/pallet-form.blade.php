@@ -196,7 +196,7 @@ new class extends FormComponent {
         <flux:field>
             <flux:label>{{ __('app.weight.label') }}</flux:label>
             <flux:input.group>
-                <flux:input type="number" step="0.01" wire:model="weight"/>
+                <flux:input type="number" lang="en_EN" step="0.01" wire:model="weight"/>
                 <flux:input.group.suffix>{{ __('app.weight.unit') }}</flux:input.group.suffix>
             </flux:input.group>
             <flux:error name="weight"/>

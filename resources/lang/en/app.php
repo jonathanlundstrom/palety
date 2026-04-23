@@ -76,6 +76,10 @@ return [
     ],
     'weight_per_month' => 'Kilos packed per month',
     'month_abbr' => 'mo',
+    'usage' => [
+        'label' => 'Usage',
+        'unit' => 'time|times',
+    ],
     'scan' => [
         'title' => 'Scan QR Code',
         'subtitle' => 'Point your camera at the QR code to scan it.',
@@ -93,7 +97,8 @@ return [
 
     // Available locales:
     'locales' => [
+        'sv' =>'Swedish',
         'en' => 'English',
-        'ua' => 'Ukrainian',
+        'uk' => 'Ukrainian',
     ]
 ];

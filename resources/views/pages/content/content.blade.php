@@ -32,6 +32,7 @@ new class extends TableComponent {
     #[Computed]
     public function items(): LengthAwarePaginator {
         return Content::query()
+            ->withCount('parcels')
             ->when($this->q, fn($query) => $query->whereAny(
                 ['label_en', 'label_ua'], 'ILIKE', "%{$this->q}%")
             )
@@ -78,6 +79,7 @@ new class extends TableComponent {
             <flux:table.column sortable :sorted="$sortBy === 'label_en'" :direction="$sortDirection" wire:click="sort('label_en')">{{ __('app.label_en') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'label_ua'" :direction="$sortDirection" wire:click="sort('label_ua')">{{ __('app.label_ua') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'category'" :direction="$sortDirection" wire:click="sort('category')">{{ trans_choice('app.category.label', 1) }}</flux:table.column>
+            <flux:table.column sortable :sorted="$sortBy === 'parcels_count'" :direction="$sortDirection" wire:click="sort('parcels_count')">{{ __('app.usage.label') }}</flux:table.column>
             <flux:table.column></flux:table.column>
         </flux:table.columns>
         <flux:table.rows>

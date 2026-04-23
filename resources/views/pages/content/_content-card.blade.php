@@ -31,5 +31,12 @@
                 {{ $item->label_ua }}
             </flux:text>
         </li>
+
+        <li class="px-3 py-3 flex flex-row flex-nowrap not-last:border-b-1 items-start border-b-gray-100 dark:border-b-white/5">
+            <flux:icon.arrow-trending-up class="flex-none size-4 mt-0.5 mr-2"/>
+            <flux:text class="flex-auto text-sm">
+                {{ $item->parcels_count }} {{ trans_choice('app.usage.unit', $item->parcels_count) }}
+            </flux:text>
+        </li>
     </ul>
 </flux:card>

@@ -75,6 +75,7 @@ new class extends Component {
         $user->sendEmailVerificationNotification();
         Session::flash('status', 'verification-link-sent');
     }
+
 }
 
 ?>
@@ -109,8 +110,9 @@ new class extends Component {
             </div>
 
             <flux:select variant="listbox" wire:model.live="locale" label="{{ __('app.locale.label') }}">
+                <flux:select.option value="sv">{{ __('app.locales.sv') }}</flux:select.option>
                 <flux:select.option value="en">{{ __('app.locales.en') }}</flux:select.option>
-                <flux:select.option value="ua">{{ __('app.locales.ua') }}</flux:select.option>
+                <flux:select.option value="uk">{{ __('app.locales.uk') }}</flux:select.option>
             </flux:select>
 
             <flux:select variant="listbox" wire:model.live="timezone" label="{{ __('app.timezone.label') }}" searchable>

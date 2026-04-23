@@ -7,6 +7,7 @@
             {{ $item->category->label() }}
         </flux:badge>
     </flux:table.cell>
+    <flux:table.cell>{{ $item->parcels_count }} {{ trans_choice('app.usage.unit', $item->parcels_count) }}</flux:table.cell>
     <flux:table.cell>
         <x-item-actions :form="$this->modalName" :object="$item"/>
     </flux:table.cell>
