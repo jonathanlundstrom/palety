@@ -65,7 +65,6 @@ new class extends Component {
         <flux:chart.svg>
             <flux:chart.line field="weight" class="text-sky-200 dark:text-amber-400"/>
             <flux:chart.area field="weight" class="text-sky-100 dark:text-amber-200"/>
-            <flux:chart.point field="weight" class="text-sky-200 dark:text-amber-400" />
 
             <flux:chart.axis axis="y">
                 <flux:chart.axis.grid/>

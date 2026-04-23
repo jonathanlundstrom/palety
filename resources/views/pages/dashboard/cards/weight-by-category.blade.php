@@ -83,22 +83,17 @@ new class extends Component {
             ->all();
     }
 
-    /**
-     * Color classes for each ImportCategory, derived from the enum's color() method.
-     *
-     * @return array<string, array{bar: string, indicator: string}>
-     */
     #[Computed]
     public function categoryColors(): array {
         return [
-            'FOOD' => ['bar' => 'text-lime-500 dark:text-lime-400', 'indicator' => 'bg-lime-500 dark:bg-lime-400'],
-            'SANITARY_HYGIENE' => ['bar' => 'text-cyan-500 dark:text-cyan-400', 'indicator' => 'bg-cyan-500 dark:bg-cyan-400'],
-            'MEDICAL' => ['bar' => 'text-red-500 dark:text-red-400', 'indicator' => 'bg-red-500 dark:bg-red-400'],
-            'CLOTHING' => ['bar' => 'text-emerald-500 dark:text-emerald-400', 'indicator' => 'bg-emerald-500 dark:bg-emerald-400'],
-            'TECHNICAL' => ['bar' => 'text-purple-500 dark:text-purple-400', 'indicator' => 'bg-purple-500 dark:bg-purple-400'],
-            'VEHICLES' => ['bar' => 'text-orange-500 dark:text-orange-400', 'indicator' => 'bg-orange-500 dark:bg-orange-400'],
-            'FUEL' => ['bar' => 'text-yellow-500 dark:text-yellow-400', 'indicator' => 'bg-yellow-500 dark:bg-yellow-400'],
-            'OTHER' => ['bar' => 'text-zinc-400 dark:text-zinc-500', 'indicator' => 'bg-zinc-400 dark:bg-zinc-500'],
+            'FOOD' => ['bar' => 'text-lime-400'],
+            'SANITARY_HYGIENE' => ['bar' => 'text-cyan-400'],
+            'MEDICAL' => ['bar' => 'text-red-400'],
+            'CLOTHING' => ['bar' => 'text-emerald-400'],
+            'TECHNICAL' => ['bar' => 'text-purple-400'],
+            'VEHICLES' => ['bar' => 'text-orange-400'],
+            'FUEL' => ['bar' => 'text-yellow-400'],
+            'OTHER' => ['bar' => 'text-zinc-400'],
         ];
     }
 
