@@ -18,8 +18,6 @@ new class extends Component {
         } else {
             $this->dispatch('scan-result', payload: null);
         }
-
-        // Flux::modal('scanner-modal')->close();
     }
 }
 
@@ -39,13 +37,9 @@ new class extends Component {
             <flux:skeleton animate="shimmer" class="aspect-[16/9] size-full" x-show="!scanning"/>
         </div>
 
-        <div class="flex gap-6">
-            <flux:button x-on:click="toggleFlash()" x-show="hasFlash" icon="bolt" class="flex-1">{{ __('app.scan.toggle_flash') }}</flux:button>
-
-            <flux:modal.close class="flex-1">
-                <flux:button icon="check" class="w-full">Finish scanning</flux:button>
-            </flux:modal.close>
-        </div>
+        <flux:modal.close class="flex-1">
+            <flux:button icon="check" class="w-full">Finish scanning</flux:button>
+        </flux:modal.close>
     </div>
 </flux:modal>
 
@@ -75,11 +69,6 @@ new class extends Component {
             this.scanner.start()
                 .then(async () => {
                     this.scanning = true;
-                    this.hasFlash = await this.scanner.hasFlash();
-                    if (this.hasFlash) {
-                        await this.scanner.turnFlashOff();
-                        this.flashOn = false;
-                    }
                 })
                 .catch(err => {
                     console.error('Scanner error:', err);
@@ -99,13 +88,6 @@ new class extends Component {
             this.scanner?.destroy();
             this.scanner = null;
             this.scanning = false;
-        },
-
-        async toggleFlash() {
-            if (this.hasFlash) {
-                await this.scanner.toggleFlash();
-                this.flashOn = this.scanner.isFlashOn();
-            }
         },
 
         destroy() {

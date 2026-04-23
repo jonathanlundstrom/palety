@@ -28,6 +28,12 @@ new class extends Component {
         $this->resource = $abstract::find($id);
     }
 
+    #[On('reset-modal')]
+    public function clear(): void {
+        $this->reset();
+        $this->resetValidation();
+    }
+
     #[Computed]
     public function confirmed(): bool {
         return $this->confirmation_text === 'DELETE';
@@ -71,7 +77,7 @@ new class extends Component {
 }
 
 ?>
-<flux:modal name="delete-confirmation" class="w-xs sm:w-10/12 md:w-128" :flyout="$this->isFlyout" position="bottom">
+<flux:modal name="delete-confirmation" class="w-xs sm:w-10/12 md:w-128" :flyout="$this->isFlyout" position="bottom" x-on:close="$wire.dispatch('reset-modal')">
     <div class="space-y-6">
         <div>
             <flux:heading size="lg">{{ __('modals.delete.title') }}</flux:heading>

@@ -150,7 +150,10 @@ new class extends FormComponent {
                 <flux:select.option value="{{ $recipient->id }}">{{ $recipient->name }}</flux:select.option>
             @endforeach
         </flux:select>
+
+        <flux:callout variant="warning" icon="information-circle" heading="{{ __('pages.parcels.form.extras.recipient_warning') }}"/>
     @endif
+
 
     <flux:textarea wire:model="notes" label="{{ __('app.notes') }}"/>
 

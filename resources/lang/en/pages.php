@@ -12,6 +12,9 @@ return [
         'form' => [
             'title' => 'Parcel details',
             'subtitle' => 'Fill in the information below.',
+            'extras' => [
+                'recipient_warning' => 'Only choose a recipient if the parcel will be sent separately, and not on a pallet!',
+            ]
         ],
     ],
     'pallets' => [
@@ -60,6 +63,9 @@ return [
         'form' => [
             'title' => 'User details',
             'subtitle' => 'Fill in the information below.',
+            'extras' => [
+                'password_warning' => 'Only enter a password in the field if you want to change the current one!',
+            ]
         ],
     ],
     'settings' => [

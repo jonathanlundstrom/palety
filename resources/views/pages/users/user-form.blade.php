@@ -119,12 +119,13 @@ new class extends FormComponent {
 
     @if ($this->formStatus() === FormStatus::EDITING)
         <flux:callout variant="warning" icon="information-circle"
-                      heading="Only enter a password in the field if you want to change the current one!"/>
+                      heading="{{ __('pages.users.form.extras.password_warning') }}"/>
     @endif
 
     <flux:select variant="listbox" wire:model.live="locale" label="{{ __('app.locale.label') }}">
+        <flux:select.option value="sv">{{ __('app.locales.sv') }}</flux:select.option>
         <flux:select.option value="en">{{ __('app.locales.en') }}</flux:select.option>
-        <flux:select.option value="ua">{{ __('app.locales.ua') }}</flux:select.option>
+        <flux:select.option value="uk">{{ __('app.locales.uk') }}</flux:select.option>
     </flux:select>
 
     <flux:select variant="listbox" wire:model.live="timezone" label="{{ __('app.timezone.label') }}" searchable>
