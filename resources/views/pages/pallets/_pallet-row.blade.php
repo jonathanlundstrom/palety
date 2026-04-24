@@ -25,16 +25,22 @@
         </flux:badge>
     </flux:table.cell>
     <flux:table.cell>
-        @foreach ($item->displayContent() as $type)
-            <flux:badge size="sm" inset="top bottom" color="zinc">
-                {{ $type->{Content::label()} }}
-            </flux:badge>
-        @endforeach
+        @php $content = $item->displayContent(); @endphp
+        <div class="flex flex-wrap items-center gap-1">
+            @foreach ($content->take(3) as $type)
+                <flux:badge size="sm" inset="top bottom" color="zinc">
+                    {{ $type->{Content::label()} }}
+                </flux:badge>
+            @endforeach
+            @if ($content->count() > 3)
+                <flux:text size="sm" class="ml-1">+{{ $content->count() - 3 }}</flux:text>
+            @endif
+        </div>
     </flux:table.cell>
     <flux:table.cell>
         {{ $item->getWeight() }} {{ __('app.weight.unit') }}
         @if ($item->type === PalletType::CALCULATED)
-            <flux:badge inset="top bottom" size="sm" class="rounded-full" color="zinc">
+            <flux:badge inset="top bottom" size="sm" color="zinc">
                 {{ $item->parcels->count() }}
             </flux:badge>
         @endif

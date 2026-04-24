@@ -27,11 +27,17 @@
         @endif
     </flux:table.cell>
     <flux:table.cell>
-        @foreach ($item->content as $type)
-            <flux:badge size="sm" inset="top bottom" color="zinc">
-                {{ $type->{Content::label()} }}
-            </flux:badge>
-        @endforeach
+        @php $content = $item->content; @endphp
+        <div class="flex flex-wrap items-center gap-1">
+            @foreach ($content->take(3) as $type)
+                <flux:badge size="sm" inset="top bottom" color="zinc">
+                    {{ $type->{Content::label()} }}
+                </flux:badge>
+            @endforeach
+            @if ($content->count() > 3)
+                <flux:text size="sm" class="ml-1">+{{ $content->count() - 3 }}</flux:text>
+            @endif
+        </div>
     </flux:table.cell>
     <flux:table.cell>{{ $item->weight }} {{ __('app.weight.unit') }}</flux:table.cell>
     <flux:table.cell>{{ $item->notes ?: '--' }}</flux:table.cell>
