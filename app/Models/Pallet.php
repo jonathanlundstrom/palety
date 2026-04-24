@@ -3,14 +3,16 @@
 namespace App\Models;
 
 use App\Enumerables\Availability;
-use App\Enumerables\ImportCategory;
+use App\Enumerables\PalletStatus;
 use App\Enumerables\PalletType;
 use App\Models\Traits\ModelHelpers;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 
 class Pallet extends Model {
     use ModelHelpers, HasFactory;
@@ -31,9 +33,7 @@ class Pallet extends Model {
         'user_id',
         'recipient_id',
         'type',
-        'category',
-        'label_en',
-        'label_ua',
+        'status',
         'weight',
         'notes',
     ];
@@ -45,7 +45,7 @@ class Pallet extends Model {
      */
     protected $casts = [
         'type' => PalletType::class,
-        'category' => ImportCategory::class,
+        'status' => PalletStatus::class,
     ];
 
     /**
@@ -78,13 +78,36 @@ class Pallet extends Model {
     }
 
     /**
-     * Get the manual content description for the pallet.
+     * Get the content associated with the pallet.
+     */
+    public function content(): BelongsToMany {
+        return $this->belongsToMany(Content::class);
+    }
+
+    /**
+     * Get unique content items for display, sourced from the direct relation
+     * for manual pallets, or aggregated from parcels for calculated pallets.
+     * @return Collection
+     */
+    public function displayContent(): Collection {
+        if ($this->type === PalletType::CALCULATED) {
+            return $this->parcels
+                ->flatMap(fn($parcel) => $parcel->content)
+                ->unique('id')
+                ->values();
+        }
+
+        return $this->content;
+    }
+
+    /**
+     * Get a comma-separated list of pallet content for display.
      * @param string|null $locale
      * @return string
      */
-    public function getLabel(?string $locale = null): string {
-        $field = $locale !== null ? 'label_'.$locale : 'label_'.config('app.locale');
-        return $this->{$field};
+    public function contentList(?string $locale = null): string {
+        $field = $locale !== null ? 'label_'.$locale : Content::label();
+        return implode(', ', $this->displayContent()->pluck($field)->toArray());
     }
 
     /**
@@ -110,7 +133,7 @@ class Pallet extends Model {
     }
 
     /**
-     * Scope to pallets that have been sent on a transport.
+     * Scope to pallets that have been sent on transport.
      */
     public function scopeSent(Builder $query): Builder {
         return $query->whereIn('transport_id', Transport::whereNotNull('sent_at')->select('id'));
@@ -130,7 +153,7 @@ class Pallet extends Model {
                 ->pluck('category')
                 ->toArray();
         } else {
-            return [$this->category];
+            return $this->content->pluck('category')->unique()->toArray();
         }
     }
 }

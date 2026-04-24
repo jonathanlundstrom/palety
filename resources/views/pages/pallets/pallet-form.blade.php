@@ -1,11 +1,12 @@
 <?php
 
 use App\Enumerables\FormStatus;
-use App\Enumerables\ImportCategory;
+use App\Enumerables\PalletStatus;
 use App\Enumerables\PalletType;
 use App\Enumerables\Availability;
 use App\Events\PalletSaved;
 use App\Livewire\Components\FormComponent;
+use App\Models\Content;
 use App\Models\Pallet;
 use App\Models\Parcel;
 use App\Models\Recipient;
@@ -22,7 +23,7 @@ new class extends FormComponent {
     #[On('edit-resource')]
     public function edit(int $id, string $class): void {
         parent::edit($id, $class);
-        $this->scanned_items = $this->resource->parcels->all();
+        $this->scanned_parcels = $this->resource->parcels->all();
     }
 
     #[On('scan-result')]
@@ -32,8 +33,8 @@ new class extends FormComponent {
                 $abstract = app()->make($payload['class']);
                 $object = $abstract::find($payload['id']);
                 if ($object->getAvailability() === Availability::AVAILABLE) {
-                    if (!in_array($object->id, array_column($this->scanned_items, 'id'), true)) {
-                        $this->scanned_items[] = $object;
+                    if (!in_array($object->id, array_column($this->scanned_parcels, 'id'), true)) {
+                        $this->scanned_parcels[] = $object;
                         Flux::toast(variant: 'success', text: __('toasts.parcel.scanned'));
                     }
                 } else {
@@ -53,8 +54,8 @@ new class extends FormComponent {
      */
     #[On('undo-scan')]
     public function undoScan(int $id, string $class): void {
-        $this->scanned_items = array_filter(
-            $this->scanned_items,
+        $this->scanned_parcels = array_filter(
+            $this->scanned_parcels,
             fn($item) => $item->id !== $id
         );
     }
@@ -62,20 +63,17 @@ new class extends FormComponent {
     #[Validate('required')]
     public string $type = PalletType::CALCULATED->name;
 
-    #[Validate('required_if:type,' . PalletType::MANUAL_PALLET->name)]
-    public string $category;
+    #[Validate('required')]
+    public string $status = PalletStatus::DRAFT->name;
 
     #[Validate('required|integer')]
     public int $recipient_id;
 
     #[Validate('required_if:type,' . PalletType::CALCULATED->name . '|array')]
-    public array $scanned_items = [];
+    public array $scanned_parcels = [];
 
-    #[Validate('required_if:type,' . PalletType::MANUAL_PALLET->name)]
-    public string $label_en;
-
-    #[Validate('required_if:type,' . PalletType::MANUAL_PALLET->name)]
-    public string $label_ua;
+    #[Validate('required_if:type,' . PalletType::MANUAL_PALLET->name . '|array')]
+    public array $content = [];
 
     #[Validate('required_if:type,' . PalletType::MANUAL_PALLET->name)]
     public string $weight;
@@ -86,6 +84,14 @@ new class extends FormComponent {
     #[Computed]
     protected function isCalculated(): bool {
         return $this->type === PalletType::CALCULATED->name;
+    }
+
+    #[Computed]
+    protected function contentItems(): Collection {
+        return Content::query()
+            ->select('id', Content::label())
+            ->orderBy(Content::label())
+            ->get();
     }
 
     #[Computed]
@@ -129,20 +135,27 @@ new class extends FormComponent {
         try {
             $is_creating = $this->formStatus() === FormStatus::CREATING;
             $previous_weight = $is_creating ? null : $this->resource->getWeight();
+            $previous_status = $is_creating ? null : $this->resource->status;
 
-            DB::transaction(function () use ($validated, $is_creating, $previous_weight) {
+            DB::transaction(function () use ($validated, $is_creating, $previous_weight, $previous_status) {
                 $pallet = match ($this->formStatus()) {
                     FormStatus::EDITING => $this->updatePallet($validated),
                     FormStatus::CREATING => $this->createPallet($validated),
                 };
 
                 if ($this->isCalculated()) {
-                    $pallet->parcels()->saveMany($this->scanned_items);
+                    $pallet->content()->detach();
+                    $pallet->parcels()->saveMany($this->scanned_parcels);
                     $pallet->refresh(); // Refresh model after saving relations.
+                } else {
+                    $pallet->content()->sync($this->content);
                 }
 
-                // Fire event if created or on weight change:
-                if ($is_creating || $pallet->getWeight() != $previous_weight) {
+                $created_as_completed = $is_creating && $pallet->status === PalletStatus::COMPLETED;
+                $status_changed_to_completed = !$is_creating && $previous_status === PalletStatus::DRAFT && $pallet->status === PalletStatus::COMPLETED;
+                $weight_changed_while_completed = !$is_creating && $pallet->status === PalletStatus::COMPLETED && $pallet->getWeight() != $previous_weight;
+
+                if ($created_as_completed || $status_changed_to_completed || $weight_changed_while_completed) {
                     event(new PalletSaved($pallet));
                 }
             });
@@ -168,6 +181,12 @@ new class extends FormComponent {
         @endforeach
     </flux:select>
 
+    <flux:select variant="listbox" wire:model.live="status" label="{{ __('app.status') }}">
+        @foreach (PalletStatus::cases() as $case)
+            <flux:select.option :value="$case->name">{{ $case->label() }}</flux:select.option>
+        @endforeach
+    </flux:select>
+
     <flux:select variant="listbox" wire:model.live="recipient_id" label="{{ __('app.recipient') }}">
         @foreach ($this->recipients as $recipient)
             <flux:select.option value="{{ $recipient->id }}">{{ $recipient->name }}</flux:select.option>
@@ -176,21 +195,18 @@ new class extends FormComponent {
 
     @if ($this->isCalculated)
         <flux:field>
-            <flux:select wire:model.live="scanned_items" class="hidden" multiple></flux:select>
-            <livewire:fields.scanner-field :items="$scanned_items" buttonText="{{ __('app.scan.scan_parcels') }}" label="{{ __('app.scanned_parcels') }}"
-                                    :key="'parcels-'.count($scanned_items)"/>
-            <flux:error name="scanned_items"/>
+            <flux:select wire:model.live="scanned_parcels" class="hidden" multiple></flux:select>
+            <livewire:fields.scanner-field :items="$scanned_parcels" buttonText="{{ __('app.scan.scan_parcels') }}" label="{{ __('app.scanned_parcels') }}"
+                                    :key="'parcels-'.count($scanned_parcels)"/>
+            <flux:error name="scanned_parcels"/>
         </flux:field>
     @else
-        <flux:select variant="listbox" wire:model.live="category" label="{{ trans_choice('app.category.label', 1) }}"
-                     placeholder="{{ __('app.category.select') }}">
-            @foreach (ImportCategory::cases() as $case)
-                <flux:select.option :value="$case->name">{{ $case->label() }}</flux:select.option>
+        <flux:pillbox variant="combobox" wire:model.live="content" label="{{ __('app.content.label') }}"
+                      placeholder="{{ __('app.content.select') }}" multiple>
+            @foreach ($this->contentItems as $item)
+                <flux:select.option value="{{ $item->id }}">{{ $item->{Content::label()} }}</flux:select.option>
             @endforeach
-        </flux:select>
-
-        <flux:input wire:model="label_en" label="{{ __('app.label_en') }}"/>
-        <flux:input wire:model="label_ua" label="{{ __('app.label_ua') }}"/>
+        </flux:pillbox>
 
         <flux:field>
             <flux:label>{{ __('app.weight.label') }}</flux:label>

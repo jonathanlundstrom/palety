@@ -45,8 +45,9 @@ new class extends TableComponent {
     #[Computed]
     public function items(): LengthAwarePaginator {
         return Pallet::query()
+            ->with(['content', 'recipient', 'parcels.content'])
             ->when($this->q, fn($query) => $query->whereAny(
-                ['label_en', 'label_ua', 'weight', 'notes'], 'ILIKE', "%{$this->q}%")
+                ['weight', 'notes'], 'ILIKE', "%{$this->q}%")
             )
             ->when($this->type, fn($query) => $query->where('type', $this->type))
             ->when($this->recipient_id, fn($query) => $query->where('recipient_id', $this->recipient_id))
@@ -133,10 +134,11 @@ new class extends TableComponent {
                                wire:click="sort('id')">{{ __('app.id') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'type'" :direction="$sortDirection"
                                wire:click="sort('type')">{{ __('app.type') }}</flux:table.column>
+            <flux:table.column sortable :sorted="$sortBy === 'status'" :direction="$sortDirection"
+                               wire:click="sort('status')">{{ __('app.status') }}</flux:table.column>
             <flux:table.column>{{ __('app.availability') }}</flux:table.column>
-            <flux:table.column>{{ __('app.label') }}</flux:table.column>
             <flux:table.column>{{ __('app.recipient') }}</flux:table.column>
-            <flux:table.column>{{ trans_choice('app.category.label', 2) }}</flux:table.column>
+            <flux:table.column>{{ __('app.content.label') }}</flux:table.column>
             <flux:table.column>{{ __('app.weight.label') }}</flux:table.column>
             <flux:table.column></flux:table.column>
         </flux:table.columns>

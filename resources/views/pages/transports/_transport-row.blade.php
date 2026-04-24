@@ -13,7 +13,7 @@
             {{ $item->status->label() }}
         </flux:badge>
     </flux:table.cell>
-    <flux:table.cell>{{ $item->notes ?? '–' }}</flux:table.cell>
+    <flux:table.cell>{{ $item->notes ?: '––' }}</flux:table.cell>
     <flux:table.cell>
         <x-item-actions :form="$this->modalName" :object="$item">
             <x-actions.packing-list-button :object="$item"/>

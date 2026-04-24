@@ -33,8 +33,8 @@
                                     <tr>
                                         <td>Pallet</td>
                                         <td>{{ $pallet->id }}</td>
-                                        <td>{{ $pallet->label_en }}</td>
-                                        <td>{{ $pallet->label_ua }}</td>
+                                        <td>{{ $pallet->contentList('en') }}</td>
+                                        <td>{{ $pallet->contentList('ua') }}</td>
                                         <td>{{ $pallet->getWeight() }} {{ __('app.weight.unit') }}</td>
                                     </tr>
                                 @else

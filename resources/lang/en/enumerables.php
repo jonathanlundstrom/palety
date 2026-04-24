@@ -2,6 +2,7 @@
 
 use App\Enumerables\DeliveryType;
 use App\Enumerables\ImportCategory;
+use App\Enumerables\PalletStatus;
 use App\Enumerables\PalletType;
 use App\Enumerables\Availability;
 use App\Enumerables\ParcelType;
@@ -46,6 +47,9 @@ return [
     TransportStatus::IN_PROGRESS->name => 'In progress',
     TransportStatus::SENT->name => 'Has been sent',
     TransportStatus::DELIVERED->name => 'Delivered',
+
+    PalletStatus::DRAFT->name => 'Draft',
+    PalletStatus::COMPLETED->name => 'Completed',
 
     UserRole::ADMIN->name => 'Admin',
     UserRole::USER->name => 'User',

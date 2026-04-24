@@ -72,7 +72,7 @@ new class extends Component {
                         <div class="flex gap-3 items-center">
                             <flux:badge color="zinc" size="sm">#{{ $item->id }}</flux:badge>
                             <div class="flex-1">
-                                <flux:text class="flex-1">{{ $item->contentList() }}</flux:text>
+                                <flux:text class="flex-1">{{ $item->contentList() }} – {{ $item->getWeight() }} {{ __('app.weight.unit') }}</flux:text>
                             </div>
                             <flux:button variant="ghost" icon="trash" color="red" size="xs"
                                          wire:click="undo({{ $item->id }}, '{{ addslashes($item::class) }}')"/>
@@ -84,8 +84,7 @@ new class extends Component {
                             <flux:badge color="zinc" size="sm">#{{ $item->id }}</flux:badge>
                             <div class="flex-1">
                                 <flux:text class="flex-1">
-                                    {{ $item->{$item::label()} ?: 'N/A' }}
-                                    ({{ $item->getWeight() }} {{ __('app.weight.unit') }})
+                                    {{ $item->contentList() ?: 'N/A' }} – {{ $item->getWeight() }} {{ __('app.weight.unit') }}
                                 </flux:text>
                             </div>
                             <flux:button variant="ghost" icon="trash" color="red" size="xs"

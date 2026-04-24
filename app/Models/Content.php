@@ -46,4 +46,12 @@ class Content extends Model {
     public function parcels(): BelongsToMany {
         return $this->belongsToMany(Parcel::class);
     }
+
+    /**
+     * Get the pallets associated with the content.
+     * @return BelongsToMany
+     */
+    public function pallets(): BelongsToMany {
+        return $this->belongsToMany(Pallet::class);
+    }
 }

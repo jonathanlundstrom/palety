@@ -1,5 +1,6 @@
 <?php
     use App\Enumerables\PalletType;
+    use App\Models\Content;
 ?>
 <flux:table.row class="hidden lg:table-row" key="row-{{ $item->id }}">
     <flux:table.cell>{{ $item->id }}</flux:table.cell>
@@ -9,20 +10,24 @@
         </flux:badge>
     </flux:table.cell>
     <flux:table.cell>
+        <flux:badge size="sm" inset="top bottom" color="{{ $item->status->color() }}">
+            {{ $item->status->label() }}
+        </flux:badge>
+    </flux:table.cell>
+    <flux:table.cell>
         <flux:badge size="sm" inset="top bottom" color="{{ $item->getAvailability()->color() }}">
             {{ $item->getAvailability()->label() }}
         </flux:badge>
     </flux:table.cell>
-    <flux:table.cell>{{ $item->{$item::label()} ?? '–' }}</flux:table.cell>
     <flux:table.cell>
         <flux:badge size="sm" inset="top bottom" color="zinc">
             {{ $item->recipient->name }}
         </flux:badge>
     </flux:table.cell>
     <flux:table.cell>
-        @foreach ($item->getCategories() as $category)
+        @foreach ($item->displayContent() as $type)
             <flux:badge size="sm" inset="top bottom" color="zinc">
-                {{ $category->label() }}
+                {{ $type->{Content::label()} }}
             </flux:badge>
         @endforeach
     </flux:table.cell>

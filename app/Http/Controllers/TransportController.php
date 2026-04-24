@@ -67,7 +67,7 @@ class TransportController extends Controller {
      */
     private function buildLoadedByRecipient(Transport $transport): array {
         $pallets = $transport->pallets()
-            ->with(['recipient', 'parcels'])
+            ->with(['recipient', 'content', 'parcels.content'])
             ->get()
             ->groupBy('recipient_id');
 
