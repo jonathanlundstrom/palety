@@ -32,7 +32,7 @@ new class extends TableComponent {
     #[Computed]
     public function items(): LengthAwarePaginator {
         return Content::query()
-            ->withCount('parcels')
+            ->withCount(['parcels', 'pallets'])
             ->when($this->q, fn($query) => $query->whereAny(
                 ['label_en', 'label_ua'], 'ILIKE', "%{$this->q}%")
             )

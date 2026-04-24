@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enumerables\ImportCategory;
 use App\Models\Traits\ModelHelpers;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -53,5 +54,14 @@ class Content extends Model {
      */
     public function pallets(): BelongsToMany {
         return $this->belongsToMany(Pallet::class);
+    }
+
+    /**
+     * Get the total number of parcels and pallets using this content.
+     */
+    protected function usageCount(): Attribute {
+        return Attribute::make(
+            get: fn () => ($this->parcels_count ?? 0) + ($this->pallets_count ?? 0),
+        );
     }
 }

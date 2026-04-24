@@ -29,15 +29,31 @@ new class extends Component {
             fn ($m) => [$m => collect($categories)->mapWithKeys(fn ($c) => [$c->name => 0.0])->all()]
         )->all();
 
-        // MANUAL pallets: direct weight + direct category
+        // MANUAL pallets: weight split evenly across distinct content categories via pivot
         Pallet::query()
-            ->whereYear('created_at', $this->year)
-            ->where('type', PalletType::MANUAL_PALLET)
-            ->selectRaw('EXTRACT(MONTH FROM created_at)::int AS month, category, SUM(weight) AS total')
-            ->groupByRaw('EXTRACT(MONTH FROM created_at), category')
+            ->join('content_pallet as cp', 'cp.pallet_id', '=', 'pallets.id')
+            ->join('contents as c', 'c.id', '=', 'cp.content_id')
+            ->joinSub(
+                function ($query): void {
+                    $query->from('content_pallet as cp2')
+                        ->join('contents as c2', 'c2.id', '=', 'cp2.content_id')
+                        ->selectRaw('cp2.pallet_id, COUNT(DISTINCT c2.category) AS cnt')
+                        ->groupBy('cp2.pallet_id');
+                },
+                'cat_count',
+                'cat_count.pallet_id',
+                '=',
+                'pallets.id'
+            )
+            ->whereYear('pallets.created_at', $this->year)
+            ->where('pallets.type', PalletType::MANUAL_PALLET)
+            ->selectRaw('EXTRACT(MONTH FROM pallets.created_at)::int AS month, c.category, SUM(pallets.weight / NULLIF(cat_count.cnt::float, 0)) AS total')
+            ->groupByRaw('EXTRACT(MONTH FROM pallets.created_at), c.category')
             ->get()
             ->each(function ($row) use (&$data): void {
-                $data[$row->month][$row->category->name] = (float) $row->total;
+                if (isset($data[$row->month][$row->category])) {
+                    $data[$row->month][$row->category] += (float) $row->total;
+                }
             });
 
         // Loose parcels + parcels on CALCULATED pallets: weight split evenly across
