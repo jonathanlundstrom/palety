@@ -41,7 +41,7 @@ new class extends Component {
             ->groupByRaw('EXTRACT(MONTH FROM created_at)')
             ->pluck('total', 'month');
 
-        $months = $this->year === now()->year ? now()->month : 12;
+        $months = $this->year === now()->year ? min(now()->month + 1, 12) : 12;
         return collect(range(1, $months))
             ->map(fn ($m) => [
                 'month' => now()->setMonth($m)->format('M'),

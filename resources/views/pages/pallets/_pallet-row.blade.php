@@ -34,7 +34,7 @@
     <flux:table.cell>
         {{ $item->getWeight() }} {{ __('app.weight.unit') }}
         @if ($item->type === PalletType::CALCULATED)
-            <flux:badge as="button" size="sm">
+            <flux:badge inset="top bottom" size="sm" class="rounded-full" color="zinc">
                 {{ $item->parcels->count() }}
             </flux:badge>
         @endif

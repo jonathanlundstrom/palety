@@ -75,7 +75,7 @@ new class extends Component {
             ->groupByRaw('EXTRACT(MONTH FROM created_at)')
             ->pluck('count', 'month');
 
-        $months = $this->year === now()->year ? now()->month : 12;
+        $months = $this->year === now()->year ? min(now()->month + 1, 12) : 12;
 
         return collect(range(1, $months))
             ->map(fn ($m) => (int) $counts->get($m, 0))

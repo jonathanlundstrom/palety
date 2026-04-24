@@ -21,7 +21,7 @@ new class extends Component {
      */
     #[Computed]
     public function monthlyData(): array {
-        $months = $this->year === now()->year ? now()->month : 12;
+        $months = $this->year === now()->year ? min(now()->month + 1, 12) : 12;
         $categoryKeys = array_keys(ImportCategory::chartCategories());
 
         // Initialise a zeroed structure: [month => [category => 0.0]]
