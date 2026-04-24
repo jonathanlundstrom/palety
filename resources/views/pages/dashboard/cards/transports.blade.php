@@ -79,6 +79,8 @@ new class extends Component {
 
         return collect(range(1, $months))
             ->map(fn ($m) => (int) $counts->get($m, 0))
+            ->skipUntil(fn ($count) => $count > 0)
+            ->values()
             ->all();
     }
 

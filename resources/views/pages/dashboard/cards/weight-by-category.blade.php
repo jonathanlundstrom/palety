@@ -22,21 +22,25 @@ new class extends Component {
     #[Computed]
     public function monthlyData(): array {
         $months = $this->year === now()->year ? now()->month : 12;
-        $categories = ImportCategory::cases();
+        $categoryKeys = array_keys(ImportCategory::chartCategories());
 
         // Initialise a zeroed structure: [month => [category => 0.0]]
         $data = collect(range(1, $months))->mapWithKeys(
-            fn ($m) => [$m => collect($categories)->mapWithKeys(fn ($c) => [$c->name => 0.0])->all()]
+            fn ($m) => [$m => array_fill_keys($categoryKeys, 0.0)]
         )->all();
 
         // MANUAL pallets: weight split evenly across distinct content categories via pivot
         Pallet::query()
             ->join('content_pallet as cp', 'cp.pallet_id', '=', 'pallets.id')
-            ->join('contents as c', 'c.id', '=', 'cp.content_id')
+            ->join('contents as c', function ($join): void {
+                $join->on('c.id', '=', 'cp.content_id')->whereNull('c.deleted_at');
+            })
             ->joinSub(
                 function ($query): void {
                     $query->from('content_pallet as cp2')
-                        ->join('contents as c2', 'c2.id', '=', 'cp2.content_id')
+                        ->join('contents as c2', function ($join): void {
+                            $join->on('c2.id', '=', 'cp2.content_id')->whereNull('c2.deleted_at');
+                        })
                         ->selectRaw('cp2.pallet_id, COUNT(DISTINCT c2.category) AS cnt')
                         ->groupBy('cp2.pallet_id');
                 },
@@ -61,11 +65,15 @@ new class extends Component {
         // since they cannot be attributed to a category.
         Parcel::query()
             ->join('content_parcel as cp', 'cp.parcel_id', '=', 'parcels.id')
-            ->join('contents as c', 'c.id', '=', 'cp.content_id')
+            ->join('contents as c', function ($join): void {
+                $join->on('c.id', '=', 'cp.content_id')->whereNull('c.deleted_at');
+            })
             ->joinSub(
                 function ($query): void {
                     $query->from('content_parcel as cp2')
-                        ->join('contents as c2', 'c2.id', '=', 'cp2.content_id')
+                        ->join('contents as c2', function ($join): void {
+                            $join->on('c2.id', '=', 'cp2.content_id')->whereNull('c2.deleted_at');
+                        })
                         ->selectRaw('cp2.parcel_id, COUNT(DISTINCT c2.category) AS cnt')
                         ->groupBy('cp2.parcel_id');
                 },
@@ -91,6 +99,7 @@ new class extends Component {
 
         // Format for the chart: [['month' => 'Jan', 'FOOD' => 100.0, ...], ...]
         return collect($data)
+            ->skipUntil(fn ($categories) => array_sum($categories) > 0.0)
             ->map(fn ($categories, $m) => array_merge(
                 ['month' => now()->setMonth($m)->format('M')],
                 array_map(fn ($v) => round($v, 1), $categories),
@@ -101,16 +110,7 @@ new class extends Component {
 
     #[Computed]
     public function categoryColors(): array {
-        return [
-            'FOOD' => ['bar' => 'text-lime-400'],
-            'SANITARY_HYGIENE' => ['bar' => 'text-cyan-400'],
-            'MEDICAL' => ['bar' => 'text-red-400'],
-            'CLOTHING' => ['bar' => 'text-emerald-400'],
-            'TECHNICAL' => ['bar' => 'text-purple-400'],
-            'VEHICLES' => ['bar' => 'text-orange-400'],
-            'FUEL' => ['bar' => 'text-yellow-400'],
-            'OTHER' => ['bar' => 'text-zinc-400'],
-        ];
+        return ImportCategory::chartCategories();
     }
 
 }
@@ -120,10 +120,10 @@ new class extends Component {
         <flux:chart :value="$this->monthlyData" class="h-128">
             <flux:chart.svg>
                 <flux:chart.group stacked>
-                    @foreach (ImportCategory::cases() as $category)
+                    @foreach ($this->categoryColors as $name => $colors)
                         <flux:chart.bar
-                            field="{{ $category->name }}"
-                            class="{{ $this->categoryColors[$category->name]['bar'] }}"
+                            field="{{ $name }}"
+                            class="{{ $colors['bar'] }}"
                             radius="2"
                         />
                     @endforeach
@@ -144,10 +144,10 @@ new class extends Component {
 
             <flux:chart.tooltip>
                 <flux:chart.tooltip.heading field="month"/>
-                @foreach (ImportCategory::cases() as $category)
+                @foreach (array_keys($this->categoryColors) as $name)
                     <flux:chart.tooltip.value
-                        field="{{ $category->name }}"
-                        :label="$category->label()"
+                        field="{{ $name }}"
+                        :label="ImportCategory::from($name)->label()"
                         :format="['style' => 'unit', 'unit' => 'kilogram', 'unitDisplay' => 'short']"
                     />
                 @endforeach

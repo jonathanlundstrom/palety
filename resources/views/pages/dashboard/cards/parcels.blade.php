@@ -55,6 +55,8 @@ new class extends Component {
         $months = $this->year === now()->year ? now()->month : 12;
         return collect(range(1, $months))
             ->map(fn ($m) => (int) $counts->get($m, 0))
+            ->skipUntil(fn ($count) => $count > 0)
+            ->values()
             ->all();
     }
 

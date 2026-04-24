@@ -52,6 +52,7 @@ new class extends Component {
                     1
                 ),
             ])
+            ->skipUntil(fn ($row) => $row['weight'] > 0.0)
             ->values()
             ->all();
     }
