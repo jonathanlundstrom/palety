@@ -72,7 +72,7 @@ class TransportController extends Controller {
             ->groupBy('recipient_id');
 
         $parcels = $transport->parcels()
-            ->with('recipient')
+            ->with(['recipient', 'content'])
             ->get()
             ->groupBy('recipient_id');
 
@@ -95,12 +95,16 @@ class TransportController extends Controller {
         }
 
         foreach ($pallets as $recipientId => $items) {
-            $loadedGoods[$recipientId]['pallets'] = $items;
+            $loadedGoods[$recipientId]['pallets'] = $items->sortBy(
+                fn ($pallet) => $pallet->displayContent()->first()->label_en ?? ''
+            )->values();
             $loadedGoods[$recipientId]['weight'] += $items->sum(fn ($pallet) => $pallet->getWeight());
         }
 
         foreach ($parcels as $recipientId => $items) {
-            $loadedGoods[$recipientId]['parcels'] = $items;
+            $loadedGoods[$recipientId]['parcels'] = $items->sortBy(
+                fn ($parcel) => $parcel->content->first()->label_en ?? ''
+            )->values();
             $loadedGoods[$recipientId]['weight'] += $items->sum(fn ($parcel) => $parcel->getWeight());
         }
 

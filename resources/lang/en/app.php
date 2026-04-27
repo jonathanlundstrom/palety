@@ -75,6 +75,7 @@ return [
         'unit' => 'kg',
     ],
     'weight_per_month' => 'Kilos packed per month',
+    'total_weight' => 'Total weight',
     'month_abbr' => 'mo',
     'usage' => [
         'label' => 'Usage',
@@ -94,6 +95,8 @@ return [
     'via_pallet' => 'via pallet',
     'statistics' => 'Statistics',
     'sent_count' => ':sent out of :total sent',
+    'subrecipient_of' => 'Subrecipient of :name',
+    'packing_list_for_transport' => 'Packing list for transport #:id',
 
     // Available locales:
     'locales' => [
