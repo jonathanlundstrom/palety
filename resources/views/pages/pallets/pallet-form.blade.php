@@ -36,6 +36,8 @@ new class extends FormComponent {
                     if (!in_array($object->id, array_column($this->scanned_parcels, 'id'), true)) {
                         $this->scanned_parcels[] = $object;
                         Flux::toast(variant: 'success', text: __('toasts.parcel.scanned'));
+                    } else {
+                        Flux::toast(variant: 'warning', text: __('toasts.parcel.already_scanned'));
                     }
                 } else {
                     Flux::toast(variant: 'danger', text: __('toasts.parcel.loaded'));
