@@ -48,7 +48,7 @@ new class extends TableComponent {
 }
 
 ?>
-<section>
+<section wire:poll.60s>
     <header class="mb-6">
         <flux:heading size="xl" level="1">{{ __('pages.content.headline') }}</flux:heading>
         <flux:text class="mb-6 mt-2 text-base">{{ __('pages.content.subtitle') }}</flux:text>

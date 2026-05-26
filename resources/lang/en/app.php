@@ -89,6 +89,11 @@ return [
         'scan_parcels' => 'Scan parcels',
         'scan_pallets' => 'Scan pallets',
     ],
+    'add_modal' => [
+        'title' => 'Manually add items',
+        'subtitle' => 'Use the field below to search for the items that you want to add.',
+        'placeholder' => 'Find items by their ID',
+    ],
     'no_items' => 'No items found',
     'parcel_loaded' => 'This parcel has already been loaded on a pallet or transport. Only make changes if you know what you\'re doing!',
     'pallet_loaded' => 'This pallet has already been loaded on a transport. Only make changes if you know what you\'re doing!',

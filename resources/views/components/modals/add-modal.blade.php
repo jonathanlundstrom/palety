@@ -85,15 +85,15 @@ new class extends Component {
 <flux:modal name="add-modal" class="w-xs sm:w-10/12 md:w-128" x-on:close="$wire.dispatchTo('modals.add-modal', 'reset-modal')">
     <div class="space-y-6">
         <div>
-            <flux:heading size="lg">Manually add resources</flux:heading>
-            <flux:text class="mt-2">Use the field below to search for the resources that you want to add.</flux:text>
+            <flux:heading size="lg">{{ __('app.add_modal.title') }}</flux:heading>
+            <flux:text class="mt-2">{{ __('app.add_modal.subtitle') }}</flux:text>
         </div>
 
         <form wire:submit="onSubmit" class="space-y-6">
             <flux:field>
                 <flux:pillbox wire:model.live="resources" variant="combobox" multiple :filter="false">
                     <x-slot name="input">
-                        <flux:pillbox.input wire:model.live="search" placeholder="Find resource by ID"/>
+                        <flux:pillbox.input wire:model.live="search" placeholder="{{ __('app.add_modal.placeholder') }}"/>
                     </x-slot>
 
                     @foreach ($this->items as $item)
