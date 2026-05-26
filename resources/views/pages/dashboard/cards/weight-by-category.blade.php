@@ -115,7 +115,7 @@ new class extends Component {
 
 }
 ?>
-<flux:card class="col-span-8 overflow-hidden">
+<flux:card class="col-span-12 lg:col-span-8 overflow-hidden">
     <div class="pt-4">
         <flux:chart :value="$this->monthlyData" class="h-128">
             <flux:chart.svg>
