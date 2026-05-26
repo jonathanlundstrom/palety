@@ -1,10 +1,5 @@
 <?php
 
-use App\Models\Content;
-use App\Models\Pallet;
-use App\Models\Parcel;
-use App\Models\Recipient;
-use App\Models\Transport;
 use Flux\Flux;
 use hisorange\BrowserDetect\Facade as Browser;
 use Illuminate\Database\Eloquent\Model;
@@ -52,22 +47,15 @@ new class extends Component {
      */
     public function onSubmit(): void {
         $this->validate(); // For good measure...
-
-        $toast_base = match ($this->resource::class) {
-            Recipient::class => 'toasts.recipient',
-            Transport::class => 'toasts.transport',
-            Content::class => 'toasts.content',
-            Parcel::class => 'toasts.parcel',
-            Pallet::class => 'toasts.pallet',
-        };
+        $resource_type = strtolower(class_basename($this->resource));
 
         try {
             if ($this->resource->delete()) {
-                Flux::toast(variant: 'success', text: __("{$toast_base}.delete.success"));
+                Flux::toast(variant: 'success', text: __("toasts.{$resource_type}.delete.success"));
                 $this->dispatch('items-updated');
                 $this->dispatch('modal-close');
             } else {
-                throw new Exception("{$toast_base}.delete.failed");
+                throw new Exception("toasts.{$resource_type}.delete.failed");
             }
         } catch (Exception $e) {
             Flux::toast(variant: 'danger', text: __($e->getMessage()));

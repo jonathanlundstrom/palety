@@ -19,16 +19,16 @@ new class extends FormComponent {
     #[On('edit-resource')]
     public function edit(int $id, string $class): void {
         parent::edit($id, $class);
-        $this->scanned_pallets = $this->resource->pallets->all();
-        $this->scanned_parcels = $this->resource->parcels->all();
+        $this->linked_pallets = $this->resource->pallets->all();
+        $this->linked_parcels = $this->resource->parcels->all();
     }
 
     #[On('scan-result')]
     public function onScanResult(?array $payload): void {
         if (!is_null($payload) && in_array($payload['class'], [Parcel::class, Pallet::class])) {
             [$target, $toast_key] = match ($payload['class']) {
-                Parcel::class => ['scanned_parcels', 'toasts.parcel'],
-                Pallet::class => ['scanned_pallets', 'toasts.pallet'],
+                Parcel::class => ['linked_parcels', 'toasts.parcel'],
+                Pallet::class => ['linked_pallets', 'toasts.pallet'],
             };
 
             try {
@@ -41,13 +41,13 @@ new class extends FormComponent {
                     if (!in_array($object->id, array_column($this->{$target}, 'id'), true)) {
                         if ($object->recipient) {
                             $this->{$target}[] = $object;
-                            Flux::toast(variant: 'success', text: __($toast_key . '.scanned'));
+                            Flux::toast(variant: 'success', text: __($toast_key . '.added'));
                             $this->dispatch('vibrate-success');
                         } else {
                             Flux::toast(variant: 'warning', text: __($toast_key . '.no_recipient'));
                         }
                     } else {
-                        Flux::toast(variant: 'warning', text: __($toast_key . '.already_scanned'));
+                        Flux::toast(variant: 'warning', text: __($toast_key . '.already_added'));
                     }
                 } else {
                     Flux::toast(variant: 'danger', text: __($toast_key . '.loaded'));
@@ -65,10 +65,10 @@ new class extends FormComponent {
     public string $status = TransportStatus::IN_PROGRESS->name;
 
     #[Validate('nullable|array')]
-    public array $scanned_pallets = [];
+    public array $linked_pallets = [];
 
     #[Validate('nullable|array')]
-    public array $scanned_parcels = [];
+    public array $linked_parcels = [];
 
     #[Validate('nullable')]
     public string $notes;
@@ -82,8 +82,8 @@ new class extends FormComponent {
     #[On('undo-scan')]
     public function undoScan(int $id, string $class): void {
         $field = match ($class) {
-            Pallet::class => 'scanned_pallets',
-            Parcel::class => 'scanned_parcels',
+            Pallet::class => 'linked_pallets',
+            Parcel::class => 'linked_parcels',
         };
 
         $this->{$field} = array_filter(
@@ -158,8 +158,8 @@ new class extends FormComponent {
                 FormStatus::CREATING => $this->createTransport($validated),
             };
 
-            $transport->pallets()->saveMany($this->scanned_pallets);
-            $transport->parcels()->saveMany($this->scanned_parcels);
+            $transport->pallets()->saveMany($this->linked_pallets);
+            $transport->parcels()->saveMany($this->linked_parcels);
 
             $this->dispatch('items-updated');
             Flux::toast(variant: 'success', text: __('toasts.transport.saved'));
@@ -185,17 +185,17 @@ new class extends FormComponent {
     </flux:select>
 
     <flux:field>
-        <flux:select wire:model.live="scanned_pallets" class="hidden" multiple></flux:select>
-        <livewire:fields.scanner-field :items="$scanned_pallets" buttonText="{{ __('app.scan.scan_pallets') }}" label="{{ __('app.scanned_pallets') }}"
-                                :key="'pallets-'.count($scanned_pallets)"/>
-        <flux:error name="scanned_pallets"/>
+        <flux:select wire:model.live="linked_pallets" class="hidden" multiple></flux:select>
+        <livewire:fields.scanner-field handles="{{ Pallet::class }}" :items="$linked_pallets" buttonText="{{ __('app.scan.scan_pallets') }}" label="{{ __('app.linked_pallets') }}"
+                                :key="'pallets-'.count($linked_pallets)"/>
+        <flux:error name="linked_pallets"/>
     </flux:field>
 
     <flux:field>
-        <flux:select wire:model.live="scanned_parcels" class="hidden" multiple></flux:select>
-        <livewire:fields.scanner-field :items="$scanned_parcels" buttonText="{{ __('app.scan.scan_parcels') }}" label="{{ __('app.scanned_parcels') }}"
-                                :key="'parcels-'.count($scanned_parcels)"/>
-        <flux:error name="scanned_parcels"/>
+        <flux:select wire:model.live="linked_parcels" class="hidden" multiple></flux:select>
+        <livewire:fields.scanner-field handles="{{ Parcel::class }}" :items="$linked_parcels" buttonText="{{ __('app.scan.scan_parcels') }}" label="{{ __('app.linked_parcels') }}"
+                                :key="'parcels-'.count($linked_parcels)"/>
+        <flux:error name="linked_parcels"/>
     </flux:field>
 
     <flux:textarea wire:model="notes" label="{{ __('app.notes') }}"/>

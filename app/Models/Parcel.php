@@ -116,6 +116,13 @@ class Parcel extends Model {
     }
 
     /**
+     * Scope to parcels that are available (not loaded on a pallet or transport).
+     */
+    public function scopeAvailable(Builder $query): Builder {
+        return $query->whereNull('pallet_id')->whereNull('transport_id');
+    }
+
+    /**
      * Scope to parcels that have been sent, either directly
      * via transport or via a pallet on transport.
      */

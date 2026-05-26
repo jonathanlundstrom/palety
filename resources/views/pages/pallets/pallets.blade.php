@@ -160,4 +160,5 @@ new class extends TableComponent {
     </x-modals.flyout>
 
     <livewire:modals.scanner-modal/>
+    <livewire:modals.add-modal/>
 </section>

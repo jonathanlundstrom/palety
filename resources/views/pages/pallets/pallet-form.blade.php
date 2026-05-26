@@ -23,7 +23,7 @@ new class extends FormComponent {
     #[On('edit-resource')]
     public function edit(int $id, string $class): void {
         parent::edit($id, $class);
-        $this->scanned_parcels = $this->resource->parcels->all();
+        $this->linked_parcels = $this->resource->parcels->all();
     }
 
     #[On('scan-result')]
@@ -33,11 +33,12 @@ new class extends FormComponent {
                 $abstract = app()->make($payload['class']);
                 $object = $abstract::find($payload['id']);
                 if ($object->getAvailability() === Availability::AVAILABLE) {
-                    if (!in_array($object->id, array_column($this->scanned_parcels, 'id'), true)) {
-                        $this->scanned_parcels[] = $object;
-                        Flux::toast(variant: 'success', text: __('toasts.parcel.scanned'));
+                    if (!in_array($object->id, array_column($this->linked_parcels, 'id'), true)) {
+                        $this->linked_parcels[] = $object;
+                        Flux::toast(variant: 'success', text: __('toasts.parcel.added'));
+                        $this->dispatch('vibrate-success');
                     } else {
-                        Flux::toast(variant: 'warning', text: __('toasts.parcel.already_scanned'));
+                        Flux::toast(variant: 'warning', text: __('toasts.parcel.already_added'));
                     }
                 } else {
                     Flux::toast(variant: 'danger', text: __('toasts.parcel.loaded'));
@@ -56,8 +57,8 @@ new class extends FormComponent {
      */
     #[On('undo-scan')]
     public function undoScan(int $id, string $class): void {
-        $this->scanned_parcels = array_filter(
-            $this->scanned_parcels,
+        $this->linked_parcels = array_filter(
+            $this->linked_parcels,
             fn($item) => $item->id !== $id
         );
     }
@@ -72,7 +73,7 @@ new class extends FormComponent {
     public int $recipient_id;
 
     #[Validate('required_if:type,' . PalletType::CALCULATED->name . '|array')]
-    public array $scanned_parcels = [];
+    public array $linked_parcels = [];
 
     #[Validate('required_if:type,' . PalletType::MANUAL_PALLET->name . '|array')]
     public array $content = [];
@@ -147,7 +148,7 @@ new class extends FormComponent {
 
                 if ($this->isCalculated()) {
                     $pallet->content()->detach();
-                    $pallet->parcels()->saveMany($this->scanned_parcels);
+                    $pallet->parcels()->saveMany($this->linked_parcels);
                     $pallet->refresh(); // Refresh model after saving relations.
                 } else {
                     $pallet->content()->sync($this->content);
@@ -174,7 +175,7 @@ new class extends FormComponent {
 ?>
 <form wire:submit="onSubmit" class="space-y-6 min-h-full">
     @if ($this->formStatus() === FormStatus::EDITING && $resource->getAvailability() === Availability::ALREADY_LOADED)
-        <flux:callout variant="danger" heading="{!! __('app.pallet_loaded') !!}" icon="exclamation-circle" />
+        <flux:callout variant="danger" heading="{!! __('app.pallet_loaded') !!}" icon="exclamation-circle"/>
     @endif
 
     <flux:select variant="listbox" wire:model.live="type" label="{{ __('app.type') }}">
@@ -197,10 +198,12 @@ new class extends FormComponent {
 
     @if ($this->isCalculated)
         <flux:field>
-            <flux:select wire:model.live="scanned_parcels" class="hidden" multiple></flux:select>
-            <livewire:fields.scanner-field :items="$scanned_parcels" buttonText="{{ __('app.scan.scan_parcels') }}" label="{{ __('app.scanned_parcels') }}"
-                                    :key="'parcels-'.count($scanned_parcels)"/>
-            <flux:error name="scanned_parcels"/>
+            <flux:select wire:model.live="linked_parcels" class="hidden" multiple></flux:select>
+            <livewire:fields.scanner-field handles="{{ Parcel::class }}" :items="$linked_parcels"
+                                           buttonText="{{ __('app.scan.scan_parcels') }}"
+                                           label="{{ __('app.linked_parcels') }}"
+                                           :key="'parcels-'.count($linked_parcels)"/>
+            <flux:error name="linked_parcels"/>
         </flux:field>
     @else
         <flux:pillbox variant="combobox" wire:model.live="content" label="{{ __('app.content.label') }}"

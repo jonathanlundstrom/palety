@@ -133,6 +133,13 @@ class Pallet extends Model {
     }
 
     /**
+     * Scope to pallets that are available (not loaded on a transport).
+     */
+    public function scopeAvailable(Builder $query): Builder {
+        return $query->whereNull('transport_id');
+    }
+
+    /**
      * Scope to pallets that have been sent on transport.
      */
     public function scopeSent(Builder $query): Builder {
