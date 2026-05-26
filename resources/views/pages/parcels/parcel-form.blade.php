@@ -117,7 +117,7 @@ new class extends FormComponent {
 
 }
 ?>
-<form wire:submit="onSubmit" class="space-y-6 min-h-full">
+<form wire:submit="onSubmit" wire:poll.60s class="space-y-6 min-h-full">
     @if ($this->formStatus() === FormStatus::EDITING && $resource->getAvailability() === Availability::ALREADY_LOADED)
         <flux:callout variant="danger" heading="{!! __('app.parcel_loaded') !!}" icon="exclamation-circle" />
     @endif
