@@ -36,6 +36,7 @@ return [
     'created_at' => 'Created',
     'updated_at' => 'Updated',
     'add' => 'Add',
+    'add_manually' => 'Add manually',
     'edit' => 'Edit',
     'save' => 'Save',
     'cancel' => 'Cancel',

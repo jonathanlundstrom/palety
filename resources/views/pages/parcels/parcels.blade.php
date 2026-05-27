@@ -38,7 +38,7 @@ new class extends TableComponent {
      * @return void
      */
     public function mount(): void {
-        $this->sortBy = 'created_at';
+        $this->sortBy = 'id';
         $this->sortDirection = 'desc';
     }
 

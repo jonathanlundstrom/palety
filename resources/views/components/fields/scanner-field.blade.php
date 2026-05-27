@@ -132,7 +132,7 @@ new class extends Component {
                 <flux:button icon="chevron-down" class="rounded-t-none"></flux:button>
                 <flux:menu>
                     <flux:modal.trigger name="add-modal">
-                        <flux:menu.item icon="magnifying-glass" wire:click="add()">Add manually</flux:menu.item>
+                        <flux:menu.item icon="magnifying-glass" wire:click="add()">{{ __('app.add_manually') }}</flux:menu.item>
                     </flux:modal.trigger>
                 </flux:menu>
             </flux:dropdown>
