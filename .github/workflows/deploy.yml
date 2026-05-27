@@ -206,7 +206,7 @@ jobs:
 
       - name: Deploy Image
         run: >-
-          scw container container update ${{ vars.SCW_CONTAINER_ID }}
+          scw container container update ${{ vars.SCW_CONTAINER_ID }} region=${{ vars.SCW_REGION }}
           ${{ steps.deployment-args.outputs.deployment_args }}
           private-network-id=${{ vars.SCW_PRIVATE_NETWORK_ID }}
           https-connection-only=true
