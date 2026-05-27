@@ -59,7 +59,24 @@ jobs:
           namespace_cmd = ["scw", "container", "namespace", "get", "--output", "json", namespace_id, "region=${{ vars.SCW_REGION }}"]
           namespace_res = json.loads(subprocess.check_output(namespace_cmd))
 
-          registry_endpoint = namespace_res["registry_endpoint"]
+          registry_endpoint = (
+              namespace_res.get("registry_endpoint")
+              or namespace_res.get("registryEndpoint")
+          )
+          if not registry_endpoint:
+              registry_image = (
+                  container_res.get("registry_image")
+                  or container_res.get("registryImage")
+                  or container_res.get("image")
+              )
+              if not registry_image:
+                  raise RuntimeError(
+                      "Could not determine registry endpoint. "
+                      f"Namespace keys: {sorted(namespace_res.keys())}; "
+                      f"container keys: {sorted(container_res.keys())}"
+                  )
+
+              registry_endpoint = registry_image.rsplit("/", 1)[0]
 
           with open(os.environ["GITHUB_ENV"], "a") as github_env:
               github_env.write(
@@ -77,13 +94,13 @@ jobs:
 
       - name: Load image from artifact and tag for registry
         run: |
-          docker load --input ${{ runner.temp }}/${{ inputs.image_tar_name }}
-          tag=$(docker images ${{ inputs.image_tag }} --format '{{.Tag}}')
+          docker load --input "${{ runner.temp }}/${{ inputs.image_tar_name }}"
+          tag=$(docker images "${{ inputs.image_tag }}" --format '{{.Tag}}')
           registry_image="${{ env.registry_endpoint }}/${{ env.container_name }}:${tag}"
-          echo "registry_image=${registry_image}" | tee -a $GITHUB_ENV
+          echo "registry_image=${registry_image}" | tee -a "$GITHUB_ENV"
 
           # Tag the image for upload
-          docker tag ${{ inputs.image_tag }} ${registry_image}
+          docker tag "${{ inputs.image_tag }}" "${registry_image}"
 
       - name: Prepare deploy args and prepare env file for migration
         id: deployment-args
@@ -133,7 +150,7 @@ jobs:
 
           deployment_args = [
               f"port={port}",
-              f"registry-image={registry_image}",
+              f"image={registry_image}",
               # Environment variables
               *(
                   f"environment-variables.{k}={v}"
@@ -141,9 +158,8 @@ jobs:
               ),
               # Secret environment variables
               *(
-                  f"secret-environment-variables.{idx}.{k}={v}"
-                  for idx, (key, value) in enumerate(secrets_to_deploy.items())
-                  for k, v in {'key': key, 'value': value}.items()
+                  f"secret-environment-variables.{k}={v}"
+                  for k, v in secrets_to_deploy.items()
               ),
           ]
           with open(os.environ["GITHUB_OUTPUT"], "a") as github_output:
@@ -158,7 +174,7 @@ jobs:
 
       - name: Set database expiration
         run: >-
-          echo "SCW_BACKUP_EXPIRATION=$(date -d "+7 days" --iso-8601=seconds)" >> $GITHUB_ENV
+          echo "SCW_BACKUP_EXPIRATION=$(date -d '+7 days' --iso-8601=seconds)" >> "$GITHUB_ENV"
 
       - name: Create database backup
         id: database-backup
@@ -190,10 +206,10 @@ jobs:
 
       - name: Deploy Image
         run: >-
-          scw container container update ${{ vars.SCW_CONTAINER_ID }} region=${{ vars.SCW_REGION }}
+          scw container container update ${{ vars.SCW_CONTAINER_ID }}
           ${{ steps.deployment-args.outputs.deployment_args }}
           private-network-id=${{ vars.SCW_PRIVATE_NETWORK_ID }}
-          http-option=redirected
+          https-connection-only=true
           --wait --output json
           | tee ${{ runner.temp }}/output.json
           | jq .
