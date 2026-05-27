@@ -41,7 +41,7 @@ new class extends TableComponent {
     public function items(): LengthAwarePaginator {
         return Recipient::query()
             ->when($this->q, fn($query) => $query->whereAny(
-                ['name', 'phone_number', 'email', 'city'], 'ILIKE', "%{$this->q}%")
+                ['id', 'name', 'reference', 'email', 'phone_number', 'organisation_number', 'address', 'zipcode', 'city'], 'ILIKE', "%{$this->q}%")
             )
             ->when($this->type, fn($query) => $query->where('type', $this->type))
             ->when($this->delivery_type, fn($query) => $query->where('delivery_type', $this->delivery_type))

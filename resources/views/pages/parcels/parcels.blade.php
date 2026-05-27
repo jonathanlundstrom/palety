@@ -46,7 +46,7 @@ new class extends TableComponent {
     public function items(): LengthAwarePaginator {
         return Parcel::query()
             ->when($this->q, fn($query) => $query->whereAny(
-                ['weight', 'notes'], 'ILIKE', "%{$this->q}%")
+                ['id', 'weight', 'notes'], 'ILIKE', "%{$this->q}%")
             )
             ->when($this->type, fn($query) => $query->where('type', $this->type))
             ->when($this->content_id, fn($query) => $query->whereHas('content', fn($q) => $q->whereKey($this->content_id)))

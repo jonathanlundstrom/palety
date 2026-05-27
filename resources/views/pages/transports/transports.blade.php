@@ -30,7 +30,7 @@ new class extends TableComponent {
     public function items(): LengthAwarePaginator {
         return Transport::query()
             ->when($this->q, fn($query) => $query->whereAny(
-                ['notes'], 'ILIKE', "%{$this->q}%")
+                ['id', 'notes'], 'ILIKE', "%{$this->q}%")
             )
             ->when($this->type, fn($query) => $query->where('type', $this->type))
             ->when($this->status, fn($query) => $query->where('status', $this->status))

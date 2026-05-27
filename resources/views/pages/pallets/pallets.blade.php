@@ -47,7 +47,7 @@ new class extends TableComponent {
         return Pallet::query()
             ->with(['content', 'recipient', 'parcels.content'])
             ->when($this->q, fn($query) => $query->whereAny(
-                ['weight', 'notes'], 'ILIKE', "%{$this->q}%")
+                ['id', 'weight', 'notes'], 'ILIKE', "%{$this->q}%")
             )
             ->when($this->type, fn($query) => $query->where('type', $this->type))
             ->when($this->recipient_id, fn($query) => $query->where('recipient_id', $this->recipient_id))

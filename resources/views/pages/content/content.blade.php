@@ -34,7 +34,7 @@ new class extends TableComponent {
         return Content::query()
             ->withCount(['parcels', 'pallets'])
             ->when($this->q, fn($query) => $query->whereAny(
-                ['label_en', 'label_ua'], 'ILIKE', "%{$this->q}%")
+                ['id', 'label_en', 'label_ua'], 'ILIKE', "%{$this->q}%")
             )
             ->when($this->category, fn($query) => $query->where('category', $this->category))
             ->orderBy($this->sortBy, $this->sortDirection)
