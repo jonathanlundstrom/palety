@@ -2,7 +2,14 @@
 
 namespace App\Livewire\Components;
 
+use App\Events\PalletSaved;
+use App\Events\ParcelSaved;
+use App\Models\Pallet;
+use App\Models\Parcel;
+use Exception;
+use Flux\Flux;
 use hisorange\BrowserDetect\Facade as Browser;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -85,6 +92,35 @@ abstract class TableComponent extends Component {
      */
     public function edit(int $id, string $class): void {
         $this->dispatch('edit-resource', id: $id, class: $class);
+    }
+
+    /**
+     * Print a label for the specified resource.
+     *
+     * @param $id
+     * @param string $class
+     * @return void
+     */
+    public function print($id, string $class): void {
+        try {
+            $object = app()->make($class)::find($id);
+
+            match($class) {
+                Parcel::class => event(new ParcelSaved($object)),
+                Pallet::class => event(new PalletSaved($object)),
+                default => throw new Exception('Unsupported object type'),
+            };
+
+            Flux::toast(
+                text: __('toasts.label.printing.success'),
+                variant: 'success',
+            );
+        } catch (Exception) {
+            Flux::toast(
+                text: __('toasts.label.printing.failed'),
+                variant: 'danger',
+            );
+        }
     }
 
     /**

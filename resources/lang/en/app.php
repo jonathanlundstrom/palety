@@ -47,6 +47,7 @@ return [
     'logout' => 'Log out',
     'pieces' => 'pc|pcs',
     'all_items' => 'All items',
+    'print_label' => 'Print label',
     'parent' => [
         'label' => 'Parent resource',
         'select' => 'Select parent resource',

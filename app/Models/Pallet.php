@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enumerables\Availability;
 use App\Enumerables\PalletStatus;
 use App\Enumerables\PalletType;
+use App\Events\PalletSaved;
 use App\Models\Traits\ModelHelpers;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -133,20 +134,6 @@ class Pallet extends Model {
     }
 
     /**
-     * Scope to pallets that are available (not loaded on a transport).
-     */
-    public function scopeAvailable(Builder $query): Builder {
-        return $query->whereNull('transport_id');
-    }
-
-    /**
-     * Scope to pallets that have been sent on transport.
-     */
-    public function scopeSent(Builder $query): Builder {
-        return $query->whereIn('transport_id', Transport::whereNotNull('sent_at')->select('id'));
-    }
-
-    /**
      * Get the categories associated with the pallet.
      * If the pallet is calculated, it will return the categories of the parcels in the pallet.
      * Otherwise, it will return the category of the pallet itself.
@@ -162,5 +149,19 @@ class Pallet extends Model {
         } else {
             return $this->content->pluck('category')->unique()->toArray();
         }
+    }
+
+    /**
+     * Scope to pallets that are available (not loaded on a transport).
+     */
+    public function scopeAvailable(Builder $query): Builder {
+        return $query->whereNull('transport_id');
+    }
+
+    /**
+     * Scope to pallets that have been sent on transport.
+     */
+    public function scopeSent(Builder $query): Builder {
+        return $query->whereIn('transport_id', Transport::whereNotNull('sent_at')->select('id'));
     }
 }

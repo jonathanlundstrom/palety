@@ -60,4 +60,10 @@ return [
             'failed' => 'Failed to delete transport',
         ]
     ],
+    'label' => [
+        'printing' => [
+            'success' => 'Successfully started label printing!',
+            'failed' => 'Failed to start label printing',
+        ]
+    ]
 ];

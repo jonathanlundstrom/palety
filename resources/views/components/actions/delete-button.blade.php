@@ -1,5 +1,5 @@
 @props([
-    'object' => '',
+    'object' => (object) [],
 ])
 
 <flux:modal.trigger name="delete-confirmation">

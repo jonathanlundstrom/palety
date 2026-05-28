@@ -1,5 +1,5 @@
 @props([
-    'object' => '',
+    'object' => (object) [],
 ])
 
 <flux:menu.item icon="arrow-down-tray" :href="route('transports.packing-list.pdf', $object)">

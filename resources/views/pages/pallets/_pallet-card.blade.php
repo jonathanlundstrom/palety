@@ -27,7 +27,9 @@
                 {{ $item->getWeight() }} {{ __('app.weight.unit') }}
             </flux:text>
 
-            <x-item-actions :form="$this->modalName" :object="$item" class="relative top-1"/>
+            <x-item-actions :form="$this->modalName" :object="$item" class="relative top-1">
+                <x-actions.print-button :object="$item"/>
+            </x-item-actions>
         </div>
     </div>
 

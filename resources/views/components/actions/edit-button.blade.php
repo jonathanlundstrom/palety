@@ -1,6 +1,6 @@
 @props([
     'form',
-    'object' => '',
+    'object' => (object) [],
 ])
 
 <flux:modal.trigger name="{{ $form }}">
