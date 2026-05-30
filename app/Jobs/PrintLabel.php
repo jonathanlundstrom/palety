@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Models\Parcel;
 use App\Models\Pallet;
+use App\Models\Parcel;
 use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -15,19 +15,16 @@ class PrintLabel implements ShouldQueue {
      * The maximum number of times the job may be attempted.
      * Failed jobs are most likely caused by errors in printer configuration
      * or network issues, at which point re-attempting may not resolve the issue.
-     * @var int $tries
      */
     public int $tries = 1;
 
     /**
      * The resource to print the label for.
-     * @var Parcel|Pallet $resource
      */
     private Parcel|Pallet $resource;
 
     /**
      * Create a new job instance.
-     * @param Parcel|Pallet $resource
      */
     public function __construct(Parcel|Pallet $resource) {
         $this->resource = $resource;
@@ -39,19 +36,15 @@ class PrintLabel implements ShouldQueue {
      * Does not generate a reply on success but throws exceptions on failure.
      * Port 9100 is the default for Zebra printers.
      *
-     * @param string $zpl
-     * @param string $ip
-     * @param int $port
-     * @return void
      * @throws Exception
      */
     private function print(string $zpl, string $ip, int $port): void {
         $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
         if ($socket === false) {
-            throw new Exception('Failed to create socket: ' . socket_strerror(socket_last_error()));
+            throw new Exception('Failed to create socket: '.socket_strerror(socket_last_error()));
         }
 
-        if (!socket_connect($socket, $ip, $port)) {
+        if (! socket_connect($socket, $ip, $port)) {
             $error = socket_strerror(socket_last_error($socket));
             socket_close($socket);
             throw new Exception("Could not connect to printer at {$ip}:{$port} - {$error}");
@@ -63,6 +56,7 @@ class PrintLabel implements ShouldQueue {
 
     /**
      * Execute the job.
+     *
      * @throws Exception
      */
     public function handle(): void {
@@ -76,7 +70,7 @@ class PrintLabel implements ShouldQueue {
         $zpl = view('labels.76_51_compact', [
             'id' => $this->resource->id,
             'type' => strtoupper(class_basename($this->resource)),
-            'data' => $this->resource::class . ':' . $this->resource->id,
+            'data' => $this->resource::class.':'.$this->resource->id,
             'weight' => $this->resource->getWeight(),
         ])->render();
 

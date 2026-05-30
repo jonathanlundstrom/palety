@@ -8,7 +8,7 @@ use App\Enumerables\Traits\EnumHelpers;
 /**
  * This enum represents the type of recipient.
  */
-enum RecipientType implements ColoredEnum{
+enum RecipientType implements ColoredEnum {
     use EnumHelpers;
 
     case INDIVIDUAL;
@@ -16,7 +16,6 @@ enum RecipientType implements ColoredEnum{
 
     /**
      * Determines if the current instance represents a legal entity.
-     * @return bool
      */
     public function isLegalEntity(): bool {
         return in_array($this, [
@@ -26,11 +25,9 @@ enum RecipientType implements ColoredEnum{
 
     /**
      * Return the color associated with the current case.
-     *
-     * @return string
      */
     public function color(): string {
-        return match($this) {
+        return match ($this) {
             self::INDIVIDUAL => 'lime',
             self::ORGANISATION => 'blue',
         };

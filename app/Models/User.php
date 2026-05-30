@@ -10,7 +10,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 
 class User extends Authenticatable {
-    use ModelHelpers, HasFactory, Notifiable;
+    use HasFactory, ModelHelpers, Notifiable;
 
     /**
      * The attributes that are mass-assignable.

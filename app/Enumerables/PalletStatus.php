@@ -17,11 +17,9 @@ enum PalletStatus implements ColoredEnum {
 
     /**
      * Return the color associated with the current case.
-     *
-     * @return string
      */
     public function color(): string {
-        return match($this) {
+        return match ($this) {
             self::DRAFT => 'blue',
             self::COMPLETED => 'green',
         };

@@ -18,11 +18,9 @@ enum PalletType implements ColoredEnum {
 
     /**
      * Return the color associated with the current case.
-     *
-     * @return string
      */
     public function color(): string {
-        return match($this) {
+        return match ($this) {
             self::CALCULATED => 'teal',
             self::MANUAL_PALLET => 'blue',
         };

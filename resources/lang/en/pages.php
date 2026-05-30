@@ -14,7 +14,7 @@ return [
             'subtitle' => 'Fill in the information below.',
             'extras' => [
                 'recipient_warning' => 'Only choose a recipient if the parcel will be sent separately, and not on a pallet!',
-            ]
+            ],
         ],
     ],
     'pallets' => [
@@ -65,7 +65,7 @@ return [
             'subtitle' => 'Fill in the information below.',
             'extras' => [
                 'password_warning' => 'Only enter a password in the field if you want to change the current one!',
-            ]
+            ],
         ],
     ],
     'settings' => [
@@ -89,7 +89,7 @@ return [
                 'modal' => [
                     'title' => 'Are you sure you want to delete your account?',
                     'subtitle' => 'Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.',
-                ]
+                ],
             ],
             'password' => [
                 'title' => 'Password',

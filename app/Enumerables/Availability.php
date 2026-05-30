@@ -19,11 +19,9 @@ enum Availability {
 
     /**
      * Return the color associated with the current case.
-     *
-     * @return string
      */
     public function color(): string {
-        return match($this) {
+        return match ($this) {
             self::AVAILABLE => 'lime',
             self::ALREADY_LOADED => 'red',
             self::LOADED_ON_PALLET => 'red',
@@ -38,7 +36,7 @@ enum Availability {
      * @return Availability[]
      */
     public static function parcelFilters(): array {
-        return array_filter(self::cases(), fn($case) => $case !== self::AVAILABLE);
+        return array_filter(self::cases(), fn ($case) => $case !== self::AVAILABLE);
     }
 
     /**

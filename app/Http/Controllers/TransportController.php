@@ -10,11 +10,8 @@ use Illuminate\View\View;
 use Spatie\Browsershot\Browsershot;
 
 class TransportController extends Controller {
-
     /**
      * Render the packing list as plain HTML for Browsershot access via signed URL.
-     * @param Transport $transport
-     * @return View
      */
     public function showPackingList(Transport $transport): View {
         return view('exports.transport-packing-list', [
@@ -25,8 +22,6 @@ class TransportController extends Controller {
 
     /**
      * Generate a PDF of the packing list using Browsershot and return it as a download.
-     * @param Transport $transport
-     * @return Response
      */
     public function printPackingList(Transport $transport): Response {
         $signedUrl = URL::temporarySignedRoute('transports.packing-list.show', now()->addMinutes(5), [
@@ -56,14 +51,12 @@ class TransportController extends Controller {
 
         return response($browsershot->pdf(), 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="packing-list-' . $transport->id . '.pdf"',
+            'Content-Disposition' => 'attachment; filename="packing-list-'.$transport->id.'.pdf"',
         ]);
     }
 
     /**
      * Build the loaded-by-recipient data structure for the packing list view.
-     * @param Transport $transport
-     * @return array
      */
     private function buildLoadedByRecipient(Transport $transport): array {
         $pallets = $transport->pallets()

@@ -7,7 +7,7 @@ return [
         'password' => [
             'failed' => 'Failed to update password',
             'saved' => 'Password updated successfully!',
-        ]
+        ],
     ],
     'recipient' => [
         'failed' => 'Failed to save recipient',
@@ -15,7 +15,7 @@ return [
         'delete' => [
             'success' => 'Recipient deleted successfully!',
             'failed' => 'Failed to delete recipient',
-        ]
+        ],
     ],
     'content' => [
         'failed' => 'Failed to save content',
@@ -24,7 +24,7 @@ return [
         'delete' => [
             'success' => 'Content deleted successfully!',
             'failed' => 'Failed to delete content',
-        ]
+        ],
     ],
     'parcel' => [
         'failed' => 'Failed to save parcel',
@@ -37,7 +37,7 @@ return [
         'delete' => [
             'success' => 'Parcel deleted successfully!',
             'failed' => 'Failed to delete parcel',
-        ]
+        ],
     ],
     'pallet' => [
         'failed' => 'Failed to save pallet',
@@ -50,7 +50,7 @@ return [
         'delete' => [
             'success' => 'Pallet deleted successfully!',
             'failed' => 'Failed to delete pallet',
-        ]
+        ],
     ],
     'transport' => [
         'failed' => 'Failed to save transport',
@@ -58,12 +58,12 @@ return [
         'delete' => [
             'success' => 'Transport deleted successfully!',
             'failed' => 'Failed to delete transport',
-        ]
+        ],
     ],
     'label' => [
         'printing' => [
             'success' => 'Successfully started label printing!',
             'failed' => 'Failed to start label printing',
-        ]
-    ]
+        ],
+    ],
 ];

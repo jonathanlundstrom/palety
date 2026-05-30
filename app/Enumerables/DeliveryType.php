@@ -17,7 +17,6 @@ enum DeliveryType implements ColoredEnum {
 
     /**
      * Determines if the current instance represents a delivery type.
-     * @return bool
      */
     public function isDelivery(): bool {
         return in_array($this, [
@@ -28,7 +27,6 @@ enum DeliveryType implements ColoredEnum {
 
     /**
      * Determines if the current instance should have an associated address.
-     * @return bool
      */
     public function hasAddress(): bool {
         return in_array($this, [
@@ -38,11 +36,9 @@ enum DeliveryType implements ColoredEnum {
 
     /**
      * Return the color associated with the current case.
-     *
-     * @return string
      */
     public function color(): string {
-        return match($this) {
+        return match ($this) {
             self::SELF_PICKUP => 'yellow',
             self::ADDRESS_DELIVERY => 'orange',
             self::NOVA_POSHTA_DELIVERY => 'red',

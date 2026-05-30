@@ -12,8 +12,6 @@ class HandleParcelSaved {
 
     /**
      * Handle the event.
-     * @param ParcelSaved $event
-     * @return void
      */
     public function handle(ParcelSaved $event): void {
         if (config('printing.enabled')) {

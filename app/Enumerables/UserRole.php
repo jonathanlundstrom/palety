@@ -15,11 +15,9 @@ enum UserRole {
 
     /**
      * Return the color associated with the current case.
-     *
-     * @return string
      */
     public function color(): string {
-        return match($this) {
+        return match ($this) {
             self::USER => 'lime',
             self::ADMIN => 'blue',
         };

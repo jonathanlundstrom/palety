@@ -11,8 +11,6 @@ class HandlePalletSaved {
 
     /**
      * Handle the event.
-     * @param PalletSaved $event
-     * @return void
      */
     public function handle(PalletSaved $event): void {
         if (config('printing.enabled')) {

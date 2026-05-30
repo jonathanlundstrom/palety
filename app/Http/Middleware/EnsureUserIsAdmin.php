@@ -10,13 +10,9 @@ use Symfony\Component\HttpFoundation\Response;
 class EnsureUserIsAdmin {
     /**
      * Handle an incoming request.
-     *
-     * @param Request $request
-     * @param Closure $next
-     * @return Response
      */
     public function handle(Request $request, Closure $next): Response {
-        if (!$request->user() || $request->user()->role !== UserRole::ADMIN) {
+        if (! $request->user() || $request->user()->role !== UserRole::ADMIN) {
             abort(403);
         }
 

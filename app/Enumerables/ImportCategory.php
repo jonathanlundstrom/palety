@@ -25,11 +25,9 @@ enum ImportCategory implements ColoredEnum {
 
     /**
      * Return the color associated with the current case.
-     *
-     * @return string
      */
     public function color(): string {
-        return match($this) {
+        return match ($this) {
             self::FOOD => 'lime',
             self::SANITARY_HYGIENE => 'cyan',
             self::MEDICAL => 'red',

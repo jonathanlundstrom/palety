@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->dropColumn([
                 'category',
                 'label_en',
-                'label_ua'
+                'label_ua',
             ]);
         });
     }

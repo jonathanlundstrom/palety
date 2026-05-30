@@ -64,7 +64,8 @@ class Transport extends Model {
      */
     public function getWeight(): float {
         $parcels_weight = $this->parcels()->sum('weight');
-        $pallets_weight = $this->pallets()->get()->sum(fn($pallet) => $pallet->getWeight());
+        $pallets_weight = $this->pallets()->get()->sum(fn ($pallet) => $pallet->getWeight());
+
         return floatval($parcels_weight + $pallets_weight);
     }
 }

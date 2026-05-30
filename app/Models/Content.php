@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Content extends Model {
-    use ModelHelpers, HasFactory, SoftDeletes;
+    use HasFactory, ModelHelpers, SoftDeletes;
 
     /**
      * The table associated with the model.
@@ -42,7 +42,6 @@ class Content extends Model {
 
     /**
      * Get the parcels associated with the content.
-     * @return BelongsToMany
      */
     public function parcels(): BelongsToMany {
         return $this->belongsToMany(Parcel::class);
@@ -50,7 +49,6 @@ class Content extends Model {
 
     /**
      * Get the pallets associated with the content.
-     * @return BelongsToMany
      */
     public function pallets(): BelongsToMany {
         return $this->belongsToMany(Pallet::class);

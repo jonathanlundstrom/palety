@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Recipient extends Model {
-    use ModelHelpers, HasFactory;
+    use HasFactory, ModelHelpers;
 
     /**
      * The table associated with the model.
@@ -78,7 +78,6 @@ class Recipient extends Model {
     /**
      * Scope a query to select distinct cities and order them alphabetically.
      *
-     * @param Builder $query
      *
      * @return Builder The modified query builder instance.
      */

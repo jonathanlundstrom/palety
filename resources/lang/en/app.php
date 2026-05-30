@@ -108,8 +108,8 @@ return [
 
     // Available locales:
     'locales' => [
-        'sv' =>'Swedish',
+        'sv' => 'Swedish',
         'en' => 'English',
         'uk' => 'Ukrainian',
-    ]
+    ],
 ];

@@ -1,10 +1,10 @@
 <?php
 
+use App\Enumerables\Availability;
 use App\Enumerables\DeliveryType;
 use App\Enumerables\ImportCategory;
 use App\Enumerables\PalletStatus;
 use App\Enumerables\PalletType;
-use App\Enumerables\Availability;
 use App\Enumerables\ParcelType;
 use App\Enumerables\RecipientType;
 use App\Enumerables\TransportStatus;

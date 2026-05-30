@@ -60,12 +60,11 @@ class Parcel extends Model {
 
     /**
      * Get a comma-separated list of parcel content for display.
-     * @param string|null $locale
-     * @return string
      */
     public function contentList(?string $locale = null): string {
         if ($content = $this->content()) {
             $field = $locale !== null ? 'label_'.$locale : Content::label();
+
             return implode(', ', $content->pluck($field)->toArray());
         } else {
             return '';
@@ -98,10 +97,9 @@ class Parcel extends Model {
     /**
      * Check if the parcel is loaded, either on a pallet or transport.
      * Combines checks for both pallet and transport loading states.
-     * @return Availability
      */
     public function getAvailability(): Availability {
-        return match(true) {
+        return match (true) {
             $this->pallet_id !== null => Availability::LOADED_ON_PALLET,
             $this->transport_id !== null => Availability::LOADED_ON_TRANSPORT,
             default => Availability::AVAILABLE,

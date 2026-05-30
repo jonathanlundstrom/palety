@@ -1,8 +1,8 @@
 <?php
 
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Livewire\Actions\Logout;
 use Illuminate\Support\Facades\Route;
-use Livewire\Volt\Volt;
 
 Route::middleware('guest')->group(function () {
     Route::livewire('login', 'pages::auth.login')
@@ -28,5 +28,5 @@ Route::middleware('auth')->group(function () {
         ->name('password.confirm');
 });
 
-Route::post('logout', App\Livewire\Actions\Logout::class)
+Route::post('logout', Logout::class)
     ->name('logout');
