@@ -10,29 +10,30 @@ new #[Layout('layouts.auth')] class extends Component {
     /**
      * Send a password reset link to the provided email address.
      */
-    public function sendPasswordResetLink(): void
-    {
+    public function sendPasswordResetLink(): void {
         $this->validate([
-            'email' => ['required', 'string', 'email'],
+            'email' => [
+                'required',
+                'string',
+                'email',
+            ],
         ]);
 
         Password::sendResetLink($this->only('email'));
-
-        session()->flash('status', __('A reset link will be sent if the account exists.'));
+        session()->flash('status', __('auth.forgot_password.confirmation'));
     }
 }; ?>
 
 <div class="flex flex-col gap-6">
-    <x-auth-header :title="__('Forgot password')" :description="__('Enter your email to receive a password reset link')" />
+    <x-auth-header :title="__('auth.forgot_password.title')" :description="__('auth.forgot_password.description')" />
 
     <!-- Session Status -->
     <x-auth-session-status class="text-center" :status="session('status')" />
 
     <form wire:submit="sendPasswordResetLink" class="flex flex-col gap-6">
-        <!-- Email Address -->
         <flux:input
             wire:model="email"
-            :label="__('Email Address')"
+            :label="__('app.email')"
             type="email"
             required
             autofocus
@@ -40,11 +41,11 @@ new #[Layout('layouts.auth')] class extends Component {
             viewable
         />
 
-        <flux:button variant="primary" type="submit" class="w-full">{{ __('Email password reset link') }}</flux:button>
+        <flux:button variant="primary" type="submit" class="w-full">{{ __('auth.forgot_password.submit') }}</flux:button>
     </form>
 
     <div class="space-x-1 rtl:space-x-reverse text-center text-sm text-zinc-400">
-        {{ __('Or, return to') }}
-        <flux:link :href="route('login')" wire:navigate>{{ __('log in') }}</flux:link>
+        {{ __('auth.forgot_password.return_to') }}
+        <flux:link :href="route('login')" wire:navigate>{{ mb_strtolower(__('app.login')) }}</flux:link>
     </div>
 </div>

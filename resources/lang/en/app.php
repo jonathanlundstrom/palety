@@ -42,6 +42,7 @@ return [
     'cancel' => 'Cancel',
     'delete' => 'Delete',
     'submit' => 'Submit',
+    'confirm' => 'Confirm',
     'packing_list' => 'Packing list',
     'login' => 'Log in',
     'logout' => 'Log out',
