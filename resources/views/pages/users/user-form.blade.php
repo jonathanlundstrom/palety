@@ -23,7 +23,7 @@ new class extends FormComponent {
     public string $role = UserRole::USER->name;
 
     #[Validate('nullable|min:8')]
-    public string $password;
+    public string $password = '';
 
     #[Validate('required')]
     public string $locale = 'en';
@@ -68,12 +68,15 @@ new class extends FormComponent {
      * @return void
      */
     public function onSubmit(): void {
-        // Append validation rule for e-mail uniqueness:
+        // Append validation rules that are conditional.
         $this->withValidator(function ($validator) {
             $validator->addRules([
                 'email' => $this->formStatus() === FormStatus::EDITING
                     ? Rule::unique('users')->ignore($this->resource->id)
                     : Rule::unique('users'),
+                'password' => $this->formStatus() === FormStatus::CREATING
+                    ? 'required'
+                    : 'nullable',
             ]);
         });
 
