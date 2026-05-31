@@ -9,9 +9,9 @@ trait ModelHelpers {
      * Retrieves the correct label field based on the current application locale.
      */
     public static function label(): string {
-        $locale = app()->getLocale();
-
-        return $locale === 'ua' ? 'label_ua' : 'label_en';
+        return app()->getLocale() === 'uk'
+            ? 'label_ua'
+            : 'label_en';
     }
 
     /**

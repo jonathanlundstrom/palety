@@ -227,9 +227,25 @@ return [
     */
 
     'attributes' => [
-        'label_en' => 'english label',
-        'label_ua' => 'ukrainian label',
-        'nova_poshta_id' => 'Nova Poshta ID',
+        'name' => mb_strtolower(__('app.name')),
+        'label_en' => mb_strtolower(__('app.label_en')),
+        'label_ua' => mb_strtolower(__('app.label_ua')),
+        'nova_poshta_id' => mb_strtolower(__('app.nova_poshta_id')),
+        'type' => mb_strtolower(__('app.type')),
+        'content' => mb_strtolower(__('app.content.label')),
+        'category' => mb_strtolower(trans_choice('app.category.label', 1)),
+        'weight' => mb_strtolower(__('app.weight.label')),
+        'recipient_id' => mb_strtolower(__('app.recipient')),
+        'linked_parcels' => mb_strtolower(__('app.linked_parcels')),
+        'linked_pallets' => mb_strtolower(__('app.linked_pallets')),
+        'organisation_number' => mb_strtolower(__('app.organisation_number')),
+        'delivery_type' => mb_strtolower(__('app.delivery_type')),
+        'reference' => mb_strtolower(__('app.reference')),
+        'phone_number' => mb_strtolower(__('app.phone_number')),
+        'address' => mb_strtolower(__('app.address')),
+        'zipcode' => mb_strtolower(__('app.zipcode')),
+        'city' => mb_strtolower(__('app.city')),
+        'email' => mb_strtolower(__('app.email')),
+        'password' => mb_strtolower(__('app.password')),
     ],
-
 ];
