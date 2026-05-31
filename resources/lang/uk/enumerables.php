@@ -22,10 +22,10 @@ return [
     ParcelType::BOX->name => 'Коробка',
     ParcelType::OTHER->name => 'Інше',
 
-    ImportCategory::FOOD->name => 'Продукти харчування',
+    ImportCategory::FOOD->name => 'Продовольство',
     ImportCategory::SANITARY_HYGIENE->name => 'Санітарно-гігієнічні засоби',
-    ImportCategory::MEDICAL->name => 'Медичні пристрої та продукти',
-    ImportCategory::CLOTHING->name => 'Одяг/Взуття',
+    ImportCategory::MEDICAL->name => 'Лікарські засоби та медичні вироби',
+    ImportCategory::CLOTHING->name => 'Одяг / Взуття',
     ImportCategory::TECHNICAL->name => 'Технічні засоби',
     ImportCategory::VEHICLES->name => 'Транспортні засоби',
     ImportCategory::FUEL->name => 'Паливо',

@@ -25,7 +25,7 @@ return [
     ImportCategory::FOOD->name => 'Mat',
     ImportCategory::SANITARY_HYGIENE->name => 'Sanitet och hygienartiklar',
     ImportCategory::MEDICAL->name => 'Medicinska anordningar och produkter',
-    ImportCategory::CLOTHING->name => 'Kläder/Skor',
+    ImportCategory::CLOTHING->name => 'Kläder och skor',
     ImportCategory::TECHNICAL->name => 'Tekniska hjälpmedel',
     ImportCategory::VEHICLES->name => 'Fordon',
     ImportCategory::FUEL->name => 'Bränsle',
