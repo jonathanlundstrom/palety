@@ -33,6 +33,10 @@ return [
     'current_password' => 'Nuvarande lösenord',
     'confirm_password' => 'Bekräfta lösenord',
     'notes' => 'Anteckningar',
+    'num_copies' => [
+        'label' => 'Antal kopior',
+        'description' => 'Används för att skapa flera identiska paket.',
+    ],
     'city' => 'Stad',
     'created_at' => 'Skapad',
     'updated_at' => 'Uppdaterad',

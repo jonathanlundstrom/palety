@@ -33,6 +33,10 @@ return [
     'current_password' => 'Current password',
     'confirm_password' => 'Confirm password',
     'notes' => 'Notes',
+    'num_copies' => [
+        'label' => 'Number of copies',
+        'description' => 'Used to create multiple identical parcels.',
+    ],
     'city' => 'City',
     'created_at' => 'Created',
     'updated_at' => 'Updated',

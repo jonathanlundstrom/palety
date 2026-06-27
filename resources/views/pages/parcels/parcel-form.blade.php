@@ -9,6 +9,7 @@ use App\Models\Content;
 use App\Models\Parcel;
 use App\Models\Recipient;
 use Flux\Flux;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -33,6 +34,9 @@ new class extends FormComponent {
 
     #[Validate('nullable|integer')]
     public int $recipient_id;
+
+    #[Validate('nullable|integer|min:1|max:15')]
+    public int $copies = 1;
 
     #[Computed]
     protected function contentItems(): Collection {
@@ -91,23 +95,25 @@ new class extends FormComponent {
         try {
             $is_creating = $this->formStatus() === FormStatus::CREATING;
             $previous_weight = $is_creating ? null : $this->resource->weight;
+            $copies = $is_creating ? max(1, (int) ($this->copies ?? 1)) : 1;
 
-            DB::transaction(function () use ($validated, $is_creating, $previous_weight) {
-                $parcel = match ($this->formStatus()) {
-                    FormStatus::EDITING => $this->updateParcel($validated),
-                    FormStatus::CREATING => $this->createParcel($validated),
-                };
-
-                // Sync attached content after create/edit
-                $parcel->content()->sync($this->content);
-
-                // Fire event if created or on weight change:
-                if ($is_creating || $parcel->weight != $previous_weight) {
-                    event(new ParcelSaved($parcel));
+            DB::transaction(function () use ($validated, $is_creating, $previous_weight, $copies) {
+                if ($is_creating) {
+                    for ($i = 0; $i < $copies; $i++) {
+                        $parcel = $this->createParcel($validated);
+                        $parcel->content()->sync($this->content);
+                        event(new ParcelSaved($parcel));
+                    }
+                } else {
+                    $parcel = $this->updateParcel($validated);
+                    $parcel->content()->sync($this->content);
+                    if ($parcel->weight != $previous_weight) {
+                        event(new ParcelSaved($parcel));
+                    }
                 }
             });
 
-            Flux::toast(variant: 'success', text: __('toasts.parcel.saved'));
+            Flux::toast(variant: 'success', text: trans_choice('toasts.parcel.saved', $copies));
             $this->dispatch('items-updated');
             $this->dispatch('modal-close');
         } catch (Exception $e) {
@@ -155,6 +161,19 @@ new class extends FormComponent {
     @endif
 
     <flux:textarea wire:model="notes" label="{{ __('app.notes') }}"/>
+
+    @if ($this->formStatus() === FormStatus::CREATING)
+        <flux:separator variant="subtle"/>
+
+        <flux:field>
+            <flux:label>{{ __('app.num_copies.label') }}</flux:label>
+            <flux:description>{{ __('app.num_copies.description') }}</flux:description>
+            <flux:input.group>
+                <flux:input icon="document-duplicate" type="number" min="1" max="15" wire:model="copies" />
+            </flux:input.group>
+            <flux:error name="copies" />
+        </flux:field>
+    @endif
 
     <div class="flex">
         <flux:spacer/>

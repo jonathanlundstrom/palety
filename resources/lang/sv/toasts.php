@@ -28,7 +28,7 @@ return [
     ],
     'parcel' => [
         'failed' => 'Misslyckades med att spara paketet',
-        'saved' => 'Paketet sparades!',
+        'saved' => 'Paketet sparades!|:count paket sparades!',
         'added' => 'Paketet lades till i listan',
         'already_added' => 'Det här paketet har redan lagts till!',
         'loaded' => 'Paketet är redan lastat på en pall eller transport!',

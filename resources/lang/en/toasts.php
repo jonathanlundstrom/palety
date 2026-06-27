@@ -28,7 +28,7 @@ return [
     ],
     'parcel' => [
         'failed' => 'Failed to save parcel',
-        'saved' => 'Parcel saved successfully!',
+        'saved' => 'Parcel saved successfully!|:count parcels saved successfully!',
         'added' => 'Successfully added parcel to list',
         'already_added' => 'This parcel has already been added!',
         'loaded' => 'The parcel is already loaded on a pallet or transport!',
