@@ -9,6 +9,6 @@
     </flux:table.cell>
     <flux:table.cell>{{ $item->usage_count }} {{ trans_choice('app.usage.unit', $item->usage_count) }}</flux:table.cell>
     <flux:table.cell>
-        <x-item-actions :form="$this->modalName" :object="$item"/>
+        <x-item-actions :form="$this->modalName" :object="$item" :deleteDisabled="$item->usage_count > 0"/>
     </flux:table.cell>
 </flux:table.row>
