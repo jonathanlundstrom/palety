@@ -161,6 +161,6 @@ new class extends FormComponent {
 
     <div class="flex">
         <flux:spacer/>
-        <flux:button type="submit" variant="primary">{{ __('app.submit') }}</flux:button>
+        <flux:button type="submit" variant="primary">{{ __('app.save') }}</flux:button>
     </div>
 </form>

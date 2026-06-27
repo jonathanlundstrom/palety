@@ -45,6 +45,7 @@
             </flux:badge>
         @endif
     </flux:table.cell>
+    <flux:table.cell>{{ $item->created_at->format('Y-m-d, H:i') }}</flux:table.cell>
     <flux:table.cell>
         <x-item-actions :form="$this->modalName" :object="$item">
             <x-actions.print-button :object="$item"/>

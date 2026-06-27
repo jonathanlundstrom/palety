@@ -18,6 +18,9 @@ new class extends TableComponent {
     }
 
     #[Url(except: '')]
+    public array $range = [];
+
+    #[Url(except: '')]
     public string $type = '';
 
     #[Url(except: '')]
@@ -25,6 +28,7 @@ new class extends TableComponent {
 
     #[Url(except: '')]
     public string $recipient_id = '';
+
 
     /**
      * Mount the Livewire component.
@@ -44,6 +48,10 @@ new class extends TableComponent {
             )
             ->when($this->type, fn($query) => $query->where('type', $this->type))
             ->when($this->status, fn($query) => $query->where('status', $this->status))
+            ->when(!empty($this->range), fn($query) => $query
+                ->whereDate('created_at', '>=', $this->range['start'])
+                ->whereDate('created_at', '<=', $this->range['end'])
+            )
             ->withCount(['pallets', 'parcels'])
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate();
@@ -66,6 +74,8 @@ new class extends TableComponent {
     <div class="flex flex-wrap gap-4 items-center mb-4">
         <flux:input wire:model.live.debounce.500ms="q" icon-trailing="magnifying-glass"
                     placeholder="{{__('app.search')}}" clearable class="w-full md:flex-1"/>
+
+        <flux:date-picker mode="range" wire:model.live="range" locale="{{ App::getLocale() }}" placeholder="{{ __('app.date_range') }}" with-today week-numbers clearable class="w-full md:flex-1" />
 
         <flux:select variant="listbox" wire:model.live="type" placeholder="{{ __('app.type') }}" clearable
                      class="w-full md:flex-1">
@@ -102,6 +112,7 @@ new class extends TableComponent {
             <flux:table.column>{{ __('app.status') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'notes'" :direction="$sortDirection"
                                wire:click="sort('notes')">{{ __('app.notes') }}</flux:table.column>
+            <flux:table.column>{{ __('app.created_at') }}</flux:table.column>
             <flux:table.column></flux:table.column>
         </flux:table.columns>
         <flux:table.rows>

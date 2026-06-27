@@ -1,11 +1,9 @@
 <?php
 
 use App\Enumerables\Availability;
-use App\Enumerables\PalletType;
 use App\Livewire\Components\TableComponent;
 use App\Models\Pallet;
 use App\Models\Recipient;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Attributes\Computed;
@@ -21,7 +19,7 @@ new class extends TableComponent {
     }
 
     #[Url(except: '')]
-    public string $type = '';
+    public array $range = [];
 
     #[Url(except: '')]
     public string $availability = '';
@@ -29,8 +27,6 @@ new class extends TableComponent {
     #[Url(except: '')]
     public string $recipient_id = '';
 
-    #[Url(except: '')]
-    public string $author_id = '';
 
     /**
      * Mount the Livewire component.
@@ -46,12 +42,15 @@ new class extends TableComponent {
     public function items(): LengthAwarePaginator {
         return Pallet::query()
             ->with(['content', 'recipient', 'parcels.content'])
-            ->when($this->q, fn($query) => $query->whereAny(
-                ['id', 'weight', 'notes'], 'ILIKE', "%{$this->q}%")
+            ->when($this->q, fn($query) => $query
+                ->whereAny(['id', 'weight', 'notes'], 'ILIKE', "%{$this->q}%")
+                ->orWhereHas('author', fn($q) => $q->where('name', 'ILIKE', "%{$this->q}%"))
             )
-            ->when($this->type, fn($query) => $query->where('type', $this->type))
-            ->when($this->recipient_id, fn($query) => $query->where('recipient_id', $this->recipient_id))
-            ->when($this->author_id, fn($query) => $query->where('user_id', $this->author_id))
+->when($this->recipient_id, fn($query) => $query->where('recipient_id', $this->recipient_id))
+            ->when(!empty($this->range), fn($query) => $query
+                ->whereDate('created_at', '>=', $this->range['start'])
+                ->whereDate('created_at', '<=', $this->range['end'])
+            )
             ->when(true, function ($query) {
                 return match ($this->availability) {
                     Availability::ANY_STATUS->name => $query,
@@ -66,11 +65,6 @@ new class extends TableComponent {
     #[Computed]
     protected function recipients(): Collection {
         return Recipient::list(['id', 'name'], 'name')->get();
-    }
-
-    #[Computed]
-    protected function users(): Collection {
-        return User::list(['id', 'name'], 'name')->get();
     }
 
     public function render(): View {
@@ -91,12 +85,7 @@ new class extends TableComponent {
         <flux:input wire:model.live.debounce.500ms="q" icon-trailing="magnifying-glass"
                     placeholder="{{__('app.search')}}" clearable class="w-full md:flex-1"/>
 
-        <flux:select variant="listbox" wire:model.live="type" placeholder="{{ __('app.type') }}" clearable
-                     class="w-full md:flex-1">
-            @foreach (PalletType::cases() as $case)
-                <flux:select.option value="{{ $case->name }}">{{ $case->label() }}</flux:select.option>
-            @endforeach
-        </flux:select>
+        <flux:date-picker mode="range" wire:model.live="range" locale="{{ App::getLocale() }}" placeholder="{{ __('app.date_range') }}" with-today week-numbers clearable class="w-full md:flex-1" />
 
         <flux:select variant="listbox" wire:model.live="availability" placeholder="{{ __('app.availability') }}"
                      clearable class="w-full md:flex-1">
@@ -109,13 +98,6 @@ new class extends TableComponent {
                      class="w-full md:flex-1">
             @foreach ($this->recipients as $recipient)
                 <flux:select.option value="{{ $recipient->id }}">{{ $recipient->name }}</flux:select.option>
-            @endforeach
-        </flux:select>
-
-        <flux:select variant="listbox" wire:model.live="author_id" placeholder="{{ __('app.author') }}" clearable
-                     class="flex-1">
-            @foreach ($this->users as $user)
-                <flux:select.option value="{{ $user->id }}">{{ $user->name }}</flux:select.option>
             @endforeach
         </flux:select>
 
@@ -140,6 +122,7 @@ new class extends TableComponent {
             <flux:table.column>{{ __('app.recipient') }}</flux:table.column>
             <flux:table.column>{{ __('app.content.label') }}</flux:table.column>
             <flux:table.column>{{ __('app.weight.label') }}</flux:table.column>
+            <flux:table.column>{{ __('app.created_at') }}</flux:table.column>
             <flux:table.column></flux:table.column>
         </flux:table.columns>
         <flux:table.rows>

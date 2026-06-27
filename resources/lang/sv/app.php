@@ -12,6 +12,7 @@ return [
     'transport' => 'Transport|Transporter',
     'search' => 'Sök',
     'recipient' => 'Mottagare',
+    'date_range' => 'Datumintervall',
     'availability' => 'Tillgänglighet',
     'delivery_type' => 'Leveranstyp',
     'nova_poshta' => 'Nova Poshta',

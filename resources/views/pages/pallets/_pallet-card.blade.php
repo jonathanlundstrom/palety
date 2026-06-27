@@ -74,5 +74,14 @@
                 </flux:text>
             </li>
         @endif
+
+        <li class="px-3 py-3 flex flex-row flex-nowrap not-last:border-b-1 items-start border-b-gray-100 dark:border-b-white/5">
+            <flux:icon.calendar class="flex-none size-4 mt-1 mr-2"/>
+            <span class="flex flex-auto flex-row flex-wrap gap-1">
+                <flux:text class="flex-auto text-sm">
+                    {{ $item->created_at->format('Y-m-d, H:i') }}
+                </flux:text>
+            </span>
+        </li>
     </ul>
 </flux:card>
