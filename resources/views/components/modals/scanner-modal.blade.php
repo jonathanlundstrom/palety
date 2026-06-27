@@ -38,7 +38,7 @@ new class extends Component {
         </div>
 
         <flux:modal.close class="flex-1">
-            <flux:button icon="check" class="w-full">Finish scanning</flux:button>
+            <flux:button icon="check" class="w-full">{{ __('app.scan.finish') }}</flux:button>
         </flux:modal.close>
     </div>
 </flux:modal>

@@ -92,6 +92,7 @@ return [
         'no_items' => 'No items have been linked',
         'scan_parcels' => 'Scan parcels',
         'scan_pallets' => 'Scan pallets',
+        'finish' => 'Finish scanning',
     ],
     'add_modal' => [
         'title' => 'Manually add items',

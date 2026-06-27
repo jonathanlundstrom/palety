@@ -92,6 +92,7 @@ return [
         'no_items' => 'Inga objekt har länkats',
         'scan_parcels' => 'Skanna paket',
         'scan_pallets' => 'Skanna pallar',
+        'finish' => 'Avsluta skanning',
     ],
     'add_modal' => [
         'title' => 'Lägg till objekt manuellt',
