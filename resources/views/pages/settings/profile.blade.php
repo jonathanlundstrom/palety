@@ -4,6 +4,7 @@ use App\Enumerables\UserRole;
 use App\Models\User;
 use Flux\Flux;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Validation\Rule;
@@ -28,6 +29,10 @@ new class extends Component {
         $this->email = Auth::user()->email;
         $this->locale = Auth::user()->locale;
         $this->timezone = Auth::user()->timezone;
+
+        if ($toast = Session::get('toast')) {
+            Flux::toast(variant: $toast['variant'], text: $toast['text']);
+        }
     }
 
     /**
@@ -55,8 +60,16 @@ new class extends Component {
             $user->email_verified_at = null;
         }
 
+        $localeChanged = $user->isDirty('locale');
+
         if ($user->save()) {
-            Flux::toast(variant: 'success', text: __('toasts.user.saved'));
+            if ($localeChanged) {
+                App::setLocale($user->locale);
+                Session::flash('toast', ['variant' => 'success', 'text' => __('toasts.user.saved')]);
+                $this->redirect(route('settings.profile'));
+            } else {
+                Flux::toast(variant: 'success', text: __('toasts.user.saved'));
+            }
         } else {
             Flux::toast(variant: 'danger', text: __('toasts.user.failed'));
         }
