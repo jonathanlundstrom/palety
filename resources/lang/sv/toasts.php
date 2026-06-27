@@ -45,7 +45,7 @@ return [
         'added' => 'Pallen lades till i listan',
         'already_added' => 'Pallen har redan lagts till!',
         'loaded' => 'Pallen är redan lastad på en transport!',
-        'no_recipient' => 'Paketet måste ha en mottagare innan det kan läggas till i transporten!',
+        'no_recipient' => 'Pallen måste ha en mottagare innan den kan läggas till i transporten!',
         'not_found' => 'Pallen hittades inte i databasen',
         'delete' => [
             'success' => 'Pallen togs bort!',

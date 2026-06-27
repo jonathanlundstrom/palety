@@ -45,7 +45,7 @@ return [
         'added' => 'Successfully added pallet to list',
         'already_added' => 'The pallet has already been added!',
         'loaded' => 'The pallet is already loaded on a transport!',
-        'no_recipient' => 'The parcel needs to have a recipient before it can be added to the transport!',
+        'no_recipient' => 'The pallet needs to have a recipient before it can be added to the transport!',
         'not_found' => 'Pallet could not be found in the database',
         'delete' => [
             'success' => 'Pallet deleted successfully!',

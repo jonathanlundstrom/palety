@@ -20,9 +20,13 @@
         </flux:badge>
     </flux:table.cell>
     <flux:table.cell>
-        <flux:badge size="sm" inset="top bottom" color="zinc">
-            {{ $item->recipient->name }}
-        </flux:badge>
+        @if ($item->recipient)
+            <flux:badge size="sm" inset="top bottom" color="zinc">
+                {{ $item->recipient->name }}
+            </flux:badge>
+        @else
+            --
+        @endif
     </flux:table.cell>
     <flux:table.cell>
         @php $content = $item->displayContent(); @endphp

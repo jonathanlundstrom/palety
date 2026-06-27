@@ -69,8 +69,8 @@ new class extends FormComponent {
     #[Validate('required')]
     public string $status = PalletStatus::DRAFT->name;
 
-    #[Validate('required|integer')]
-    public int $recipient_id;
+    #[Validate('nullable|integer')]
+    public ?int $recipient_id = null;
 
     #[Validate('required_if:type,' . PalletType::CALCULATED->name . '|array')]
     public array $linked_parcels = [];
@@ -190,7 +190,7 @@ new class extends FormComponent {
         @endforeach
     </flux:select>
 
-    <flux:select variant="listbox" wire:model.live="recipient_id" label="{{ __('app.recipient') }}">
+    <flux:select variant="listbox" wire:model.live="recipient_id" label="{{ __('app.recipient') }}" placeholder="{{ __('app.recipient') }}" clearable>
         @foreach ($this->recipients as $recipient)
             <flux:select.option value="{{ $recipient->id }}">{{ $recipient->name }}</flux:select.option>
         @endforeach
