@@ -95,7 +95,7 @@ new class extends TableComponent {
         </flux:select>
 
         <flux:select variant="listbox" wire:model.live="recipient_id" placeholder="{{ __('app.recipient') }}" clearable
-                     class="w-full md:flex-1">
+                     class="md:flex-1 !w-auto grow">
             @foreach ($this->recipients as $recipient)
                 <flux:select.option value="{{ $recipient->id }}">{{ $recipient->name }}</flux:select.option>
             @endforeach

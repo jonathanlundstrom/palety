@@ -59,7 +59,7 @@ new class extends TableComponent {
                     placeholder="{{__('app.search')}}" clearable class="w-full md:flex-1"/>
 
         <flux:select variant="listbox" wire:model.live="role" placeholder="{{ trans_choice('app.role.label', 1) }}"
-                     clearable class="flex-1">
+                     clearable class="md:flex-1 !w-auto grow">
             @foreach (UserRole::cases() as $case)
                 <flux:select.option value="{{ $case->name }}">{{ $case->label() }}</flux:select.option>
             @endforeach

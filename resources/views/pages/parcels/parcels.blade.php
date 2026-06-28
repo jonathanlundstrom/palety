@@ -86,19 +86,19 @@ new class extends TableComponent {
 
     <div class="flex flex-wrap gap-4 items-center mb-4">
         <flux:input wire:model.live.debounce.500ms="q" icon-trailing="magnifying-glass"
-                    placeholder="{{__('app.search')}}" clearable class="w-full md:flex-1"/>
+                    placeholder="{{__('app.search')}}" clearable class="md:flex-1"/>
 
         <flux:date-picker mode="range" wire:model.live="range" locale="{{ App::getLocale() }}" placeholder="{{ __('app.date_range') }}" with-today week-numbers clearable class="w-full md:flex-1" />
 
         <flux:select variant="listbox" wire:model.live="availability" placeholder="{{ __('app.availability') }}" clearable
-                     class="w-full md:flex-1">
+                     class="md:flex-1">
             @foreach (Availability::parcelFilters() as $case)
                 <flux:select.option value="{{ $case->name }}">{{ $case->label() }}</flux:select.option>
             @endforeach
         </flux:select>
 
         <flux:select variant="listbox" wire:model.live="content_id" placeholder="{{ __('app.content.label') }}"
-                     searchable clearable class="w-full md:flex-1">
+                     searchable clearable class="md:flex-1 !w-auto grow">
             @foreach ($this->content as $content)
                 <flux:select.option value="{{ $content->id }}">{{ $content->{Content::label()} }}</flux:select.option>
             @endforeach
