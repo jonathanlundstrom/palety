@@ -1,5 +1,5 @@
 ARG php_version="8.5.5"
-ARG alpine_version="3.21"
+ARG alpine_version="3.23"
 ARG composer_version="2.8.6"
 ARG supervisor_version="=~4.2"
 ARG node_version="=~22"
