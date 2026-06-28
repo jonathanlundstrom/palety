@@ -33,6 +33,7 @@ return [
     'current_password' => 'Nuvarande lösenord',
     'confirm_password' => 'Bekräfta lösenord',
     'notes' => 'Anteckningar',
+    'merge' => 'Slå ihop',
     'num_copies' => [
         'label' => 'Antal kopior',
         'description' => 'Används för att skapa flera identiska paket.',

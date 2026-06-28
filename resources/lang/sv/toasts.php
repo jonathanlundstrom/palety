@@ -25,6 +25,10 @@ return [
             'success' => 'Innehållet togs bort!',
             'failed' => 'Misslyckades med att ta bort innehållet',
         ],
+        'merge' => [
+            'success' => 'Innehållet slogs ihop!',
+            'failed' => 'Misslyckades med att slå ihop innehållet',
+        ],
     ],
     'parcel' => [
         'failed' => 'Misslyckades med att spara paketet',

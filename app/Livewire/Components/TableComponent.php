@@ -117,4 +117,12 @@ abstract class TableComponent extends Component {
     public function delete(int $id, string $class): void {
         $this->dispatch('confirm-delete', id: $id, class: $class);
     }
+
+    /**
+     * Merge a content item into another.
+     * Dispatches an event to open the merge confirmation modal.
+     */
+    public function merge(int $id): void {
+        $this->dispatch('confirm-merge', id: $id);
+    }
 }

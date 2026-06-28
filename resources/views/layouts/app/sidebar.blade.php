@@ -131,6 +131,7 @@
 
         {{-- Shared components --}}
         <livewire:modals.delete-modal />
+        <livewire:modals.merge-content-modal />
 
         @fluxScripts
     </body>

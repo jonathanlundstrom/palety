@@ -33,6 +33,7 @@ return [
     'current_password' => 'Current password',
     'confirm_password' => 'Confirm password',
     'notes' => 'Notes',
+    'merge' => 'Merge',
     'num_copies' => [
         'label' => 'Number of copies',
         'description' => 'Used to create multiple identical parcels.',

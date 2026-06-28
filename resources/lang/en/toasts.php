@@ -25,6 +25,10 @@ return [
             'success' => 'Content deleted successfully!',
             'failed' => 'Failed to delete content',
         ],
+        'merge' => [
+            'success' => 'Content merged successfully!',
+            'failed' => 'Failed to merge content',
+        ],
     ],
     'parcel' => [
         'failed' => 'Failed to save parcel',
