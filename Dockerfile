@@ -1,9 +1,9 @@
 ARG php_version="8.5.5"
 ARG alpine_version="3.23"
-ARG composer_version="2.8.6"
-ARG supervisor_version="=~4.2"
-ARG node_version="=~22"
-ARG nginx_version="=~1.26"
+ARG composer_version="2.9.8"
+ARG supervisor_version="=~4.3"
+ARG node_version="=~24"
+ARG nginx_version="=~1.28"
 
 ARG APP_NAME="Palety"
 
@@ -29,7 +29,6 @@ COPY .docker/scripts/docker-php-ext-get /usr/local/bin
 RUN apk --update add \
     zlib-dev \
     libpng-dev \
-    libxpm-dev \
     libwebp-dev \
     libxml2-dev \
     libjpeg-turbo-dev \
@@ -38,10 +37,7 @@ RUN apk --update add \
     icu-dev \
     linux-headers \
  && docker-php-source extract \
- && docker-php-ext-configure \
-    calendar \
  && docker-php-ext-configure gd \
-    --with-xpm \
     --with-jpeg \
     --with-webp \
     --with-freetype \
@@ -50,12 +46,8 @@ RUN apk --update add \
     calendar \
     pcntl \
     bcmath \
-    opcache \
-    pdo \
     pdo_pgsql \
     gd \
- && docker-php-ext-configure \
-    intl \
  && docker-php-ext-install \
     intl \
  && docker-php-source delete \
