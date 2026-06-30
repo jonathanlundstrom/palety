@@ -21,10 +21,20 @@ abstract class TableComponent extends Component {
     public string $q = '';
 
     #[Url(as: 'sort')]
-    public string $sortBy = 'id';
+    public ?string $sortBy;
 
     #[Url(as: 'direction')]
-    public ?string $sortDirection = 'asc';
+    public ?string $sortDirection;
+
+    /**
+     * Mount the Livewire component.
+     * Currently used to set sorting properties.
+     * @return void
+     */
+    public function mount(): void {
+        $this->sortBy = $this->sortBy ?? 'id';
+        $this->sortDirection = $this->sortDirection ?? 'desc';
+    }
 
     /**
      * Get the modal name for the attached form component.

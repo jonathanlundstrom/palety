@@ -29,17 +29,6 @@ new class extends TableComponent {
     #[Url(except: '')]
     public string $recipient_id = '';
 
-
-    /**
-     * Mount the Livewire component.
-     * Currently used to override parent sorting properties.
-     * @return void
-     */
-    public function mount(): void {
-        $this->sortBy = 'id';
-        $this->sortDirection = 'desc';
-    }
-
     #[Computed]
     public function items(): LengthAwarePaginator {
         return Transport::query()

@@ -33,8 +33,8 @@ new class extends TableComponent {
      * @return void
      */
     public function mount(): void {
-        $this->sortBy = 'name';
-        $this->sortDirection = 'asc';
+        $this->sortBy = $this->sortBy ?? 'name';
+        $this->sortDirection = $this->sortDirection ?? 'asc';
     }
 
     #[Computed]

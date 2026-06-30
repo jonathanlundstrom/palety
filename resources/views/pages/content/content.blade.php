@@ -25,8 +25,8 @@ new class extends TableComponent {
      * @return void
      */
     public function mount(): void {
-        $this->sortBy = 'label_en';
-        $this->sortDirection = 'asc';
+        $this->sortBy = $this->sortBy ?? 'label_en';
+        $this->sortDirection = $this->sortDirection ?? 'asc';
     }
 
     #[Computed]
