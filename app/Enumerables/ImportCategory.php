@@ -40,17 +40,19 @@ enum ImportCategory implements ColoredEnum {
     }
 
     /**
-     * Returns the enum cases that should be displayed in charts.
-     * The colors have to be hardcoded because of the way Tailwind CSS works.
+     * Returns the dashboard categories mapped to their Tailwind bg class.
+     * Classes must be hardcoded so Tailwind includes them in the build.
      */
     public static function chartCategories(): array {
         return [
-            self::FOOD->name => ['bar' => 'text-lime-400'],
-            self::SANITARY_HYGIENE->name => ['bar' => 'text-cyan-400'],
-            self::MEDICAL->name => ['bar' => 'text-red-400'],
-            self::CLOTHING->name => ['bar' => 'text-emerald-400'],
-            self::TECHNICAL->name => ['bar' => 'text-purple-400'],
-            self::OTHER->name => ['bar' => 'text-zinc-400'],
+            self::FOOD->name => 'bg-lime-400',
+            self::SANITARY_HYGIENE->name => 'bg-cyan-400',
+            self::MEDICAL->name => 'bg-red-400',
+            self::CLOTHING->name => 'bg-emerald-400',
+            self::TECHNICAL->name => 'bg-purple-400',
+            self::VEHICLES->name => 'bg-orange-400',
+            self::FUEL->name => 'bg-yellow-400',
+            self::OTHER->name => 'bg-zinc-400',
         ];
     }
 }

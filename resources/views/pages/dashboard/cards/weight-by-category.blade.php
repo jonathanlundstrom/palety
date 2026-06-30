@@ -21,11 +21,10 @@ new class extends Component {
      */
     #[Computed]
     public function monthlyData(): array {
-        $months = $this->year === now()->year ? min(now()->month + 1, 12) : 12;
         $categoryKeys = array_keys(ImportCategory::chartCategories());
 
         // Initialise a zeroed structure: [month => [category => 0.0]]
-        $data = collect(range(1, $months))->mapWithKeys(
+        $data = collect(range(1, 12))->mapWithKeys(
             fn ($m) => [$m => array_fill_keys($categoryKeys, 0.0)]
         )->all();
 
@@ -86,7 +85,7 @@ new class extends Component {
             ->whereYear('parcels.created_at', $this->year)
             ->where(function ($q): void {
                 $q->whereNull('parcels.pallet_id')
-                    ->orWhere('pallets.type', PalletType::CALCULATED->name);
+                    ->orWhere('pallets.type', PalletType::CALCULATED);
             })
             ->selectRaw('EXTRACT(MONTH FROM parcels.created_at)::int AS month, c.category, SUM(parcels.weight / NULLIF(cat_count.cnt::float, 0)) AS total')
             ->groupByRaw('EXTRACT(MONTH FROM parcels.created_at), c.category')
@@ -97,9 +96,7 @@ new class extends Component {
                 }
             });
 
-        // Format for the chart: [['month' => 'Jan', 'FOOD' => 100.0, ...], ...]
         return collect($data)
-            ->skipUntil(fn ($categories) => array_sum($categories) > 0.0)
             ->map(fn ($categories, $m) => array_merge(
                 ['month' => now()->setMonth($m)->format('M')],
                 array_map(fn ($v) => round($v, 1), $categories),
@@ -115,43 +112,53 @@ new class extends Component {
 
 }
 ?>
-<flux:card class="col-span-12 overflow-hidden">
-    <div class="pt-4">
-        <flux:chart :value="$this->monthlyData" class="h-128">
-            <flux:chart.svg>
-                <flux:chart.group stacked>
-                    @foreach ($this->categoryColors as $name => $colors)
-                        <flux:chart.bar
-                            field="{{ $name }}"
-                            class="{{ $colors['bar'] }}"
-                            radius="2"
-                        />
-                    @endforeach
-                </flux:chart.group>
+<flux:card class="col-span-12">
+    <div class="flex flex-col gap-5">
+        @foreach ($this->monthlyData as $row)
+            @php
+                $total = array_sum(array_filter($row, fn ($key) => $key !== 'month', ARRAY_FILTER_USE_KEY));
+            @endphp
+            <div class="flex items-center gap-4">
+                <flux:text class="w-auto shrink-0 text-left text-zinc-500 dark:text-zinc-400">{{ $row['month'] }}</flux:text>
 
-                <flux:chart.axis axis="x" field="month">
-                    <flux:chart.axis.grid/>
-                    <flux:chart.axis.tick/>
-                </flux:chart.axis>
+                <flux:tooltip position="top" class="flex-1" :disabled="$total === 0.0">
+                    <div class="flex h-2 min-w-0 w-full overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-700">
+                        @foreach ($this->categoryColors as $name => $color)
+                            @if (($row[$name] ?? 0) > 0)
+                                <div
+                                    class="{{ $color }}"
+                                    style="width: {{ round($row[$name] / $total * 100, 1) }}%"
+                                ></div>
+                            @endif
+                        @endforeach
+                    </div>
+                    <flux:tooltip.content class="space-y-1">
+                        @foreach ($this->categoryColors as $name => $color)
+                            @if (($row[$name] ?? 0) > 0)
+                                <div class="flex items-center gap-2">
+                                    <div class="size-2 shrink-0 rounded-full {{ $color }}"></div>
+                                    <span>{{ ImportCategory::from($name)->label() }}: {{ number_format($row[$name]) }} {{ __('app.weight.unit') }} ({{ round($row[$name] / $total * 100) }}%)</span>
+                                </div>
+                            @endif
+                        @endforeach
+                    </flux:tooltip.content>
+                </flux:tooltip>
 
-                <flux:chart.axis axis="y" :format="['style' => 'unit', 'unit' => 'kilogram', 'unitDisplay' => 'short']">
-                    <flux:chart.axis.grid/>
-                    <flux:chart.axis.tick/>
-                </flux:chart.axis>
+                @if ($total)
+                    <flux:text class="w-auto shrink-0 text-right tabular-nums text-zinc-500 dark:text-zinc-400">
+                        {{ number_format($total).' '.__('app.weight.unit') }}
+                    </flux:text>
+                @endif
+            </div>
+        @endforeach
 
-                <flux:chart.cursor/>
-            </flux:chart.svg>
-
-            <flux:chart.tooltip>
-                <flux:chart.tooltip.heading field="month"/>
-                @foreach (array_keys($this->categoryColors) as $name)
-                    <flux:chart.tooltip.value
-                        field="{{ $name }}"
-                        :label="ImportCategory::from($name)->label()"
-                        :format="['style' => 'unit', 'unit' => 'kilogram', 'unitDisplay' => 'short']"
-                    />
-                @endforeach
-            </flux:chart.tooltip>
-        </flux:chart>
+        <div class="mt-1 flex flex-wrap gap-x-4 gap-y-1">
+            @foreach ($this->categoryColors as $name => $color)
+                <div class="flex items-center gap-1.5">
+                    <div class="size-2.5 shrink-0 rounded-full {{ $color }}"></div>
+                    <flux:text class="text-xs text-zinc-500 dark:text-zinc-400">{{ ImportCategory::from($name)->label() }}</flux:text>
+                </div>
+            @endforeach
+        </div>
     </div>
 </flux:card>
