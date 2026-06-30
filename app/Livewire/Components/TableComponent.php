@@ -29,7 +29,6 @@ abstract class TableComponent extends Component {
     /**
      * Mount the Livewire component.
      * Currently used to set sorting properties.
-     * @return void
      */
     public function mount(): void {
         $this->sortBy = $this->sortBy ?? 'id';
