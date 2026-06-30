@@ -135,7 +135,7 @@ new class extends Component {
                 </div>
             @endforeach
 
-            <div class="mt-1 flex items-center gap-3">
+            <div class="mt-3 flex items-center gap-3">
                 <div class="flex items-center gap-4">
                     <div class="flex items-center gap-1.5">
                         <div class="h-2 w-2 rounded-full bg-sky-400 dark:bg-sky-500"></div>
