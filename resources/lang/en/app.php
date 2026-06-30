@@ -86,6 +86,8 @@ return [
     ],
     'weight_per_month' => 'Kilos packed per month',
     'total_weight' => 'Total weight',
+    'weight_includes_palletised' => 'Includes weight of parcels loaded on pallets.',
+    'weight_includes_parcels' => 'Calculated pallets include the weight of their parcels.',
     'top_contents' => 'Top contents by weight',
     'top_recipients' => 'Top recipients',
     'month_abbr' => 'mo',

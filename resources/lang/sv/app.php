@@ -86,6 +86,8 @@ return [
     ],
     'weight_per_month' => 'Kilon packade per månad',
     'total_weight' => 'Total vikt',
+    'weight_includes_palletised' => 'Inkluderar vikt för paket lastade på pallar.',
+    'weight_includes_parcels' => 'Beräknade pallar inkluderar vikten av sina paket.',
     'top_contents' => 'Toppinnehåll efter vikt',
     'top_recipients' => 'Toppmottagare',
     'month_abbr' => 'mån',

@@ -86,6 +86,8 @@ return [
     ],
     'weight_per_month' => 'Кілограмів упаковано на місяць',
     'total_weight' => 'Загальна вага',
+    'weight_includes_palletised' => 'Включає вагу посилок, завантажених на палети.',
+    'weight_includes_parcels' => 'Розраховані палети включають вагу своїх посилок.',
     'top_contents' => 'Топ вмісту за вагою',
     'top_recipients' => 'Топ отримувачів',
     'month_abbr' => 'міс',

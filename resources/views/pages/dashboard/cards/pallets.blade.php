@@ -98,6 +98,12 @@ new class extends Component {
             <div class="flex items-center gap-1 font-medium text-md text-green-600 dark:text-green-400">
                 <flux:icon icon="scale" variant="mini"/>
                 {{ number_format($this->totalWeight) }} {{ __('app.weight.unit') }}
+                <flux:tooltip toggleable position="left">
+                    <flux:button icon="information-circle" size="sm" variant="ghost" class="text-zinc-500! dark:text-zinc-300! -mr-2"/>
+                    <flux:tooltip.content class="max-w-[16rem]">
+                        <p>{{ __('app.weight_includes_parcels') }}</p>
+                    </flux:tooltip.content>
+                </flux:tooltip>
             </div>
         @endif
     </div>
