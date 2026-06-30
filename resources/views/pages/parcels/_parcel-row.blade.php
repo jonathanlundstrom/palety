@@ -29,13 +29,13 @@
     <flux:table.cell>
         @php $content = $item->content; @endphp
         <div class="flex flex-wrap items-center gap-1">
-            @foreach ($content->take(3) as $type)
+            @foreach ($content->take(2) as $type)
                 <flux:badge size="sm" inset="top bottom" color="zinc">
                     {{ $type->{Content::label()} }}
                 </flux:badge>
             @endforeach
-            @if ($content->count() > 3)
-                <flux:text size="sm" class="ml-1">+{{ $content->count() - 3 }}</flux:text>
+            @if ($content->count() > 2)
+                <flux:text size="sm" class="ml-1">+{{ $content->count() - 2 }}</flux:text>
             @endif
         </div>
     </flux:table.cell>

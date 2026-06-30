@@ -41,6 +41,7 @@ return [
     'city' => 'Місто',
     'created_at' => 'Створено',
     'updated_at' => 'Оновлено',
+    'delivered_at' => 'Доставлено',
     'add' => 'Додати',
     'add_manually' => 'Додати вручну',
     'edit' => 'Редагувати',

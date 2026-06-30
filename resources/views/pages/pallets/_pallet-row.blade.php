@@ -31,13 +31,13 @@
     <flux:table.cell>
         @php $content = $item->displayContent(); @endphp
         <div class="flex flex-wrap items-center gap-1">
-            @foreach ($content->take(3) as $type)
+            @foreach ($content->take(2) as $type)
                 <flux:badge size="sm" inset="top bottom" color="zinc">
                     {{ $type->{Content::label()} }}
                 </flux:badge>
             @endforeach
-            @if ($content->count() > 3)
-                <flux:text size="sm" class="ml-1">+{{ $content->count() - 3 }}</flux:text>
+            @if ($content->count() > 2)
+                <flux:text size="sm" class="ml-1">+{{ $content->count() - 2 }}</flux:text>
             @endif
         </div>
     </flux:table.cell>
@@ -49,6 +49,7 @@
             </flux:badge>
         @endif
     </flux:table.cell>
+    <flux:table.cell>{{ $item->notes ?: '--' }}</flux:table.cell>
     <flux:table.cell>{{ $item->created_at->format('Y-m-d, H:i') }}</flux:table.cell>
     <flux:table.cell>
         <x-item-actions :form="$this->modalName" :object="$item">

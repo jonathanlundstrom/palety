@@ -116,7 +116,8 @@ new class extends TableComponent {
                                wire:click="sort('weight')">{{ __('app.weight.label') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'notes'" :direction="$sortDirection"
                                wire:click="sort('notes')">{{ __('app.notes') }}</flux:table.column>
-            <flux:table.column>{{ __('app.created_at') }}</flux:table.column>
+            <flux:table.column sortable :sorted="$sortBy === 'created_at'" :direction="$sortDirection"
+                               wire:click="sort('created_at')">{{ __('app.created_at') }}</flux:table.column>
             <flux:table.column></flux:table.column>
         </flux:table.columns>
         <flux:table.rows>

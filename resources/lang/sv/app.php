@@ -41,6 +41,7 @@ return [
     'city' => 'Stad',
     'created_at' => 'Skapad',
     'updated_at' => 'Uppdaterad',
+    'delivered_at' => 'Levererad',
     'add' => 'Lägg till',
     'add_manually' => 'Lägg till manuellt',
     'edit' => 'Redigera',

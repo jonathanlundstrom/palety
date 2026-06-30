@@ -41,6 +41,7 @@ return [
     'city' => 'City',
     'created_at' => 'Created',
     'updated_at' => 'Updated',
+    'delivered_at' => 'Delivered',
     'add' => 'Add',
     'add_manually' => 'Add manually',
     'edit' => 'Edit',
