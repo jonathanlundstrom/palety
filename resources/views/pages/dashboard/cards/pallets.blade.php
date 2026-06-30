@@ -63,7 +63,7 @@ new class extends Component {
             ->groupByRaw('EXTRACT(MONTH FROM created_at)')
             ->pluck('count', 'month');
 
-        $months = $this->year === now()->year ? min(now()->month + 1, 12) : 12;
+        $months = $this->year === now()->year ? now()->month : 12;
 
         return collect(range(1, $months))
             ->map(fn ($m) => (int) $counts->get($m, 0))
@@ -108,10 +108,12 @@ new class extends Component {
         @endif
     </div>
 
-    <flux:chart class="-mx-6 -mb-6 mt-6 h-14" :value="$this->monthlyTrend">
-        <flux:chart.svg gutter="1 0 0 0">
-            <flux:chart.line class="text-sky-200 dark:text-amber-400"/>
-            <flux:chart.area class="text-sky-100 dark:text-amber-200"/>
-        </flux:chart.svg>
-    </flux:chart>
+    @if (count(array_filter($this->monthlyTrend)) > 1)
+        <flux:chart class="-mx-6 -mb-6 mt-6 h-14" :value="$this->monthlyTrend">
+            <flux:chart.svg gutter="1 0 0 0">
+                <flux:chart.line class="text-sky-200 dark:text-amber-400"/>
+                <flux:chart.area class="text-sky-100 dark:text-amber-200"/>
+            </flux:chart.svg>
+        </flux:chart>
+    @endif
 </flux:card>
