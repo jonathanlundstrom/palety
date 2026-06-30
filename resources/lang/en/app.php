@@ -86,6 +86,8 @@ return [
     ],
     'weight_per_month' => 'Kilos packed per month',
     'total_weight' => 'Total weight',
+    'top_contents' => 'Top contents by weight',
+    'top_recipients' => 'Top recipients',
     'month_abbr' => 'mo',
     'usage' => [
         'label' => 'Usage',

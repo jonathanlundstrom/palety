@@ -86,6 +86,8 @@ return [
     ],
     'weight_per_month' => 'Kilon packade per månad',
     'total_weight' => 'Total vikt',
+    'top_contents' => 'Toppinnehåll efter vikt',
+    'top_recipients' => 'Toppmottagare',
     'month_abbr' => 'mån',
     'usage' => [
         'label' => 'Användning',

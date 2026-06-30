@@ -86,6 +86,8 @@ return [
     ],
     'weight_per_month' => 'Кілограмів упаковано на місяць',
     'total_weight' => 'Загальна вага',
+    'top_contents' => 'Топ вмісту за вагою',
+    'top_recipients' => 'Топ отримувачів',
     'month_abbr' => 'міс',
     'usage' => [
         'label' => 'Використання',

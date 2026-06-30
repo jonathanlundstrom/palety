@@ -57,12 +57,17 @@ new class extends Component {
         <livewire:pages::dashboard.cards.transports :year="$year" />
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full flex-1">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full flex-1 items-start">
         <div class="col-span-12 lg:col-span-4 gap-6">
-            <livewire:pages::dashboard.cards.kilos :year="$year" />
-            <livewire:pages::dashboard.cards.kilos-chart :year="$year" />
+            <div class="flex flex-col gap-6">
+                <livewire:pages::dashboard.cards.top-contents :year="$year" />
+                <livewire:pages::dashboard.cards.top-recipients :year="$year" />
+            </div>
         </div>
 
-        <livewire:pages::dashboard.cards.weight-by-category :year="$year" />
+        <div class="flex flex-col col-span-12 lg:col-span-8 gap-6">
+            <livewire:pages::dashboard.cards.kilos :year="$year" />
+            <livewire:pages::dashboard.cards.weight-by-category :year="$year" />
+        </div>
     </div>
 </div>

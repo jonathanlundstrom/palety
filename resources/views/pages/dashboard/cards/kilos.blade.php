@@ -90,7 +90,7 @@ new class extends Component {
 
 }
 ?>
-<flux:card class="col-span-4 mb-6 overflow-hidden">
+<flux:card class="col-span-12 overflow-hidden">
     <div class="flex items-center justify-between">
         <div>
             <flux:heading size="xl" class="tabular-nums">
