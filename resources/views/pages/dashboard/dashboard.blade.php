@@ -66,7 +66,6 @@ new class extends Component {
         </div>
 
         <div class="flex flex-col col-span-12 lg:col-span-8 gap-6">
-            <livewire:pages::dashboard.cards.kilos :year="$year" />
             <livewire:pages::dashboard.cards.weight-by-category :year="$year" />
         </div>
     </div>
