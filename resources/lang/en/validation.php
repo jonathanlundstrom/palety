@@ -247,5 +247,6 @@ return [
         'city' => mb_strtolower(__('app.city')),
         'email' => mb_strtolower(__('app.email')),
         'password' => mb_strtolower(__('app.password')),
+        'target_id' => mb_strtolower(__('app.target')),
     ],
 ];

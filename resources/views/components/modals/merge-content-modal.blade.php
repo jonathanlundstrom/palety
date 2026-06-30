@@ -19,10 +19,14 @@ new class extends Component {
     #[Validate('required|integer')]
     public ?int $target_id = null;
 
+    #[Validate('nullable|string|max:255')]
+    public ?string $note = null;
+
     #[On('confirm-merge')]
     public function prepare(int $id): void {
         $this->source_id = $id;
         $this->target_id = null;
+        $this->note = null;
         $this->resetValidation();
     }
 
@@ -74,6 +78,14 @@ new class extends Component {
 
         try {
             DB::transaction(function () {
+                $affectedParcelIds = DB::table('content_parcel')
+                    ->where('content_id', $this->source_id)
+                    ->pluck('parcel_id');
+
+                $affectedPalletIds = DB::table('content_pallet')
+                    ->where('content_id', $this->source_id)
+                    ->pluck('pallet_id');
+
                 $lookup = [
                     'content_parcel' => 'parcel_id',
                     'content_pallet' => 'pallet_id'
@@ -92,6 +104,18 @@ new class extends Component {
 
                 Content::findOrFail($this->source_id)
                     ->forceDelete(); // Bypass the soft delete. Not used for now.
+
+                if ($this->note) {
+                    DB::table('parcels')
+                        ->whereIn('id', $affectedParcelIds)
+                        ->whereNull('notes')
+                        ->update(['notes' => $this->note]);
+
+                    DB::table('pallets')
+                        ->whereIn('id', $affectedPalletIds)
+                        ->whereNull('notes')
+                        ->update(['notes' => $this->note]);
+                }
             });
 
             Flux::toast(variant: 'success', text: __('toasts.content.merge.success'));
@@ -127,6 +151,13 @@ new class extends Component {
                     </flux:select.option>
                 @endforeach
             </flux:select>
+
+            <flux:textarea
+                wire:model="note"
+                :label="__('app.notes')"
+                :placeholder="__('modals.merge.note_placeholder')"
+                rows="2"
+            />
 
             <div class="flex justify-between">
                 <flux:modal.close>

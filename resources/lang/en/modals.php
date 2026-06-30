@@ -7,6 +7,7 @@ return [
         'target_label' => 'Merge into',
         'confirm' => 'Merge & delete source',
         'source_heading' => ':label (used :count :unit)',
+        'note_placeholder' => 'Optional note for affected parcels and pallets.',
     ],
     'delete' => [
         'title' => 'Delete resource',

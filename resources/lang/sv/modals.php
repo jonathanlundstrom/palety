@@ -7,6 +7,7 @@ return [
         'target_label' => 'Slå ihop med',
         'confirm' => 'Slå ihop & ta bort källa',
         'source_heading' => ':label (används :count :unit)',
+        'note_placeholder' => 'Valfri anteckning för berörda paket och pallar.',
     ],
     'delete' => [
         'title' => 'Ta bort resurs',

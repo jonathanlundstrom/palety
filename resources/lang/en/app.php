@@ -12,6 +12,7 @@ return [
     'transport' => 'Transport|Transports',
     'search' => 'Search',
     'recipient' => 'Recipient',
+    'target' => 'Destination',
     'date_range' => 'Date range',
     'availability' => 'Availability',
     'delivery_type' => 'Delivery type',

@@ -12,6 +12,7 @@ return [
     'transport' => 'Транспорт|Транспорти',
     'search' => 'Пошук',
     'recipient' => 'Отримувач',
+    'target' => 'Призначення',
     'date_range' => 'Діапазон дат',
     'availability' => 'Доступність',
     'delivery_type' => 'Тип доставки',

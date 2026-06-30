@@ -12,6 +12,7 @@ return [
     'transport' => 'Transport|Transporter',
     'search' => 'Sök',
     'recipient' => 'Mottagare',
+    'target' => 'Destination',
     'date_range' => 'Datumintervall',
     'availability' => 'Tillgänglighet',
     'delivery_type' => 'Leveranstyp',
