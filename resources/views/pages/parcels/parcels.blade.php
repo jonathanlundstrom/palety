@@ -5,6 +5,7 @@ use App\Enumerables\ParcelType;
 use App\Livewire\Components\TableComponent;
 use App\Models\Parcel;
 use App\Models\Content;
+use App\Models\Recipient;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Livewire\Attributes\Computed;
@@ -26,6 +27,9 @@ new class extends TableComponent {
     public string $availability = '';
 
     #[Url(except: '')]
+    public string $recipient_id = '';
+
+    #[Url(except: '')]
     public string $content_id = '';
 
     #[Computed]
@@ -36,6 +40,7 @@ new class extends TableComponent {
                 ->orWhereHas('author', fn($q) => $q->where('name', 'ILIKE', "%{$this->q}%"))
                 ->orWhereHas('recipient', fn($q) => $q->where('name', 'ILIKE', "%{$this->q}%"))
             )
+            ->when($this->recipient_id, fn($query) => $query->where('recipient_id', $this->recipient_id))
             ->when($this->content_id, fn($query) => $query->whereHas('content', fn($q) => $q->whereKey($this->content_id)))
             ->when(!empty($this->range), fn($query) => $query
                 ->whereDate('created_at', '>=', $this->range['start'])
@@ -53,6 +58,11 @@ new class extends TableComponent {
             ->with(['content' => fn($query) => $query->orderBy(Content::label())])
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate();
+    }
+
+    #[Computed]
+    protected function recipients(): Collection {
+        return Recipient::list(['id', 'name'], 'name')->get();
     }
 
     #[Computed]
@@ -84,6 +94,13 @@ new class extends TableComponent {
                      class="md:flex-1">
             @foreach (Availability::parcelFilters() as $case)
                 <flux:select.option value="{{ $case->name }}">{{ $case->label() }}</flux:select.option>
+            @endforeach
+        </flux:select>
+
+        <flux:select variant="listbox" wire:model.live="recipient_id" placeholder="{{ __('app.recipient') }}"
+                     searchable clearable class="md:flex-1">
+            @foreach ($this->recipients as $recipient)
+                <flux:select.option value="{{ $recipient->id }}">{{ $recipient->name }}</flux:select.option>
             @endforeach
         </flux:select>
 

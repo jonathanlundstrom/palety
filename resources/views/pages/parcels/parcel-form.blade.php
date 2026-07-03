@@ -151,7 +151,7 @@ new class extends FormComponent {
     </flux:field>
 
     @if ($this->canSelectRecipient)
-        <flux:select variant="listbox" wire:model.live="recipient_id" label="{{ __('app.recipient') }}" clearable>
+        <flux:select variant="listbox" wire:model.live="recipient_id" label="{{ __('app.recipient') }}" searchable clearable>
             @foreach ($this->recipients as $recipient)
                 <flux:select.option value="{{ $recipient->id }}">{{ $recipient->name }}</flux:select.option>
             @endforeach

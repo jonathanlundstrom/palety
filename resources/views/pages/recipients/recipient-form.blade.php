@@ -115,7 +115,7 @@ new class extends FormComponent {
 ?>
 <form wire:submit="onSubmit" wire:poll.60s class="space-y-6 min-h-full">
     <flux:select variant="listbox" wire:model.live="parent_id" label="{{ __('app.parent.label') }}"
-                 placeholder="{{ __('app.parent.select') }}" clearable>
+                 placeholder="{{ __('app.parent.select') }}" searchable clearable>
         @foreach ($this->recipients as $recipient)
             <flux:select.option value="{{ $recipient->id }}">{{ $recipient->name }}</flux:select.option>
         @endforeach
