@@ -20,6 +20,7 @@ abstract class FormComponent extends Component {
         $abstract = app()->make($class);
         $this->resource = $abstract::find($id);
         $this->hydrateFields($this->resource);
+        $this->dispatch('edit-hydrated');
     }
 
     #[On('reset-modal')]
