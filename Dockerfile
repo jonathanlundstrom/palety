@@ -36,6 +36,7 @@ RUN apk --update add \
     freetype-dev \
     icu-dev \
     linux-headers \
+    libzip-dev \
  && docker-php-source extract \
  && docker-php-ext-configure gd \
     --with-jpeg \
@@ -48,6 +49,7 @@ RUN apk --update add \
     bcmath \
     pdo_pgsql \
     gd \
+    zip \
  && docker-php-ext-install \
     intl \
  && docker-php-source delete \
