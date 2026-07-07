@@ -1,12 +1,12 @@
-@php use App\Enumerables\DeliveryType; use App\Enumerables\PalletType; use App\Enumerables\RecipientType; @endphp
+@php
+    use App\Enumerables\DeliveryType;
+    use App\Enumerables\PalletType;
+    use App\Enumerables\RecipientType;
+@endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         @include('partials.head')
-
-        <style>
-
-        </style>
     </head>
     <body class="bg-white">
         <flux:main class="p-8">
@@ -32,9 +32,7 @@
                 </header>
 
                 @foreach($loadedByRecipient as $goods)
-                    @php
-                        $recipient = $goods['model'];
-                    @endphp
+                    @php $recipient = $goods['model']; @endphp
                     <div class="flex flex-row flex-nowrap mb-10 items-stretch">
                         <table>
                             <thead class="!bg-zinc-50">

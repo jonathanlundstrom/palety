@@ -5,16 +5,20 @@ namespace App\Http\Controllers;
 use App\Models\Recipient;
 use App\Models\Transport;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\URL;
 use Illuminate\View\View;
+use Maatwebsite\Excel\Concerns\FromView;
+use Maatwebsite\Excel\Facades\Excel;
 use Spatie\Browsershot\Browsershot;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class TransportController extends Controller {
     /**
      * Render the packing list as plain HTML for Browsershot access via signed URL.
      */
     public function showPackingList(Transport $transport): View {
-        return view('exports.transport-packing-list', [
+        return view('exports.packing-list-pdf', [
             'transport' => $transport,
             'loadedByRecipient' => $this->buildLoadedByRecipient($transport),
         ]);
@@ -53,6 +57,30 @@ class TransportController extends Controller {
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="packing-list-'.$transport->id.'.pdf"',
         ]);
+    }
+
+    /**
+     * Generate an Excel file of the packing list and return it as a download.
+     */
+    public function downloadPackingListXlsx(Transport $transport): BinaryFileResponse {
+        App::setLocale('en'); // Force English locale.
+
+        $loadedByRecipient = $this->buildLoadedByRecipient($transport);
+        $export = new class($transport, $loadedByRecipient) implements FromView {
+            public function __construct(
+                private readonly Transport $transport,
+                private readonly array $loadedByRecipient,
+            ) {}
+
+            public function view(): View {
+                return view('exports.packing-list-excel', [
+                    'transport' => $this->transport,
+                    'loadedByRecipient' => $this->loadedByRecipient,
+                ]);
+            }
+        };
+
+        return Excel::download($export, 'packing-list-'.$transport->id.'.xlsx');
     }
 
     /**

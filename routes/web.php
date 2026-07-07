@@ -19,9 +19,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::livewire('/users', 'pages::users')->name('users');
     });
 
-    // Download packing list PDF for transport:
-    Route::get('/transports/{transport}/packing-list/download', [TransportController::class, 'printPackingList'])
+    Route::get('/transports/{transport}/packing-list/download/pdf', [TransportController::class, 'printPackingList'])
         ->name('transports.packing-list.pdf');
+
+    Route::get('/transports/{transport}/packing-list/download/xlsx', [TransportController::class, 'downloadPackingListXlsx'])
+        ->name('transports.packing-list.xlsx');
 });
 
 // Signed URL access for packing list HTML (used by Browsershot, no auth required):
