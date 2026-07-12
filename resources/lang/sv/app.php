@@ -9,6 +9,8 @@ return [
     'status' => 'Status',
     'parcel' => 'Paket|Paket',
     'pallet' => 'Pall|Pallar',
+    'box' => 'låda|lådor',
+    'piece' => 'styck|stycken',
     'transport' => 'Transport|Transporter',
     'search' => 'Sök',
     'recipient' => 'Mottagare',
@@ -118,6 +120,13 @@ return [
     'sent_count' => ':sent av :total skickade',
     'subrecipient_of' => 'Undermottagare av :name',
     'packing_list_for_transport' => 'Packlista för transport #:id',
+    'import_list' => [
+        'category' => 'Varukategori',
+        'item_name' => 'Varubenämning',
+        'num_pieces' => 'Antal enheter',
+        'est_weight' => 'Uppskattad vikt, kg',
+        'quantity' => 'Antal, st',
+    ],
 
     // Available locales:
     'locales' => [

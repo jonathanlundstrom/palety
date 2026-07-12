@@ -187,8 +187,8 @@ class TransportController extends Controller {
                     'quantity' => 1,
                     'weight' => $parcel->weight,
                     'unit' => match($parcel->type) {
-                        ParcelType::BOX => 'коробка',
-                        ParcelType::OTHER => 'штука',
+                        ParcelType::BOX => 'app.box',
+                        ParcelType::OTHER => 'app.piece',
                     },
                     'notes' => $parcel->notes,
                 ];
@@ -201,8 +201,8 @@ class TransportController extends Controller {
                     'quantity' => 1,
                     'weight' => $parcel->weight,
                     'unit' => match($parcel->type) {
-                        ParcelType::BOX => 'коробка',
-                        ParcelType::OTHER => 'штука',
+                        ParcelType::BOX => 'app.box',
+                        ParcelType::OTHER => 'app.piece',
                     },
                     'notes' => $parcel->notes,
                 ];
@@ -242,6 +242,26 @@ class TransportController extends Controller {
     }
 
     /**
+     * Merge items sharing the same Ukrainian label, summing their quantity and weight.
+     */
+    private function mergeByLabel(array $items): array {
+        $merged = [];
+
+        foreach ($items as $item) {
+            $key = $item['label_ua'];
+
+            if (isset($merged[$key])) {
+                $merged[$key]['quantity'] += $item['quantity'];
+                $merged[$key]['weight'] += $item['weight'];
+            } else {
+                $merged[$key] = $item;
+            }
+        }
+
+        return array_values($merged);
+    }
+
+    /**
      * Build the loaded-by-category data structure for the import declaration view.
      * Multi-category items are assigned entirely to the dominant category (most content items).
      * Ties are broken by ImportCategory enum declaration order.
@@ -269,6 +289,12 @@ class TransportController extends Controller {
 
         $this->tabulateParcels($result, $parcels);
         $this->tabulatePallets($result, $pallets);
+
+        foreach ($result as &$row) {
+            $row['pallets'] = $this->mergeByLabel($row['pallets']);
+            $row['parcels'] = $this->mergeByLabel($row['parcels']);
+        }
+        unset($row);
 
         return array_filter($result, fn ($row) => $row['parcels'] || $row['pallets']);
     }

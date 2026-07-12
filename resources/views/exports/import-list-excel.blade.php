@@ -65,11 +65,11 @@
 <table width="100%">
     <tbody>
     <tr>
-        <td width="20%">Категорія товару</td>
-        <td width="20%">Найменування товарів</td>
-        <td width="20%">Кількість місць</td>
-        <td width="20%">Орієнтовна вага, кг</td>
-        <td width="20%">Кількість, штук</td>
+        <td width="20%">{{ __('app.import_list.category') }}</td>
+        <td width="20%">{{ __('app.import_list.item_name') }}</td>
+        <td width="20%">{{ __('app.import_list.num_pieces') }}</td>
+        <td width="20%">{{ __('app.import_list.est_weight') }}</td>
+        <td width="20%">{{ __('app.import_list.quantity') }}</td>
     </tr>
 
     @foreach ($data as $category => $goods)
@@ -86,9 +86,9 @@
                 @endif
 
                 <td>{{ $pallet['label_ua'] }}</td>
-                <td>{{ number_format($pallet['quantity'], 2) }}</td>
-                <td>{{ number_format($pallet['weight'], 2) }}</td>
-                <td>{{ number_format($pallet['quantity'], 2) }} {{ mb_strtolower(trans_choice('app.pallet', $pallet['quantity'])) }}</td>
+                <td>{{ $pallet['quantity'] }}</td>
+                <td>{{ $pallet['weight'] }}</td>
+                <td>{{ $pallet['quantity'] }} {{ mb_strtolower(trans_choice('app.pallet', $pallet['quantity'])) }}</td>
             </tr>
         @endforeach
 
@@ -99,12 +99,10 @@
                     @php $categoryShown = true @endphp
                 @endif
 
-                <td>
-                    {{ $parcel['label_ua'] }}
-                </td>
-                <td>{{ number_format($parcel['quantity'], 2) }}</td>
-                <td>{{ number_format($parcel['weight'], 2) }}</td>
-                <td>{{ number_format($parcel['quantity'], 2) }} {{ $parcel['unit'] }}</td>
+                <td>{{ $parcel['label_ua'] }}</td>
+                <td>{{ $parcel['quantity'] }}</td>
+                <td>{{ $parcel['weight'] }}</td>
+                <td>{{ $parcel['quantity'] }} {{ trans_choice($parcel['unit'], $parcel['quantity']) }}</td>
             </tr>
         @endforeach
     @endforeach

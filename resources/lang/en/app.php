@@ -9,6 +9,8 @@ return [
     'status' => 'Status',
     'parcel' => 'Parcel|Parcels',
     'pallet' => 'Pallet|Pallets',
+    'box' => 'box|boxes',
+    'piece' => 'piece|pieces',
     'transport' => 'Transport|Transports',
     'search' => 'Search',
     'recipient' => 'Recipient',
@@ -118,6 +120,13 @@ return [
     'sent_count' => ':sent out of :total sent',
     'subrecipient_of' => 'Subrecipient of :name',
     'packing_list_for_transport' => 'Packing list for transport #:id',
+    'import_list' => [
+        'category' => 'Category of goods',
+        'item_name' => 'Item name',
+        'num_pieces' => 'Number of pieces',
+        'est_weight' => 'Estimated weight, kg',
+        'quantity' => 'Quantity, pcs',
+    ],
 
     // Available locales:
     'locales' => [

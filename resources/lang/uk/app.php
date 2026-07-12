@@ -7,8 +7,10 @@ return [
     'label' => 'Мітка',
     'author' => 'Автор',
     'status' => 'Статус',
-    'parcel' => 'Посилка|Посилки',
-    'pallet' => 'Палета|Палети',
+    'parcel' => 'Посилка|Посилки|Посилок',
+    'pallet' => 'Палета|Палети|Палет',
+    'box' => 'коробка|коробки|коробок',
+    'piece' => 'штука|штуки|штук',
     'transport' => 'Транспорт|Транспорти',
     'search' => 'Пошук',
     'recipient' => 'Отримувач',
@@ -118,6 +120,13 @@ return [
     'sent_count' => ':sent з :total відправлено',
     'subrecipient_of' => 'Підотримувач :name',
     'packing_list_for_transport' => 'Пакувальний список для транспорту #:id',
+    'import_list' => [
+        'category' => 'Категорія товару',
+        'item_name' => 'Найменування товарів',
+        'num_pieces' => 'Кількість місць',
+        'est_weight' => 'Орієнтовна вага, кг',
+        'quantity' => 'Кількість, штук',
+    ],
 
     // Available locales:
     'locales' => [
