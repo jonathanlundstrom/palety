@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Enumerables\ImportCategory;
+use App\Enumerables\PalletType;
+use App\Enumerables\ParcelType;
+use App\Models\Parcel;
 use App\Models\Recipient;
 use App\Models\Transport;
 use Illuminate\Http\Response;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\URL;
 use Illuminate\View\View;
@@ -21,6 +26,14 @@ class TransportController extends Controller {
         return view('exports.packing-list-pdf', [
             'transport' => $transport,
             'loadedByRecipient' => $this->buildLoadedByRecipient($transport),
+        ]);
+    }
+
+    public function showImportList(Transport $transport): View {
+        App::setLocale('uk');
+        return view('exports.import-list-excel', [
+            'transport' => $transport,
+            'data' => $this->buildLoadedByCategory($transport),
         ]);
     }
 
@@ -130,5 +143,111 @@ class TransportController extends Controller {
         }
 
         return $loadedGoods;
+    }
+
+    /* private function formatParcel(Parcel $parcel): array {
+        return [
+            'id' => $parcel->id,
+            'label_en' => $content->label_en,
+            'label_ua' => $content->label_ua,
+            'weight' => $parcel->weight,
+        ];
+    } */
+
+    private function tabulateParcels(array &$result, Collection $parcels): void {
+        foreach ($parcels as $parcel) {
+            if ($parcel->content->count() > 1) {
+                foreach ($parcel->content as $content) {
+                    $result[$content->category->name]['parcels'][] = [
+                        'id' => $parcel->id,
+                        'label_en' => $content->label_en,
+                        'label_ua' => $content->label_ua,
+                        'quantity' => (1 / $parcel->content->count()),
+                        'weight' => ($parcel->weight / $parcel->content->count()),
+                        'unit' => match($parcel->type) {
+                            ParcelType::BOX => 'коробка',
+                            ParcelType::OTHER => 'штука',
+                        },
+                        'notes' => $parcel->notes,
+                    ];
+                }
+            } else {
+                $content = $parcel->content->first();
+                $result[$content->category->name]['parcels'][] = [
+                    'id' => $parcel->id,
+                    'label_en' => $content->label_en,
+                    'label_ua' => $content->label_ua,
+                    'quantity' => 1,
+                    'weight' => $parcel->weight,
+                    'unit' => match($parcel->type) {
+                        ParcelType::BOX => 'коробка',
+                        ParcelType::OTHER => 'штука',
+                    },
+                    'notes' => $parcel->notes,
+                ];
+            }
+        }
+    }
+
+    private function tabulatePallets(array &$result, Collection $pallets): void {
+        foreach ($pallets as $pallet) {
+            if ($pallet->type === PalletType::CALCULATED) {
+                $this->tabulateParcels($result, $pallet->parcels);
+            } else {
+                if ($pallet->content->count() > 1) {
+                    foreach ($pallet->content as $content) {
+                        $result[$content->category->name]['pallets'][] = [
+                            'id' => $pallet->id,
+                            'label_en' => $content->label_en,
+                            'label_ua' => $content->label_ua,
+                            'quantity' => (1 / $pallet->content->count()),
+                            'weight' => ($pallet->getWeight() / $pallet->content->count()),
+                            'notes' => $pallet->notes,
+                        ];
+                    }
+                } else {
+                    $content = $pallet->content->first();
+                    $result[$content->category->name]['pallets'][] = [
+                        'id' => $pallet->id,
+                        'label_en' => $content->label_en,
+                        'label_ua' => $content->label_ua,
+                        'quantity' => 1,
+                        'weight' => $pallet->getWeight(),
+                        'notes' => $pallet->notes,
+                    ];
+                }
+            }
+        }
+    }
+
+    /**
+     * Build the loaded-by-category data structure for the import declaration view.
+     * Count and weight are split proportionally across categories by number of content items.
+     * Calculated pallets are handled at parcel level; manual pallets at pallet level.
+     * Empty categories are omitted. Order follows ImportCategory enum declaration.
+     */
+    public function buildLoadedByCategory(Transport $transport): array {
+        $result = [];
+
+        foreach (ImportCategory::cases() as $category) {
+            $result[$category->name] = [
+                'parcels' => [],
+                'pallets' => [],
+            ];
+        }
+
+        $parcels = $transport->parcels()
+            ->with('content')
+            ->get();
+
+        $pallets = $transport->pallets()
+            ->with('parcels')
+            ->with('parcels.content')
+            ->get();
+
+        $this->tabulateParcels($result, $parcels);
+        $this->tabulatePallets($result, $pallets);
+
+        return array_filter($result, fn ($row) => $row['parcels'] || $row['pallets']);
     }
 }

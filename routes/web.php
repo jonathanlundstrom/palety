@@ -31,6 +31,11 @@ Route::get('/transports/{transport}/packing-list', [TransportController::class, 
     ->name('transports.packing-list.show')
     ->middleware(['signed']);
 
+// Signed URL access for packing list HTML (used by Browsershot, no auth required):
+Route::get('/transports/{transport}/import-list', [TransportController::class, 'showImportList'])
+    ->name('transports.import-list.show');
+// ->middleware(['signed']);
+
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');
     Route::livewire('settings/profile', 'pages::settings.profile')->name('settings.profile');
