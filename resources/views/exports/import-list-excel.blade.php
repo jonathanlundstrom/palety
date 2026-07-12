@@ -1,7 +1,5 @@
 @php
-    use App\Enumerables\DeliveryType;
-    use App\Enumerables\ImportCategory;use App\Enumerables\PalletType;
-    use App\Enumerables\RecipientType;
+    use App\Enumerables\ImportCategory;
 @endphp
 <html>
 <head>

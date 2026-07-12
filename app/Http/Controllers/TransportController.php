@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Enumerables\ImportCategory;
 use App\Enumerables\PalletType;
 use App\Enumerables\ParcelType;
-use App\Models\Parcel;
 use App\Models\Recipient;
 use App\Models\Transport;
 use Illuminate\Http\Response;
@@ -31,6 +30,7 @@ class TransportController extends Controller {
 
     public function showImportList(Transport $transport): View {
         App::setLocale('uk');
+
         return view('exports.import-list-excel', [
             'transport' => $transport,
             'data' => $this->buildLoadedByCategory($transport),
@@ -145,15 +145,6 @@ class TransportController extends Controller {
         return $loadedGoods;
     }
 
-    /* private function formatParcel(Parcel $parcel): array {
-        return [
-            'id' => $parcel->id,
-            'label_en' => $content->label_en,
-            'label_ua' => $content->label_ua,
-            'weight' => $parcel->weight,
-        ];
-    } */
-
     /**
      * Find the dominant ImportCategory for a set of content items.
      * The category with the most items wins; ties are broken by ImportCategory enum declaration order.
@@ -175,68 +166,62 @@ class TransportController extends Controller {
         return $dominant;
     }
 
+    /**
+     * Resolve the dominant category name and Ukrainian label for a set of content items.
+     * Single-content items use their own category and label directly.
+     * Multi-content items are assigned to the dominant category with its labels concatenated.
+     *
+     * @return array{0: string, 1: string}
+     */
+    private function resolveContent(Collection $contentItems): array {
+        if ($contentItems->count() === 1) {
+            $content = $contentItems->first();
+
+            return [$content->category->name, $content->label_ua];
+        }
+
+        $dominant = $this->dominantCategory($contentItems);
+        $labelUa = $contentItems
+            ->filter(fn ($c) => $c->category->name === $dominant)
+            ->pluck('label_ua')
+            ->filter()
+            ->implode(', ');
+
+        return [$dominant, $labelUa];
+    }
+
+    /**
+     * Tabulate parcels into the loaded-by-category data structure.
+     */
     private function tabulateParcels(array &$result, Collection $parcels): void {
         foreach ($parcels as $parcel) {
-            if ($parcel->content->count() > 1) {
-                $dominant = $this->dominantCategory($parcel->content);
-                $dominantContent = $parcel->content->filter(fn ($c) => $c->category->name === $dominant);
-                $result[$dominant]['parcels'][] = [
-                    'id' => $parcel->id,
-                    'label_en' => $dominantContent->pluck('label_en')->filter()->implode(', '),
-                    'label_ua' => $dominantContent->pluck('label_ua')->filter()->implode(', '),
-                    'quantity' => 1,
-                    'weight' => $parcel->weight,
-                    'unit' => match($parcel->type) {
-                        ParcelType::BOX => 'app.box',
-                        ParcelType::OTHER => 'app.piece',
-                    },
-                    'notes' => $parcel->notes,
-                ];
-            } else {
-                $content = $parcel->content->first();
-                $result[$content->category->name]['parcels'][] = [
-                    'id' => $parcel->id,
-                    'label_en' => $content->label_en,
-                    'label_ua' => $content->label_ua,
-                    'quantity' => 1,
-                    'weight' => $parcel->weight,
-                    'unit' => match($parcel->type) {
-                        ParcelType::BOX => 'app.box',
-                        ParcelType::OTHER => 'app.piece',
-                    },
-                    'notes' => $parcel->notes,
-                ];
-            }
+            [$category, $labelUa] = $this->resolveContent($parcel->content);
+            $result[$category]['parcels'][] = [
+                'label_ua' => $labelUa,
+                'quantity' => 1,
+                'weight' => $parcel->weight,
+                'unit' => match ($parcel->type) {
+                    ParcelType::BOX => 'app.box',
+                    ParcelType::OTHER => 'app.piece',
+                },
+            ];
         }
     }
 
+    /**
+     * Tabulate pallets into the loaded-by-category data structure.
+     */
     private function tabulatePallets(array &$result, Collection $pallets): void {
         foreach ($pallets as $pallet) {
             if ($pallet->type === PalletType::CALCULATED) {
                 $this->tabulateParcels($result, $pallet->parcels);
             } else {
-                if ($pallet->content->count() > 1) {
-                    $dominant = $this->dominantCategory($pallet->content);
-                    $dominantContent = $pallet->content->filter(fn ($c) => $c->category->name === $dominant);
-                    $result[$dominant]['pallets'][] = [
-                        'id' => $pallet->id,
-                        'label_en' => $dominantContent->pluck('label_en')->filter()->implode(', '),
-                        'label_ua' => $dominantContent->pluck('label_ua')->filter()->implode(', '),
-                        'quantity' => 1,
-                        'weight' => $pallet->getWeight(),
-                        'notes' => $pallet->notes,
-                    ];
-                } else {
-                    $content = $pallet->content->first();
-                    $result[$content->category->name]['pallets'][] = [
-                        'id' => $pallet->id,
-                        'label_en' => $content->label_en,
-                        'label_ua' => $content->label_ua,
-                        'quantity' => 1,
-                        'weight' => $pallet->getWeight(),
-                        'notes' => $pallet->notes,
-                    ];
-                }
+                [$category, $labelUa] = $this->resolveContent($pallet->content);
+                $result[$category]['pallets'][] = [
+                    'label_ua' => $labelUa,
+                    'quantity' => 1,
+                    'weight' => $pallet->getWeight(),
+                ];
             }
         }
     }
@@ -283,8 +268,7 @@ class TransportController extends Controller {
             ->get();
 
         $pallets = $transport->pallets()
-            ->with('parcels')
-            ->with('parcels.content')
+            ->with(['content', 'parcels.content'])
             ->get();
 
         $this->tabulateParcels($result, $parcels);
