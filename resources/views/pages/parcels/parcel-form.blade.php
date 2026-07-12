@@ -92,6 +92,9 @@ new class extends FormComponent {
             'user_id' => Auth::id()
         ];
 
+        // Round weight to one decimal place before saving.
+        $validated['weight'] = round((float) $validated['weight'], 1);
+
         try {
             $is_creating = $this->formStatus() === FormStatus::CREATING;
             $previous_weight = $is_creating ? null : $this->resource->weight;
