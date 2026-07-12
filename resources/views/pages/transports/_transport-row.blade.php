@@ -19,6 +19,7 @@
     <flux:table.cell>
         <x-item-actions :form="$this->modalName" :object="$item">
             <x-actions.packing-list-button :object="$item"/>
+            <x-actions.import-list-button :object="$item"/>
         </x-item-actions>
     </flux:table.cell>
 </flux:table.row>

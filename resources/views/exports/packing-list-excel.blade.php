@@ -11,7 +11,7 @@
     <table>
         <tbody>
             <tr>
-                <td colspan="5">{{ __('app.packing_list_for_transport', ['id' => $transport->id]) }}</td>
+                <td colspan="5">{{ __('app.packing_list.for_transport', ['id' => $transport->id]) }}</td>
                 <td>{{ $transport->getWeight() }} {{ __('app.weight.unit') }}</td>
             </tr>
             @if ($transport->notes)

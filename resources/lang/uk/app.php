@@ -53,7 +53,6 @@ return [
     'delete' => 'Видалити',
     'submit' => 'Надіслати',
     'confirm' => 'Підтвердити',
-    'packing_list' => 'Пакувальний список',
     'login' => 'Увійти',
     'logout' => 'Вийти',
     'pieces' => 'шт|шт',
@@ -119,8 +118,12 @@ return [
     'statistics' => 'Статистика',
     'sent_count' => ':sent з :total відправлено',
     'subrecipient_of' => 'Підотримувач :name',
-    'packing_list_for_transport' => 'Пакувальний список для транспорту #:id',
+    'packing_list' => [
+        'title' => 'Пакувальний список',
+        'for_transport' => 'Пакувальний список для транспорту #:id',
+    ],
     'import_list' => [
+        'title' => 'Імпортний список',
         'category' => 'Категорія товару',
         'item_name' => 'Найменування товарів',
         'num_pieces' => 'Кількість місць',

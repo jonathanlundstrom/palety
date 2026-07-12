@@ -53,7 +53,6 @@ return [
     'delete' => 'Delete',
     'submit' => 'Submit',
     'confirm' => 'Confirm',
-    'packing_list' => 'Packing list',
     'login' => 'Log in',
     'logout' => 'Log out',
     'pieces' => 'pc|pcs',
@@ -119,8 +118,12 @@ return [
     'statistics' => 'Statistics',
     'sent_count' => ':sent out of :total sent',
     'subrecipient_of' => 'Subrecipient of :name',
-    'packing_list_for_transport' => 'Packing list for transport #:id',
+    'packing_list' => [
+        'title' => 'Packing list',
+        'for_transport' => 'Packing list for transport #:id',
+    ],
     'import_list' => [
+        'title' => 'Import list',
         'category' => 'Category of goods',
         'item_name' => 'Item name',
         'num_pieces' => 'Number of pieces',

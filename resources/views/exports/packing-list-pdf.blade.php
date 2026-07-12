@@ -14,7 +14,7 @@
                 <header class="relative mb-8 w-full">
                     <div class="flex flew-row justify-between items-center">
                         <div>
-                            <flux:heading size="xl" level="1" class="font-semibold mb-1">{{ __('app.packing_list_for_transport', ['id' => $transport->id]) }}</flux:heading>
+                            <flux:heading size="xl" level="1" class="font-semibold mb-1">{{ __('app.packing_list.for_transport', ['id' => $transport->id]) }}</flux:heading>
                             @if ($transport->notes)
                                 <flux:text class="text-lg mb-1">{{ $transport->notes }}</flux:text>
                             @endif

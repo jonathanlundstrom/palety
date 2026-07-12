@@ -24,17 +24,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/transports/{transport}/packing-list/download/xlsx', [TransportController::class, 'downloadPackingListXlsx'])
         ->name('transports.packing-list.xlsx');
+
+    Route::get('/transports/{transport}/import-list/download/xlsx', [TransportController::class, 'downloadImportListXlsx'])
+        ->name('transports.import-list.xlsx');
 });
 
 // Signed URL access for packing list HTML (used by Browsershot, no auth required):
 Route::get('/transports/{transport}/packing-list', [TransportController::class, 'showPackingList'])
     ->name('transports.packing-list.show')
     ->middleware(['signed']);
-
-// Signed URL access for packing list HTML (used by Browsershot, no auth required):
-Route::get('/transports/{transport}/import-list', [TransportController::class, 'showImportList'])
-    ->name('transports.import-list.show');
-// ->middleware(['signed']);
 
 Route::middleware(['auth'])->group(function () {
     Route::redirect('settings', 'settings/profile');

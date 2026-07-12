@@ -28,15 +28,6 @@ class TransportController extends Controller {
         ]);
     }
 
-    public function showImportList(Transport $transport): View {
-        App::setLocale('uk');
-
-        return view('exports.import-list-excel', [
-            'transport' => $transport,
-            'data' => $this->buildLoadedByCategory($transport),
-        ]);
-    }
-
     /**
      * Generate a PDF of the packing list using Browsershot and return it as a download.
      */
@@ -66,9 +57,16 @@ class TransportController extends Controller {
             $browsershot->setChromePath($chromePath);
         }
 
+        $filename = sprintf(
+            '%s %d, %s.xlsx',
+            __('app.packing_list.title'),
+            $transport->id,
+            date('Y-m-d')
+        );
+
         return response($browsershot->pdf(), 200, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="packing-list-'.$transport->id.'.pdf"',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
         ]);
     }
 
@@ -93,7 +91,41 @@ class TransportController extends Controller {
             }
         };
 
-        return Excel::download($export, 'packing-list-'.$transport->id.'.xlsx');
+        return Excel::download($export, sprintf(
+            '%s %d, %s.xlsx',
+            __('app.packing_list.title'),
+            $transport->id,
+            date('Y-m-d')
+        ));
+    }
+
+    /**
+     * Generate an Excel file of the import declaration and return it as a download.
+     */
+    public function downloadImportListXlsx(Transport $transport): BinaryFileResponse {
+        App::setLocale('uk');
+
+        $data = $this->buildLoadedByCategory($transport);
+        $export = new class($transport, $data) implements FromView {
+            public function __construct(
+                private readonly Transport $transport,
+                private readonly array $data,
+            ) {}
+
+            public function view(): View {
+                return view('exports.import-list-excel', [
+                    'transport' => $this->transport,
+                    'data' => $this->data,
+                ]);
+            }
+        };
+
+        return Excel::download($export, sprintf(
+            '%s %d, %s.xlsx',
+            __('app.import_list.title'),
+            $transport->id,
+            date('Y-m-d')
+        ));
     }
 
     /**
