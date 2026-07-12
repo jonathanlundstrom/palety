@@ -51,14 +51,15 @@ class TransportController extends Controller {
                 '--disable-software-rasterizer',
             ])
             ->setNodeModulePath(config('browsershot.node_modules_path'))
-            ->format('A4');
+            ->format('A4')
+            ->landscape();
 
         if ($chromePath = config('browsershot.chrome_path')) {
             $browsershot->setChromePath($chromePath);
         }
 
         $filename = sprintf(
-            '%s %d, %s.xlsx',
+            '%s %d, %s.pdf',
             __('app.packing_list.title'),
             $transport->id,
             date('Y-m-d')

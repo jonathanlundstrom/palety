@@ -11,20 +11,19 @@
     <table>
         <tbody>
             <tr>
-                <td colspan="5">{{ __('app.packing_list.for_transport', ['id' => $transport->id]) }}</td>
+                <td colspan="6">{{ __('app.packing_list.for_transport', ['id' => $transport->id]) }}</td>
                 <td>{{ $transport->getWeight() }} {{ __('app.weight.unit') }}</td>
             </tr>
-            @if ($transport->notes)
-                <tr>
-                    <td colspan="6">{{ $transport->notes }}</td>
-                </tr>
-            @endif
-            <tr><td colspan="6"></td></tr>
-            <tr><td colspan="6"></td></tr>
-        </tbody>
-    </table>
-    <table>
-        <tbody>
+            <tr>
+                <td colspan="1">{{ $transport->pallets->count() }} {{ mb_strtolower(trans_choice('app.pallet', $transport->pallets->count())) }}</td>
+                <td colspan="1">{{ $transport->parcels->count() }} {{ mb_strtolower(trans_choice('app.parcel', $transport->parcels->count())) }}</td>
+                @if ($transport->notes)
+                <td colspan="5">{{ $transport->notes }}</td>
+                 @endif
+            </tr>
+            <tr><td colspan="7"></td></tr>
+            <tr><td colspan="7"></td></tr>
+
             @foreach($loadedByRecipient as $goods)
                 @php
                     $rowCount = 0;
@@ -59,6 +58,14 @@
                         $recipientLines[] = __('app.nova_poshta') . ' #' . $recipient->nova_poshta_id . ', ' . $recipient->city;
                     }
 
+                    if ($palletCount = $goods['pallets']->count()) {
+                        $recipientLines[] = $palletCount . ' ' . mb_strtolower(trans_choice('app.pallet', $palletCount));
+                    }
+
+                    if ($parcelCount = $goods['parcels']->count()) {
+                        $recipientLines[] = $parcelCount . ' ' . mb_strtolower(trans_choice('app.parcel', $parcelCount));
+                    }
+
                     if ($recipient->notes) {
                         $recipientLines[] = $recipient->notes;
                     }
@@ -73,6 +80,7 @@
                             <td>{{ $pallet->id }}</td>
                             <td>{{ $pallet->contentList('en') }}</td>
                             <td>{{ $pallet->contentList('ua') }}</td>
+                            <td>{{ $pallet->notes }}</td>
                             <td>{{ $pallet->getWeight() }}</td>
                             @if ($isFirstRow)
                                 @php $isFirstRow = false; @endphp
@@ -88,6 +96,7 @@
                                 @endif
                                 <td>{{ $parcel->contentList('en') }}</td>
                                 <td>{{ $parcel->contentList('ua') }}</td>
+                                <td>{{ $parcel->notes }}</td>
                                 <td>{{ $parcel->getWeight() }}</td>
                                 @if ($isFirstRow)
                                     @php $isFirstRow = false; @endphp
@@ -104,6 +113,7 @@
                         <td>{{ $parcel->id }}</td>
                         <td>{{ $parcel->contentList('en') }}</td>
                         <td>{{ $parcel->contentList('ua') }}</td>
+                        <td>{{ $parcel->notes }}</td>
                         <td>{{ $parcel->getWeight() }}</td>
                         @if ($isFirstRow)
                             @php $isFirstRow = false; @endphp
@@ -112,13 +122,14 @@
                     </tr>
                 @endforeach
                 <tr>
-                    <td colspan="4">{{ __('app.total_weight') }}:</td>
+                    <td colspan="5">{{ __('app.total_weight') }}:</td>
                     <td>{{ $goods['weight'] }}</td>
                 </tr>
-                <tr><td colspan="5"></td></tr>
-                <tr><td colspan="5"></td></tr>
+                <tr><td colspan="7"></td></tr>
+                <tr><td colspan="7"></td></tr>
             @endforeach
         </tbody>
     </table>
+
 </body>
 </html>
