@@ -154,23 +154,44 @@ class TransportController extends Controller {
         ];
     } */
 
+    /**
+     * Find the dominant ImportCategory for a set of content items.
+     * The category with the most items wins; ties are broken by ImportCategory enum declaration order.
+     */
+    private function dominantCategory(Collection $contentItems): string {
+        $grouped = $contentItems->groupBy(fn ($c) => $c->category->name);
+        $dominant = null;
+        $maxCount = 0;
+
+        foreach (ImportCategory::cases() as $category) {
+            $count = $grouped->get($category->name)?->count() ?? 0;
+
+            if ($count > $maxCount) {
+                $maxCount = $count;
+                $dominant = $category->name;
+            }
+        }
+
+        return $dominant;
+    }
+
     private function tabulateParcels(array &$result, Collection $parcels): void {
         foreach ($parcels as $parcel) {
             if ($parcel->content->count() > 1) {
-                foreach ($parcel->content as $content) {
-                    $result[$content->category->name]['parcels'][] = [
-                        'id' => $parcel->id,
-                        'label_en' => $content->label_en,
-                        'label_ua' => $content->label_ua,
-                        'quantity' => (1 / $parcel->content->count()),
-                        'weight' => ($parcel->weight / $parcel->content->count()),
-                        'unit' => match($parcel->type) {
-                            ParcelType::BOX => 'коробка',
-                            ParcelType::OTHER => 'штука',
-                        },
-                        'notes' => $parcel->notes,
-                    ];
-                }
+                $dominant = $this->dominantCategory($parcel->content);
+                $dominantContent = $parcel->content->filter(fn ($c) => $c->category->name === $dominant);
+                $result[$dominant]['parcels'][] = [
+                    'id' => $parcel->id,
+                    'label_en' => $dominantContent->pluck('label_en')->filter()->implode(', '),
+                    'label_ua' => $dominantContent->pluck('label_ua')->filter()->implode(', '),
+                    'quantity' => 1,
+                    'weight' => $parcel->weight,
+                    'unit' => match($parcel->type) {
+                        ParcelType::BOX => 'коробка',
+                        ParcelType::OTHER => 'штука',
+                    },
+                    'notes' => $parcel->notes,
+                ];
             } else {
                 $content = $parcel->content->first();
                 $result[$content->category->name]['parcels'][] = [
@@ -195,16 +216,16 @@ class TransportController extends Controller {
                 $this->tabulateParcels($result, $pallet->parcels);
             } else {
                 if ($pallet->content->count() > 1) {
-                    foreach ($pallet->content as $content) {
-                        $result[$content->category->name]['pallets'][] = [
-                            'id' => $pallet->id,
-                            'label_en' => $content->label_en,
-                            'label_ua' => $content->label_ua,
-                            'quantity' => (1 / $pallet->content->count()),
-                            'weight' => ($pallet->getWeight() / $pallet->content->count()),
-                            'notes' => $pallet->notes,
-                        ];
-                    }
+                    $dominant = $this->dominantCategory($pallet->content);
+                    $dominantContent = $pallet->content->filter(fn ($c) => $c->category->name === $dominant);
+                    $result[$dominant]['pallets'][] = [
+                        'id' => $pallet->id,
+                        'label_en' => $dominantContent->pluck('label_en')->filter()->implode(', '),
+                        'label_ua' => $dominantContent->pluck('label_ua')->filter()->implode(', '),
+                        'quantity' => 1,
+                        'weight' => $pallet->getWeight(),
+                        'notes' => $pallet->notes,
+                    ];
                 } else {
                     $content = $pallet->content->first();
                     $result[$content->category->name]['pallets'][] = [
@@ -222,7 +243,8 @@ class TransportController extends Controller {
 
     /**
      * Build the loaded-by-category data structure for the import declaration view.
-     * Count and weight are split proportionally across categories by number of content items.
+     * Multi-category items are assigned entirely to the dominant category (most content items).
+     * Ties are broken by ImportCategory enum declaration order.
      * Calculated pallets are handled at parcel level; manual pallets at pallet level.
      * Empty categories are omitted. Order follows ImportCategory enum declaration.
      */

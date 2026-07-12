@@ -99,7 +99,9 @@
                     @php $categoryShown = true @endphp
                 @endif
 
-                <td>{{ $parcel['label_ua'] }}</td>
+                <td>
+                    {{ $parcel['label_ua'] }}
+                </td>
                 <td>{{ number_format($parcel['quantity'], 2) }}</td>
                 <td>{{ number_format($parcel['weight'], 2) }}</td>
                 <td>{{ number_format($parcel['quantity'], 2) }} {{ $parcel['unit'] }}</td>
