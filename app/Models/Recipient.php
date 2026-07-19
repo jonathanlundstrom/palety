@@ -40,6 +40,7 @@ class Recipient extends Model {
         'nova_poshta_id',
         'city',
         'notes',
+        'color',
     ];
 
     /**

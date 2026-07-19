@@ -25,24 +25,25 @@
     </div>
 
     <ul>
-        @if ($item->type === RecipientType::ORGANISATION)
-            <li class="px-3 py-3 flex flex-row flex-nowrap not-last:border-b-1 items-start border-b-gray-100 dark:border-b-white/5">
-                <flux:icon.building-office-2 class="flex-none size-4 mt-0.5 mr-2"/>
-                <flux:text class="flex-auto text-sm">
-                    {{ $item->name }}
-                </flux:text>
-            </li>
-        @else
-            <li class="px-3 py-3 flex flex-row flex-nowrap not-last:border-b-1 items-start border-b-gray-100 dark:border-b-white/5">
-                <flux:icon.user class="flex-none size-4 mt-0.5 mr-2"/>
-                <flux:text class="flex-auto text-sm">
-                    {{ $item->name }}
-                    @if ($item->parent)
-                        <span class="opacity-50">({{ $item->parent->name }})</span>
-                    @endif
-                </flux:text>
-            </li>
-        @endif
+        <li class="px-3 py-3 flex flex-row flex-nowrap not-last:border-b-1 items-start border-b-gray-100 dark:border-b-white/5">
+            @if ($item->color)
+                <span class="flex-none block rounded-full size-4 mt-0.5 mr-2" style="background-color: {{ $item->color }}"></span>
+            @else
+                @if ($item->type === RecipientType::ORGANISATION)
+                    <flux:icon.building-office-2 class="flex-none size-4 mt-0.5 mr-2"/>
+                @else
+                    <flux:icon.user class="flex-none size-4 mt-0.5 mr-2"/>
+                @endif
+            @endif
+
+            <flux:text class="flex-auto text-sm">
+                {{ $item->name }}
+
+                @if ($item->parent)
+                    <span class="opacity-50">({{ $item->parent->name }})</span>
+                @endif
+            </flux:text>
+        </li>
 
         @if ($item->type === RecipientType::ORGANISATION)
             <li class="px-3 py-3 flex flex-row flex-nowrap not-last:border-b-1 items-start border-b-gray-100 dark:border-b-white/5">

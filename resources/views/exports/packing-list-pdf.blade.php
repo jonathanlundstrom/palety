@@ -46,9 +46,13 @@
                 @foreach($loadedByRecipient as $goods)
                     @php $recipient = $goods['model']; @endphp
                     <div class="flex flex-row flex-nowrap mb-10 items-stretch">
-                        <table class="w-10/12">
+                        <table class="w-10/12" style="background-color: {{ $recipient->color }}80">
                             <tbody>
-                                <tr class="font-bold !bg-gray-100">
+                                @if ($recipient->color)
+                                    <tr class="font-bold" style="background-color: {{ $recipient->color }}">
+                                @else
+                                    <tr class="font-bold !bg-gray-100">
+                                @endif
                                     <td class="w-1/12">{{ __('app.type') }}</td>
                                     <td class="w-1/12">{{ __('app.id') }}</td>
                                     <td class="w-3/12">{{ __('app.label_en') }}</td>
@@ -71,9 +75,9 @@
                                         @foreach ($pallet->parcels as $key => $parcel)
                                             <tr>
                                                 @if ($key === 0)
-                                                    <td rowspan="{{ $pallet->parcels->count() }}" class="align-text-top">{{ trans_choice('app.pallet', 1) }}</td>
-                                                    <td rowspan="{{ $pallet->parcels->count() }}" class="align-text-top">{{ $pallet->id }}</td>
+                                                    <td rowspan="{{ $pallet->parcels->count() }}" class="align-middle">{{ trans_choice('app.pallet', 1) }}</td>
                                                 @endif
+                                                <td class="align-text-top">{{ $parcel->id }} <span class="opacity-30">({{$pallet->id}})</span></td>
                                                 <td>{{ $parcel->contentList('en') }}</td>
                                                 <td>{{ $parcel->contentList('ua') }}</td>
                                                 <td>{{ $parcel->notes }}</td>
@@ -94,7 +98,7 @@
                                     </tr>
                                 @endforeach
 
-                                <tr class="font-bold !bg-white">
+                                <tr class="font-bold" style="background-color: {{ $recipient->color }}">
                                     <th colspan="5">{{ __('app.total_weight') }}:</th>
                                     <td>
                                         <strong>{{ $goods['weight'] }} {{ __('app.weight.unit') }}</strong>
@@ -103,44 +107,50 @@
                             </tbody>
                         </table>
 
-                        <flux:card class="flex flex-col p-6 w-2/12 text-center items-center justify-start ml-6 rounded-none gap-3">
-                            <div>
-                                <flux:heading level="3" class="font-semibold mb-1">{{ $recipient->name }}</flux:heading>
-                                @if ($recipient->type === RecipientType::ORGANISATION)
-                                    <flux:text>{{ __('pages.recipients.form.extras.EDRPOU') }}: {{ $recipient->organisation_number }}</flux:text>
-                                @endif
-
-                                @if ($parent = $recipient->parent)
-                                    <flux:text>{{ __('app.subrecipient_of', ['name' => $parent->name]) }}</flux:text>
-                                @endif
-                            </div>
-
-                            <div>
-                                @if ($recipient->delivery_type === DeliveryType::SELF_PICKUP)
-                                    <flux:text>{{ DeliveryType::SELF_PICKUP->label() }} in {{ $recipient->city }}</flux:text>
-                                @elseif ($recipient->delivery_type === DeliveryType::ADDRESS_DELIVERY)
-                                    <flux:text>{{ $recipient->address }}, {{ $recipient->zipcode }} {{ $recipient->city }}</flux:text>
-                                @elseif ($recipient->delivery_type === DeliveryType::NOVA_POSHTA_DELIVERY)
-                                    <flux:text>{{ __('app.nova_poshta') }} #{{ $recipient->nova_poshta_id }}, {{ $recipient->city }}</flux:text>
-                                @endif
-                            </div>
-
-                            <div>
-                                @if ($palletCount = $goods['pallets']->count())
-                                    <flux:text>{{ $palletCount }} {{ mb_strtolower(trans_choice('app.pallet', $palletCount)) }}</flux:text>
-                                @endif
-
-                                @if ($parcelCount = $goods['parcels']->count())
-                                    <flux:text>{{ $parcelCount }} {{ mb_strtolower(trans_choice('app.parcel', $parcelCount)) }}</flux:text>
-                                @endif
-                            </div>
-
-                            @if ($recipient->notes)
-                                <div>
-                                    <flux:text variant="subtle">{{ $recipient->notes }}</flux:text>
-                                </div>
+                        <div class="w-2/12 ml-6 flex flex-col">
+                            @if ($recipient->color)
+                                <div class="w-full h-4" style="background-color: {{ $recipient->color }}"></div>
                             @endif
-                        </flux:card>
+
+                            <flux:card class="flex-auto flex flex-col p-6 text-center items-center justify-start rounded-none gap-3">
+                                <div>
+                                    <flux:heading level="3" class="font-semibold mb-1">{{ $recipient->name }}</flux:heading>
+                                    @if ($recipient->type === RecipientType::ORGANISATION)
+                                        <flux:text>{{ __('pages.recipients.form.extras.EDRPOU') }}: {{ $recipient->organisation_number }}</flux:text>
+                                    @endif
+
+                                    @if ($parent = $recipient->parent)
+                                        <flux:text>{{ __('app.subrecipient_of', ['name' => $parent->name]) }}</flux:text>
+                                    @endif
+                                </div>
+
+                                <div>
+                                    @if ($recipient->delivery_type === DeliveryType::SELF_PICKUP)
+                                        <flux:text>{{ DeliveryType::SELF_PICKUP->label() }} in {{ $recipient->city }}</flux:text>
+                                    @elseif ($recipient->delivery_type === DeliveryType::ADDRESS_DELIVERY)
+                                        <flux:text>{{ $recipient->address }}, {{ $recipient->zipcode }} {{ $recipient->city }}</flux:text>
+                                    @elseif ($recipient->delivery_type === DeliveryType::NOVA_POSHTA_DELIVERY)
+                                        <flux:text>{{ __('app.nova_poshta') }} #{{ $recipient->nova_poshta_id }}, {{ $recipient->city }}</flux:text>
+                                    @endif
+                                </div>
+
+                                <div>
+                                    @if ($palletCount = $goods['pallets']->count())
+                                        <flux:text>{{ $palletCount }} {{ mb_strtolower(trans_choice('app.pallet', $palletCount)) }}</flux:text>
+                                    @endif
+
+                                    @if ($parcelCount = $goods['parcels']->count())
+                                        <flux:text>{{ $parcelCount }} {{ mb_strtolower(trans_choice('app.parcel', $parcelCount)) }}</flux:text>
+                                    @endif
+                                </div>
+
+                                @if ($recipient->notes)
+                                    <div>
+                                        <flux:text variant="subtle">{{ $recipient->notes }}</flux:text>
+                                    </div>
+                                @endif
+                            </flux:card>
+                        </div>
                     </div>
                 @endforeach
             </div>

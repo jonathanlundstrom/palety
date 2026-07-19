@@ -36,6 +36,7 @@ return [
     'current_password' => 'Current password',
     'confirm_password' => 'Confirm password',
     'notes' => 'Notes',
+    'color' => 'Color',
     'merge' => 'Merge',
     'num_copies' => [
         'label' => 'Number of copies',

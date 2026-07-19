@@ -248,5 +248,6 @@ return [
         'email' => mb_strtolower(__('app.email')),
         'password' => mb_strtolower(__('app.password')),
         'target_id' => mb_strtolower(__('app.target')),
+        'color' => mb_strtolower(__('app.color')),
     ],
 ];

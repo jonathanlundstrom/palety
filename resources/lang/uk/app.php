@@ -36,6 +36,7 @@ return [
     'current_password' => 'Поточний пароль',
     'confirm_password' => 'Підтвердити пароль',
     'notes' => 'Нотатки',
+    'color' => 'Колір',
     'merge' => 'Об\'єднати',
     'num_copies' => [
         'label' => 'Кількість копій',

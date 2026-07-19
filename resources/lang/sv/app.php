@@ -36,6 +36,7 @@ return [
     'current_password' => 'Nuvarande lösenord',
     'confirm_password' => 'Bekräfta lösenord',
     'notes' => 'Anteckningar',
+    'color' => 'Färg',
     'merge' => 'Slå ihop',
     'num_copies' => [
         'label' => 'Antal kopior',

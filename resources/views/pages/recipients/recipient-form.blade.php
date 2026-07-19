@@ -51,6 +51,9 @@ new class extends FormComponent {
     #[Validate('nullable')]
     public string $notes;
 
+    #[Validate('required|hex_color')]
+    public string $color;
+
     #[Computed]
     protected function recipients(): Collection {
         return Recipient::list(['id', 'name'], 'name')->get();
@@ -157,7 +160,16 @@ new class extends FormComponent {
     @endif
 
     <flux:input wire:model="city" label="{{ __('app.city') }}"/>
-    <flux:textarea wire:model="notes" label="{{ __('app.notes') }}"/>
+
+    <flux:textarea wire:model="notes" label="{{ __('app.notes') }}" resize="none"/>
+
+    <flux:separator variant="subtle"/>
+
+    <flux:field>
+        <flux:label>{{ __('app.color') }}</flux:label>
+        <flux:color-picker wire:model="color" type="button" />
+        <flux:error name="color" />
+    </flux:field>
 
     <div class="flex">
         <flux:spacer/>

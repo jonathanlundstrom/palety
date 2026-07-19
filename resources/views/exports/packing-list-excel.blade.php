@@ -92,8 +92,8 @@
                             <tr>
                                 @if ($key === 0)
                                     <td rowspan="{{ $pallet->parcels->count() }}">{{ trans_choice('app.pallet', 1) }}</td>
-                                    <td rowspan="{{ $pallet->parcels->count() }}">{{ $pallet->id }}</td>
                                 @endif
+                                <td>{{ $parcel->id }} ({{$pallet->id}})</td>
                                 <td>{{ $parcel->contentList('en') }}</td>
                                 <td>{{ $parcel->contentList('ua') }}</td>
                                 <td>{{ $parcel->notes }}</td>
