@@ -198,7 +198,7 @@ new class extends FormComponent {
         <flux:error name="linked_parcels"/>
     </flux:field>
 
-    <flux:textarea wire:model="notes" label="{{ __('app.notes') }}"/>
+    <flux:textarea wire:model="notes" label="{{ __('app.notes') }}" resize="none"/>
 
     <div class="flex">
         <flux:spacer/>

@@ -154,7 +154,7 @@ new class extends FormComponent {
     </flux:field>
 
     @if ($this->canSelectRecipient)
-        <flux:select variant="listbox" wire:model.live="recipient_id" label="{{ __('app.recipient') }}" searchable clearable>
+        <flux:select variant="combobox" wire:model.live="recipient_id" label="{{ __('app.recipient') }}" :clearable="isset($recipient_id)">
             @foreach ($this->recipients as $recipient)
                 <flux:select.option value="{{ $recipient->id }}">{{ $recipient->name }}</flux:select.option>
             @endforeach
@@ -163,7 +163,7 @@ new class extends FormComponent {
         <flux:callout variant="warning" icon="information-circle" heading="{{ __('pages.parcels.form.extras.recipient_warning') }}"/>
     @endif
 
-    <flux:textarea wire:model="notes" label="{{ __('app.notes') }}"/>
+    <flux:textarea wire:model="notes" label="{{ __('app.notes') }}" resize="none"/>
 
     @if ($this->formStatus() === FormStatus::CREATING)
         <flux:separator variant="subtle"/>
