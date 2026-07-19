@@ -59,6 +59,13 @@
                     {{ $item->reference }}
                 </flux:text>
             </li>
+        @else
+            <li class="px-3 py-3 flex flex-row flex-nowrap not-last:border-b-1 items-start border-b-gray-100 dark:border-b-white/5">
+                <flux:icon.viewfinder-circle class="flex-none size-4 mt-0.5 mr-2"/>
+                <flux:text class="flex-auto text-sm">
+                    {{ $item->tax_id }}
+                </flux:text>
+            </li>
         @endif
 
         @if ($item->email)

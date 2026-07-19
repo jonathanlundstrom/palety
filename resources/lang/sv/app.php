@@ -23,6 +23,7 @@ return [
     'email' => 'E-postadress',
     'phone_number' => 'Telefonnummer',
     'organisation_number' => 'Organisationsnummer',
+    'tax_id' => 'Skattenummer',
     'reference' => 'Referens',
     'address' => 'Adress',
     'zipcode' => 'Postnummer',

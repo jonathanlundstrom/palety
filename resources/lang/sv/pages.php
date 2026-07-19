@@ -52,6 +52,7 @@ return [
             'title' => 'Mottagardetaljer',
             'subtitle' => 'Fyll i informationen nedan.',
             'extras' => [
+                'IPN' => 'IPN',
                 'EDRPOU' => 'EDRPOU',
             ],
         ],

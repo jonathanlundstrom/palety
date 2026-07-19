@@ -34,6 +34,7 @@ class Recipient extends Model {
         'email',
         'phone_number',
         'organisation_number',
+        'tax_id',
         'delivery_type',
         'address',
         'zipcode',

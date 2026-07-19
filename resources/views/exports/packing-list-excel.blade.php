@@ -44,6 +44,8 @@
 
                     if ($recipient->type === RecipientType::ORGANISATION) {
                         $recipientLines[] = __('pages.recipients.form.extras.EDRPOU') . ': ' . $recipient->organisation_number;
+                    } else {
+                        $recipientLines[] = __('pages.recipients.form.extras.IPN') . ': ' . $recipient->tax_id;
                     }
 
                     if ($parent = $recipient->parent) {

@@ -52,6 +52,7 @@ return [
             'title' => 'Recipient details',
             'subtitle' => 'Fill in the information below.',
             'extras' => [
+                'IPN' => 'IPN',
                 'EDRPOU' => 'EDRPOU',
             ],
         ],

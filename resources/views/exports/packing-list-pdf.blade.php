@@ -117,6 +117,8 @@
                                     <flux:heading level="3" class="font-semibold mb-1">{{ $recipient->name }}</flux:heading>
                                     @if ($recipient->type === RecipientType::ORGANISATION)
                                         <flux:text>{{ __('pages.recipients.form.extras.EDRPOU') }}: {{ $recipient->organisation_number }}</flux:text>
+                                    @else
+                                        <flux:text>{{ __('pages.recipients.form.extras.IPN') }}: {{ $recipient->tax_id }}</flux:text>
                                     @endif
 
                                     @if ($parent = $recipient->parent)

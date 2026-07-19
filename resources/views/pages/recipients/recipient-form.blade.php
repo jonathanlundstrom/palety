@@ -24,6 +24,9 @@ new class extends FormComponent {
     #[Validate('required_if:type,' . RecipientType::ORGANISATION->name)]
     public string $organisation_number;
 
+    #[Validate('required_if:type,' . RecipientType::INDIVIDUAL->name)]
+    public string $tax_id;
+
     #[Validate('required_if:type,' . RecipientType::ORGANISATION->name)]
     public string $reference;
 
@@ -136,6 +139,8 @@ new class extends FormComponent {
         <flux:input wire:model="organisation_number"
                     label="{{ __('app.organisation_number') }} ({{ __('pages.recipients.form.extras.EDRPOU') }})"/>
         <flux:input icon="user" wire:model="reference" label="{{ __('app.reference') }}"/>
+    @else
+        <flux:input wire:model="tax_id" label="{{ __('app.tax_id') }} ({{ __('pages.recipients.form.extras.IPN') }})"/>
     @endif
 
     <flux:input type="email" icon="at-symbol" wire:model="email" label="{{ __('app.email') }}"/>

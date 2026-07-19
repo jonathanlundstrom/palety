@@ -23,6 +23,7 @@ return [
     'email' => 'Електронна адреса',
     'phone_number' => 'Номер телефону',
     'organisation_number' => 'Номер організації',
+    'tax_id' => 'Податковий номер',
     'reference' => 'Референс',
     'address' => 'Адреса',
     'zipcode' => 'Поштовий індекс',
