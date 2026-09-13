@@ -14,7 +14,7 @@ return [
         'subtitle' => 'Välj vilken transport som ska lastas med denna enhet. Endast transporter som fortfarande lastas kan väljas.',
         'target_label' => 'Transport',
         'confirm' => 'Lägg till i transport',
-        'source_heading' => ':label #:id (:recipient)',
+        'source_heading' => ':label #:id – :recipient',
         'empty' => 'Det finns inga transporter som lastas just nu. Skapa en ny, eller sätt en befintlig transport tillbaka till pågående.',
     ],
     'delivered' => [

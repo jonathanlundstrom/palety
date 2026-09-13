@@ -14,7 +14,7 @@ return [
         'subtitle' => 'Select the transport to load this item onto. Only transports that are still being loaded can be selected.',
         'target_label' => 'Transport',
         'confirm' => 'Add to transport',
-        'source_heading' => ':label #:id (:recipient)',
+        'source_heading' => ':label #:id – :recipient',
         'empty' => 'There are no transports being loaded right now. Create one first, or set an existing transport back to in progress.',
     ],
     'delivered' => [
