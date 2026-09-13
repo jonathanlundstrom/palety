@@ -89,8 +89,9 @@ new class extends Component {
 <flux:card class="col-span-4 overflow-hidden">
     <div class="flex items-center justify-between">
         <div>
-            <flux:heading size="xl" class="tabular-nums">
+            <flux:heading size="xl" class="tabular-nums flex flex-row items-center gap-x-1">
                 {{ number_format($this->totalCount) }} {{ mb_strtolower(trans_choice('app.transport', $this->totalCount)) }}
+                <flux:button size="sm" icon="arrow-right" variant="ghost" inset="top bottom" :href="route('transports')" wire:navigate />
             </flux:heading>
 
             @if ($this->totalCount > 0)
