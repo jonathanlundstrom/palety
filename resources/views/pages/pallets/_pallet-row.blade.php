@@ -21,8 +21,8 @@
     </flux:table.cell>
     <flux:table.cell>
         @if ($item->recipient)
-            <flux:badge size="sm" inset="top bottom" color="zinc">
-                {{ $item->recipient->name }}
+            <flux:badge size="sm" inset="top bottom" color="zinc" title="{{ $item->recipient->name }}" class="max-w-full truncate">
+                {{ str($item->recipient->name)->limit(25) }}
             </flux:badge>
         @else
             --
@@ -32,7 +32,7 @@
         @php $content = $item->displayContent(); @endphp
         <div class="flex flex-wrap items-center gap-1">
             @foreach ($content->take(2) as $type)
-                <flux:badge size="sm" inset="top bottom" color="zinc">
+                <flux:badge size="sm" color="zinc">
                     {{ $type->{Content::label()} }}
                 </flux:badge>
             @endforeach
@@ -49,7 +49,7 @@
             </flux:badge>
         @endif
     </flux:table.cell>
-    <flux:table.cell>{{ $item->notes ?: '--' }}</flux:table.cell>
+    <flux:table.cell>{{ str($item->notes)->limit(30) ?: '--' }}</flux:table.cell>
     <flux:table.cell>{{ $item->created_at->format('Y-m-d, H:i') }}</flux:table.cell>
     <flux:table.cell>
         <x-item-actions :form="$this->modalName" :object="$item">
