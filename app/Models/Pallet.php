@@ -154,6 +154,24 @@ class Pallet extends Model {
     }
 
     /**
+     * Scope to pallets containing the given content. Manual pallets are matched
+     * on their own content, while calculated pallets are matched on the content
+     * of the parcels loaded onto them, mirroring displayContent().
+     */
+    public function scopeHasContent(Builder $query, int|string $content_id): Builder {
+        return $query->where(fn (Builder $query) => $query
+            ->where(fn (Builder $manual) => $manual
+                ->where('type', '!=', PalletType::CALCULATED)
+                ->whereHas('content', fn (Builder $content) => $content->whereKey($content_id))
+            )
+            ->orWhere(fn (Builder $calculated) => $calculated
+                ->where('type', PalletType::CALCULATED)
+                ->whereHas('parcels.content', fn (Builder $content) => $content->whereKey($content_id))
+            )
+        );
+    }
+
+    /**
      * Scope to pallets that have been sent on transport.
      */
     public function scopeSent(Builder $query): Builder {

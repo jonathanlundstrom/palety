@@ -67,7 +67,7 @@ new class extends TableComponent {
 
     #[Computed]
     protected function content(): Collection {
-        return Content::orderBy(Content::label())->get();
+        return Content::list(['id', Content::label()], Content::label())->get();
     }
 
     public function render(): View {

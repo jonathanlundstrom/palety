@@ -2,6 +2,7 @@
 
 use App\Enumerables\Availability;
 use App\Livewire\Components\TableComponent;
+use App\Models\Content;
 use App\Models\Pallet;
 use App\Models\Recipient;
 use Illuminate\Database\Eloquent\Collection;
@@ -27,6 +28,9 @@ new class extends TableComponent {
     #[Url(except: '')]
     public string $recipient_id = '';
 
+    #[Url(except: '')]
+    public string $content_id = '';
+
     #[Computed]
     public function items(): LengthAwarePaginator {
         return Pallet::query()
@@ -35,7 +39,8 @@ new class extends TableComponent {
                 ->whereAny(['id', 'weight', 'notes'], 'ILIKE', "%{$this->q}%")
                 ->orWhereHas('author', fn($q) => $q->where('name', 'ILIKE', "%{$this->q}%"))
             )
-->when($this->recipient_id, fn($query) => $query->where('recipient_id', $this->recipient_id))
+            ->when($this->recipient_id, fn($query) => $query->where('recipient_id', $this->recipient_id))
+            ->when($this->content_id, fn($query) => $query->hasContent($this->content_id))
             ->when(!empty($this->range), fn($query) => $query
                 ->whereDate('created_at', '>=', $this->range['start'])
                 ->whereDate('created_at', '<=', $this->range['end'])
@@ -54,6 +59,11 @@ new class extends TableComponent {
     #[Computed]
     protected function recipients(): Collection {
         return Recipient::list(['id', 'name'], 'name')->get();
+    }
+
+    #[Computed]
+    protected function content(): Collection {
+        return Content::list(['id', Content::label()], Content::label())->get();
     }
 
     public function render(): View {
@@ -84,9 +94,16 @@ new class extends TableComponent {
         </flux:select>
 
         <flux:select variant="listbox" wire:model.live="recipient_id" placeholder="{{ __('app.recipient') }}" searchable clearable
-                     class="md:flex-1 !w-auto grow">
+                     class="w-full md:flex-1">
             @foreach ($this->recipients as $recipient)
                 <flux:select.option value="{{ $recipient->id }}">{{ $recipient->name }}</flux:select.option>
+            @endforeach
+        </flux:select>
+
+        <flux:select variant="listbox" wire:model.live="content_id" placeholder="{{ __('app.content.label') }}"
+                     searchable clearable class="md:flex-1 !w-auto grow">
+            @foreach ($this->content as $content)
+                <flux:select.option value="{{ $content->id }}">{{ $content->{Content::label()} }}</flux:select.option>
             @endforeach
         </flux:select>
 
