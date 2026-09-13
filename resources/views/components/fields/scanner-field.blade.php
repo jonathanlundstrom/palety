@@ -70,6 +70,15 @@ new class extends Component {
         return array_sum(array_map(fn($item) => $item->getWeight(), $this->items));
     }
 
+    /**
+     * Structure the scanner items by ID.
+     * @return array
+     */
+    #[Computed]
+    public function sortedItems(): array {
+        return collect($this->items)->sortBy('id')->values()->all();
+    }
+
 }
 
 ?>
@@ -89,7 +98,7 @@ new class extends Component {
 
     <scanner-field>
         <flux:card class="p-2 bg-gray-50 dark:bg-white/10 rounded-lg border-b-0 rounded-b-none space-y-2">
-            @forelse ($items as $item)
+            @forelse ($this->sortedItems as $item)
                 @if ($item::class === Parcel::class)
                     <flux:card class="p-3 space-y-3 rounded-md">
                         <div class="flex gap-3 items-center">
