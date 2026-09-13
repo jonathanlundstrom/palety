@@ -50,6 +50,7 @@ return [
     'add' => 'Lägg till',
     'add_manually' => 'Lägg till manuellt',
     'edit' => 'Redigera',
+    'mark_delivered' => 'Markera som levererad',
     'save' => 'Spara',
     'cancel' => 'Avbryt',
     'delete' => 'Ta bort',

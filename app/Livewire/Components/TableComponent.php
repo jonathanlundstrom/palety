@@ -134,4 +134,12 @@ abstract class TableComponent extends Component {
     public function merge(int $id): void {
         $this->dispatch('confirm-merge', id: $id);
     }
+
+    /**
+     * Mark existing transport as delivered.
+     * Dispatches an event to open the delivered confirmation modal.
+     */
+    public function delivered(int $id): void {
+        $this->dispatch('confirm-delivered', id: $id);
+    }
 }

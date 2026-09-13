@@ -63,6 +63,10 @@ return [
             'success' => 'Transport deleted successfully!',
             'failed' => 'Failed to delete transport',
         ],
+        'delivered' => [
+            'success' => 'Transport marked as delivered!',
+            'failed' => 'Failed to mark the transport as delivered',
+        ],
     ],
     'label' => [
         'printing' => [

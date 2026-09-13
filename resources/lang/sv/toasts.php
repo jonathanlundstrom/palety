@@ -63,6 +63,10 @@ return [
             'success' => 'Transporten togs bort!',
             'failed' => 'Misslyckades med att ta bort transporten',
         ],
+        'delivered' => [
+            'success' => 'Transporten markerades som levererad!',
+            'failed' => 'Misslyckades med att markera transporten som levererad',
+        ],
     ],
     'label' => [
         'printing' => [

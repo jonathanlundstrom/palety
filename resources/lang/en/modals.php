@@ -9,6 +9,13 @@ return [
         'source_heading' => ':label (used :count :unit)',
         'note_placeholder' => 'Optional note for affected parcels and pallets.',
     ],
+    'delivered' => [
+        'title' => 'Mark as delivered',
+        'subtitle' => 'Select the date when the transport was delivered. The status is updated to delivered once confirmed.',
+        'date_label' => 'Delivery date',
+        'confirm' => 'Mark as delivered',
+        'source_heading' => 'Transport #:id (sent :sent)',
+    ],
     'delete' => [
         'title' => 'Delete resource',
         'subtitle' => 'You are about to delete this resource. This action cannot be reversed. In order to continue, please confirm by typing the word "DELETE" in the input field below.',
