@@ -11,7 +11,7 @@ use App\Models\Pallet;
 use App\Models\Parcel;
 use App\Models\Recipient;
 use Flux\Flux;
-use Illuminate\Database\QueryException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
@@ -31,7 +31,7 @@ new class extends FormComponent {
         if (!is_null($payload) && $payload['class'] === Parcel::class) {
             try {
                 $abstract = app()->make($payload['class']);
-                $object = $abstract::find($payload['id']);
+                $object = $abstract::findOrFail($payload['id']);
                 if ($object->getAvailability() === Availability::AVAILABLE) {
                     if (!in_array($object->id, array_column($this->linked_parcels, 'id'), true)) {
                         $this->linked_parcels[] = $object;
@@ -43,7 +43,7 @@ new class extends FormComponent {
                 } else {
                     Flux::toast(variant: 'danger', text: __('toasts.parcel.loaded'));
                 }
-            } catch (QueryException) {
+            } catch (ModelNotFoundException) {
                 Flux::toast(variant: 'danger', text: __('toasts.parcel.not_found'));
             }
         }

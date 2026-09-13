@@ -142,4 +142,12 @@ abstract class TableComponent extends Component {
     public function delivered(int $id): void {
         $this->dispatch('confirm-delivered', id: $id);
     }
+
+    /**
+     * Load an existing parcel or pallet onto a transport.
+     * Dispatches an event to open the add to transport modal.
+     */
+    public function addToTransport(int $id, string $class): void {
+        $this->dispatch('confirm-add-to-transport', id: $id, class: $class);
+    }
 }

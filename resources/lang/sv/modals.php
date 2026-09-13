@@ -9,6 +9,14 @@ return [
         'source_heading' => ':label (används :count :unit)',
         'note_placeholder' => 'Valfri anteckning för berörda paket och pallar.',
     ],
+    'add_to_transport' => [
+        'title' => 'Lägg till i transport',
+        'subtitle' => 'Välj vilken transport som ska lastas med denna enhet. Endast transporter som fortfarande lastas kan väljas.',
+        'target_label' => 'Transport',
+        'confirm' => 'Lägg till i transport',
+        'source_heading' => ':label #:id (:recipient)',
+        'empty' => 'Det finns inga transporter som lastas just nu. Skapa en ny, eller sätt en befintlig transport tillbaka till pågående.',
+    ],
     'delivered' => [
         'title' => 'Markera som levererad',
         'subtitle' => 'Välj det datum då transporten levererades. Statusen uppdateras till levererad när du bekräftar.',

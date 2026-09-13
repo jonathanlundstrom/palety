@@ -2,6 +2,7 @@
 
 use App\Enumerables\FormStatus;
 use App\Enumerables\Availability;
+use App\Enumerables\PalletStatus;
 use App\Enumerables\TransportStatus;
 use App\Enumerables\TransportType;
 use App\Livewire\Components\FormComponent;
@@ -10,7 +11,7 @@ use App\Models\Parcel;
 use App\Models\Transport;
 use Carbon\Carbon;
 use Flux\Flux;
-use Illuminate\Database\QueryException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 
@@ -39,12 +40,14 @@ new class extends FormComponent {
 
                 if ($object->getAvailability() === Availability::AVAILABLE) {
                     if (!in_array($object->id, array_column($this->{$target}, 'id'), true)) {
-                        if ($object->recipient) {
+                        if (is_null($object->recipient)) {
+                            Flux::toast(variant: 'warning', text: __($toast_key . '.no_recipient'));
+                        } elseif ($object instanceof Pallet && $object->status !== PalletStatus::COMPLETED) {
+                            Flux::toast(variant: 'warning', text: __($toast_key . '.draft'));
+                        } else {
                             $this->{$target}[] = $object;
                             Flux::toast(variant: 'success', text: __($toast_key . '.added'));
                             $this->dispatch('vibrate-success');
-                        } else {
-                            Flux::toast(variant: 'warning', text: __($toast_key . '.no_recipient'));
                         }
                     } else {
                         Flux::toast(variant: 'warning', text: __($toast_key . '.already_added'));
@@ -52,7 +55,7 @@ new class extends FormComponent {
                 } else {
                     Flux::toast(variant: 'danger', text: __($toast_key . '.loaded'));
                 }
-            } catch (QueryException) {
+            } catch (ModelNotFoundException) {
                 Flux::toast(variant: 'danger', text: __($toast_key . '.not_found'));
             }
         }

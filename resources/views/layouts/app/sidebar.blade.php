@@ -133,6 +133,7 @@
         <livewire:modals.delete-modal />
         <livewire:modals.merge-content-modal />
         <livewire:modals.delivered-modal />
+        <livewire:modals.add-to-transport-modal />
 
         @fluxScripts
     </body>

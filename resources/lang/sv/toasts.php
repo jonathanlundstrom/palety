@@ -42,6 +42,10 @@ return [
             'success' => 'Paketet togs bort!',
             'failed' => 'Misslyckades med att ta bort paketet',
         ],
+        'transport' => [
+            'success' => 'Paketet lades till i transporten!',
+            'failed' => 'Misslyckades med att lägga till paketet i transporten',
+        ],
     ],
     'pallet' => [
         'failed' => 'Misslyckades med att spara pallen',
@@ -50,10 +54,15 @@ return [
         'already_added' => 'Pallen har redan lagts till!',
         'loaded' => 'Pallen är redan lastad på en transport!',
         'no_recipient' => 'Pallen måste ha en mottagare innan den kan läggas till i transporten!',
+        'draft' => 'Pallen måste vara färdigställd innan den kan läggas till i transporten!',
         'not_found' => 'Pallen hittades inte i databasen',
         'delete' => [
             'success' => 'Pallen togs bort!',
             'failed' => 'Misslyckades med att ta bort pallen',
+        ],
+        'transport' => [
+            'success' => 'Pallen lades till i transporten!',
+            'failed' => 'Misslyckades med att lägga till pallen i transporten',
         ],
     ],
     'transport' => [

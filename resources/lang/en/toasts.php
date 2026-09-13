@@ -42,6 +42,10 @@ return [
             'success' => 'Parcel deleted successfully!',
             'failed' => 'Failed to delete parcel',
         ],
+        'transport' => [
+            'success' => 'Parcel added to the transport!',
+            'failed' => 'Failed to add the parcel to the transport',
+        ],
     ],
     'pallet' => [
         'failed' => 'Failed to save pallet',
@@ -50,10 +54,15 @@ return [
         'already_added' => 'The pallet has already been added!',
         'loaded' => 'The pallet is already loaded on a transport!',
         'no_recipient' => 'The pallet needs to have a recipient before it can be added to the transport!',
+        'draft' => 'The pallet needs to be completed before it can be added to the transport!',
         'not_found' => 'Pallet could not be found in the database',
         'delete' => [
             'success' => 'Pallet deleted successfully!',
             'failed' => 'Failed to delete pallet',
+        ],
+        'transport' => [
+            'success' => 'Pallet added to the transport!',
+            'failed' => 'Failed to add the pallet to the transport',
         ],
     ],
     'transport' => [

@@ -51,6 +51,7 @@ return [
     'add_manually' => 'Lägg till manuellt',
     'edit' => 'Redigera',
     'mark_delivered' => 'Markera som levererad',
+    'add_to_transport' => 'Lägg till i transport',
     'save' => 'Spara',
     'cancel' => 'Avbryt',
     'delete' => 'Ta bort',

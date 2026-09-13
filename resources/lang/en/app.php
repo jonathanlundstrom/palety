@@ -51,6 +51,7 @@ return [
     'add_manually' => 'Add manually',
     'edit' => 'Edit',
     'mark_delivered' => 'Mark as delivered',
+    'add_to_transport' => 'Add to transport',
     'save' => 'Save',
     'cancel' => 'Cancel',
     'delete' => 'Delete',
