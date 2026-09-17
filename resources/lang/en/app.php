@@ -54,6 +54,7 @@ return [
     'mark_delivered' => 'Mark as delivered',
     'add_to_transport' => 'Add to transport',
     'save' => 'Save',
+    'save_copy' => 'Save copy',
     'cancel' => 'Cancel',
     'delete' => 'Delete',
     'submit' => 'Submit',

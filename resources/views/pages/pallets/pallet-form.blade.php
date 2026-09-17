@@ -232,6 +232,8 @@ new class extends FormComponent {
 
     <div class="flex">
         <flux:spacer/>
-        <flux:button type="submit" variant="primary">{{ __('app.save') }}</flux:button>
+        <flux:button type="submit" variant="primary">
+            {{ $duplicating ? __('app.save_copy') : __('app.save') }}
+        </flux:button>
     </div>
 </form>

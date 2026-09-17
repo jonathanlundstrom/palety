@@ -54,6 +54,7 @@ return [
     'mark_delivered' => 'Markera som levererad',
     'add_to_transport' => 'Lägg till i transport',
     'save' => 'Spara',
+    'save_copy' => 'Spara kopia',
     'cancel' => 'Avbryt',
     'delete' => 'Ta bort',
     'submit' => 'Skicka',

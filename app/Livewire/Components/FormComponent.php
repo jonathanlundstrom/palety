@@ -15,6 +15,9 @@ abstract class FormComponent extends Component {
     #[Locked]
     public ?Model $resource = null;
 
+    #[Locked]
+    public bool $duplicating = false;
+
     #[On('edit-resource')]
     public function edit(int $id, string $class): void {
         $abstract = app()->make($class);
@@ -33,6 +36,7 @@ abstract class FormComponent extends Component {
     public function duplicate(int $id, string $class): void {
         $abstract = app()->make($class);
         $this->hydrateFields($abstract::find($id));
+        $this->duplicating = true;
         $this->dispatch('edit-hydrated');
     }
 
