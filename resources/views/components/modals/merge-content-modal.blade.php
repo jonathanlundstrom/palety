@@ -139,7 +139,7 @@ new class extends Component {
 
         <form wire:submit="onSubmit" class="space-y-6">
             @if ($this->source)
-                <flux:callout variant="warning" icon="information-circle" :heading="$this->sourceHeading"/>
+                <flux:callout variant="secondary" icon="information-circle" :heading="$this->sourceHeading"/>
             @else
                 <flux:skeleton animate="shimmer" class="size-full rounded-lg" style="height: 3.375rem"/>
             @endif

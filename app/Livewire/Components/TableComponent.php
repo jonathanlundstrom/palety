@@ -95,6 +95,13 @@ abstract class TableComponent extends Component {
     }
 
     /**
+     * Duplicate an existing resource based on ID and class.
+     */
+    public function duplicate(int $id, string $class): void {
+        $this->dispatch('duplicate-resource', id: $id, class: $class);
+    }
+
+    /**
      * Print a label for the specified resource.
      */
     public function print($id, string $class): void {
