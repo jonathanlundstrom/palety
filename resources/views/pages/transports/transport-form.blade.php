@@ -175,6 +175,9 @@ new class extends FormComponent {
 }
 ?>
 <form wire:submit="onSubmit" wire:poll.60s class="space-y-6 min-h-full">
+    <x-form-heading :title="__('pages.transports.form.'.$this->formMode.'.title')"
+                    :subtitle="__('pages.transports.form.'.$this->formMode.'.subtitle')"/>
+
     <flux:select variant="listbox" wire:model.live="type" label="{{ __('app.type') }}">
         @foreach (TransportType::cases() as $case)
             <flux:select.option :value="$case->name">{{ $case->label() }}</flux:select.option>
@@ -205,6 +208,6 @@ new class extends FormComponent {
 
     <div class="flex">
         <flux:spacer/>
-        <flux:button type="submit" variant="primary">{{ __('app.save') }}</flux:button>
+        <flux:button type="submit" variant="primary">{{ $this->formActionLabel }}</flux:button>
     </div>
 </form>

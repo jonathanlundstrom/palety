@@ -55,6 +55,7 @@ return [
     'add_to_transport' => 'Add to transport',
     'save' => 'Save',
     'save_copy' => 'Save copy',
+    'update' => 'Update',
     'cancel' => 'Cancel',
     'delete' => 'Delete',
     'submit' => 'Submit',

@@ -10,8 +10,18 @@ return [
         'headline' => 'Alla paket',
         'subtitle' => 'Lägg till, redigera och ta bort paket.',
         'form' => [
-            'title' => 'Paketdetaljer',
-            'subtitle' => 'Fyll i informationen nedan.',
+            'creating' => [
+                'title' => 'Skapa nytt paket',
+                'subtitle' => 'Fyll i informationen nedan.',
+            ],
+            'editing' => [
+                'title' => 'Redigera paket',
+                'subtitle' => 'Uppdatera nuvarande information.',
+            ],
+            'duplicating' => [
+                'title' => 'Duplicera paket',
+                'subtitle' => 'Kontrollera informationen nedan.',
+            ],
             'extras' => [
                 'recipient_warning' => 'Välj bara en mottagare om paketet ska skickas separat och inte på en pall!',
             ],
@@ -22,8 +32,18 @@ return [
         'headline' => 'Alla pallar',
         'subtitle' => 'Lägg till, redigera och ta bort pallar.',
         'form' => [
-            'title' => 'Palldetaljer',
-            'subtitle' => 'Fyll i informationen nedan.',
+            'creating' => [
+                'title' => 'Skapa ny pall',
+                'subtitle' => 'Fyll i informationen nedan.',
+            ],
+            'editing' => [
+                'title' => 'Redigera pall',
+                'subtitle' => 'Uppdatera nuvarande information.',
+            ],
+            'duplicating' => [
+                'title' => 'Duplicera pall',
+                'subtitle' => 'Kontrollera informationen nedan.',
+            ],
         ],
     ],
     'transports' => [
@@ -31,8 +51,14 @@ return [
         'headline' => 'Alla transporter',
         'subtitle' => 'Lägg till, redigera och ta bort transporter.',
         'form' => [
-            'title' => 'Transportdetaljer',
-            'subtitle' => 'Fyll i informationen nedan.',
+            'creating' => [
+                'title' => 'Skapa ny transport',
+                'subtitle' => 'Fyll i informationen nedan.',
+            ],
+            'editing' => [
+                'title' => 'Redigera transport',
+                'subtitle' => 'Uppdatera nuvarande information.',
+            ],
         ],
     ],
     'content' => [
@@ -40,8 +66,14 @@ return [
         'headline' => 'Allt innehåll',
         'subtitle' => 'Lägg till, redigera och ta bort paketinnehåll.',
         'form' => [
-            'title' => 'Innehållsdetaljer',
-            'subtitle' => 'Fyll i informationen nedan.',
+            'creating' => [
+                'title' => 'Skapa nytt innehåll',
+                'subtitle' => 'Fyll i informationen nedan.',
+            ],
+            'editing' => [
+                'title' => 'Redigera innehåll',
+                'subtitle' => 'Uppdatera nuvarande information.',
+            ],
         ],
     ],
     'recipients' => [
@@ -49,8 +81,14 @@ return [
         'headline' => 'Alla mottagare',
         'subtitle' => 'Lägg till, redigera och ta bort mottagare.',
         'form' => [
-            'title' => 'Mottagardetaljer',
-            'subtitle' => 'Fyll i informationen nedan.',
+            'creating' => [
+                'title' => 'Skapa ny mottagare',
+                'subtitle' => 'Fyll i informationen nedan.',
+            ],
+            'editing' => [
+                'title' => 'Redigera mottagare',
+                'subtitle' => 'Uppdatera nuvarande information.',
+            ],
             'extras' => [
                 'IPN' => 'IPN',
                 'EDRPOU' => 'EDRPOU',
@@ -62,8 +100,14 @@ return [
         'headline' => 'Alla användare',
         'subtitle' => 'Lägg till, redigera och ta bort användare.',
         'form' => [
-            'title' => 'Användardetaljer',
-            'subtitle' => 'Fyll i informationen nedan.',
+            'creating' => [
+                'title' => 'Skapa ny användare',
+                'subtitle' => 'Fyll i informationen nedan.',
+            ],
+            'editing' => [
+                'title' => 'Redigera användare',
+                'subtitle' => 'Uppdatera nuvarande information.',
+            ],
             'extras' => [
                 'password_warning' => 'Ange bara ett lösenord i fältet om du vill ändra det nuvarande!',
             ],

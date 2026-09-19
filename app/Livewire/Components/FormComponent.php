@@ -5,6 +5,7 @@ namespace App\Livewire\Components;
 use App\Enumerables\FormStatus;
 use App\Helpers\ComponentHelpers;
 use Illuminate\Database\Eloquent\Model;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Component;
@@ -53,5 +54,30 @@ abstract class FormComponent extends Component {
         return (isset($this->resource) && $this->resource->exists)
             ? FormStatus::EDITING
             : FormStatus::CREATING;
+    }
+
+    /**
+     * Determines the translation sub-key used to label the interface.
+     * Matches the lowercased form status, with duplicating as a third state.
+     */
+    #[Computed]
+    public function formMode(): string {
+        return $this->duplicating
+            ? 'duplicating'
+            : mb_strtolower($this->formStatus()->name);
+    }
+
+    /**
+     * Resolves the appropriate label for the form action based on the current form state.
+     * Incorporates a distinct label when duplicating in creating mode.
+     */
+    #[Computed]
+    public function formActionLabel(): string {
+        return match ($this->formStatus()) {
+            FormStatus::CREATING => $this->duplicating
+                ? __('app.save_copy')
+                : __('app.save'),
+            FormStatus::EDITING => __('app.update')
+        };
     }
 }

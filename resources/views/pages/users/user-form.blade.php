@@ -108,6 +108,9 @@ new class extends FormComponent {
 }
 ?>
 <form wire:submit="onSubmit" class="space-y-6 min-h-full">
+    <x-form-heading :title="__('pages.users.form.'.$this->formMode.'.title')"
+                    :subtitle="__('pages.users.form.'.$this->formMode.'.subtitle')"/>
+
     <flux:input wire:model="name" label="{{ __('app.name') }}"/>
     <flux:input wire:model="email" label="{{ __('app.email') }}"/>
 
@@ -139,6 +142,6 @@ new class extends FormComponent {
 
     <div class="flex">
         <flux:spacer/>
-        <flux:button type="submit" variant="primary">{{ __('app.save') }}</flux:button>
+        <flux:button type="submit" variant="primary">{{ $this->formActionLabel }}</flux:button>
     </div>
 </form>

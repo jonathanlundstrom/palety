@@ -55,6 +55,7 @@ return [
     'add_to_transport' => 'Lägg till i transport',
     'save' => 'Spara',
     'save_copy' => 'Spara kopia',
+    'update' => 'Uppdatera',
     'cancel' => 'Avbryt',
     'delete' => 'Ta bort',
     'submit' => 'Skicka',

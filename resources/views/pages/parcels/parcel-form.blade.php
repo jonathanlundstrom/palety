@@ -127,6 +127,9 @@ new class extends FormComponent {
 }
 ?>
 <form wire:submit="onSubmit" wire:poll.60s class="space-y-6 min-h-full">
+    <x-form-heading :title="__('pages.parcels.form.'.$this->formMode.'.title')"
+                    :subtitle="__('pages.parcels.form.'.$this->formMode.'.subtitle')"/>
+
     @if ($this->formStatus() === FormStatus::EDITING && $resource->getAvailability() === Availability::ALREADY_LOADED)
         <flux:callout variant="danger" heading="{!! __('app.parcel_loaded') !!}" icon="exclamation-circle" />
     @endif
@@ -181,7 +184,7 @@ new class extends FormComponent {
     <div class="flex">
         <flux:spacer/>
         <flux:button type="submit" variant="primary">
-            {{ $duplicating ? __('app.save_copy') : __('app.save') }}
+            {{ $this->formActionLabel }}
         </flux:button>
     </div>
 </form>

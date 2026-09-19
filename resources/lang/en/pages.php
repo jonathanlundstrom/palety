@@ -10,8 +10,18 @@ return [
         'headline' => 'All parcels',
         'subtitle' => 'Add, edit and delete the list of parcels.',
         'form' => [
-            'title' => 'Parcel details',
-            'subtitle' => 'Fill in the information below.',
+            'creating' => [
+                'title' => 'Create new parcel',
+                'subtitle' => 'Fill in the information below.',
+            ],
+            'editing' => [
+                'title' => 'Edit parcel',
+                'subtitle' => 'Update current information.',
+            ],
+            'duplicating' => [
+                'title' => 'Duplicate parcel',
+                'subtitle' => 'Verify the information below.',
+            ],
             'extras' => [
                 'recipient_warning' => 'Only choose a recipient if the parcel will be sent separately, and not on a pallet!',
             ],
@@ -22,8 +32,18 @@ return [
         'headline' => 'All pallets',
         'subtitle' => 'Add, edit and delete the list of pallets.',
         'form' => [
-            'title' => 'Pallet details',
-            'subtitle' => 'Fill in the information below.',
+            'creating' => [
+                'title' => 'Create new pallet',
+                'subtitle' => 'Fill in the information below.',
+            ],
+            'editing' => [
+                'title' => 'Edit pallet',
+                'subtitle' => 'Update current information.',
+            ],
+            'duplicating' => [
+                'title' => 'Duplicate pallet',
+                'subtitle' => 'Verify the information below.',
+            ],
         ],
     ],
     'transports' => [
@@ -31,8 +51,14 @@ return [
         'headline' => 'All transports',
         'subtitle' => 'Add, edit and delete the list of transports.',
         'form' => [
-            'title' => 'Transport details',
-            'subtitle' => 'Fill in the information below.',
+            'creating' => [
+                'title' => 'Create new transport',
+                'subtitle' => 'Fill in the information below.',
+            ],
+            'editing' => [
+                'title' => 'Edit transport',
+                'subtitle' => 'Update current information.',
+            ],
         ],
     ],
     'content' => [
@@ -40,8 +66,14 @@ return [
         'headline' => 'All content',
         'subtitle' => 'Add, edit and delete the list of parcel content.',
         'form' => [
-            'title' => 'Content details',
-            'subtitle' => 'Fill in the information below.',
+            'creating' => [
+                'title' => 'Create new content',
+                'subtitle' => 'Fill in the information below.',
+            ],
+            'editing' => [
+                'title' => 'Edit content',
+                'subtitle' => 'Update current information.',
+            ],
         ],
     ],
     'recipients' => [
@@ -49,8 +81,14 @@ return [
         'headline' => 'All recipients',
         'subtitle' => 'Add, edit and delete the list of recipients.',
         'form' => [
-            'title' => 'Recipient details',
-            'subtitle' => 'Fill in the information below.',
+            'creating' => [
+                'title' => 'Create new recipient',
+                'subtitle' => 'Fill in the information below.',
+            ],
+            'editing' => [
+                'title' => 'Edit recipient',
+                'subtitle' => 'Update current information.',
+            ],
             'extras' => [
                 'IPN' => 'IPN',
                 'EDRPOU' => 'EDRPOU',
@@ -62,8 +100,14 @@ return [
         'headline' => 'All users',
         'subtitle' => 'Add, edit and delete the list of users.',
         'form' => [
-            'title' => 'User details',
-            'subtitle' => 'Fill in the information below.',
+            'creating' => [
+                'title' => 'Create new user',
+                'subtitle' => 'Fill in the information below.',
+            ],
+            'editing' => [
+                'title' => 'Edit user',
+                'subtitle' => 'Update current information.',
+            ],
             'extras' => [
                 'password_warning' => 'Only enter a password in the field if you want to change the current one!',
             ],

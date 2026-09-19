@@ -120,6 +120,9 @@ new class extends FormComponent {
 }
 ?>
 <form wire:submit="onSubmit" wire:poll.60s class="space-y-6 min-h-full">
+    <x-form-heading :title="__('pages.recipients.form.'.$this->formMode.'.title')"
+                    :subtitle="__('pages.recipients.form.'.$this->formMode.'.subtitle')"/>
+
     <flux:select variant="listbox" wire:model.live="parent_id" label="{{ __('app.parent.label') }}"
                  placeholder="{{ __('app.parent.select') }}" searchable clearable>
         @foreach ($this->recipients as $recipient)
@@ -178,6 +181,6 @@ new class extends FormComponent {
 
     <div class="flex">
         <flux:spacer/>
-        <flux:button type="submit" variant="primary">{{ __('app.save') }}</flux:button>
+        <flux:button type="submit" variant="primary">{{ $this->formActionLabel }}</flux:button>
     </div>
 </form>
