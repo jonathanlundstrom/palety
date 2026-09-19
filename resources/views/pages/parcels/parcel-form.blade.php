@@ -26,14 +26,17 @@ new class extends FormComponent {
     #[Validate('required')]
     public array $content;
 
-    #[Validate('required')]
-    public string $weight;
+    #[Validate('required|numeric')]
+    public float $weight;
 
     #[Validate('nullable')]
     public string $notes;
 
     #[Validate('nullable|integer')]
     public int $recipient_id;
+
+    #[Validate('nullable|numeric')]
+    public float $value;
 
     #[Validate('nullable|integer|min:1|max:15')]
     public int $copies = 1;
@@ -168,9 +171,19 @@ new class extends FormComponent {
 
     <flux:textarea wire:model="notes" label="{{ __('app.notes') }}" resize="none"/>
 
-    @if ($this->formStatus() === FormStatus::CREATING)
-        <flux:separator variant="subtle"/>
+    <flux:separator variant="subtle"/>
 
+    <flux:field>
+        <flux:label>{{ __('app.value.label') }}</flux:label>
+        <flux:description>{{ __('app.value.description') }}</flux:description>
+        <flux:input.group>
+            <flux:input icon="currency-euro" type="number" wire:model="value" />
+            <flux:input.group.suffix>{{ __('app.currencies.EUR') }}</flux:input.group.suffix>
+        </flux:input.group>
+        <flux:error name="value" />
+    </flux:field>
+
+    @if ($this->formStatus() === FormStatus::CREATING)
         <flux:field>
             <flux:label>{{ __('app.num_copies.label') }}</flux:label>
             <flux:description>{{ __('app.num_copies.description') }}</flux:description>

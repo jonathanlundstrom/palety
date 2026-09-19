@@ -36,6 +36,7 @@ class Pallet extends Model {
         'status',
         'weight',
         'notes',
+        'value',
     ];
 
     /**

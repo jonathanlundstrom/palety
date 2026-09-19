@@ -43,6 +43,10 @@ return [
         'label' => 'Antal kopior',
         'description' => 'Används för att skapa flera identiska paket.',
     ],
+    'value' => [
+        'label' => 'Uppskattat värde',
+        'description' => 'Används för export- och importdeklarationer.',
+    ],
     'city' => 'Stad',
     'created_at' => 'Skapad',
     'updated_at' => 'Uppdaterad',
@@ -136,6 +140,9 @@ return [
         'num_pieces' => 'Antal enheter',
         'est_weight' => 'Uppskattad vikt, kg',
         'quantity' => 'Antal, st',
+    ],
+    'currencies' => [
+        'EUR' => 'Euro',
     ],
 
     // Available locales:

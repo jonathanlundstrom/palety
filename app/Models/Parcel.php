@@ -33,6 +33,7 @@ class Parcel extends Model {
         'pallet_id',
         'transport_id',
         'notes',
+        'value',
     ];
 
     /**

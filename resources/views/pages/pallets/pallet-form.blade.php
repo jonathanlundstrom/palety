@@ -13,6 +13,7 @@ use App\Models\Recipient;
 use Flux\Flux;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
@@ -78,11 +79,14 @@ new class extends FormComponent {
     #[Validate('required_if:type,' . PalletType::MANUAL_PALLET->name . '|array')]
     public array $content = [];
 
-    #[Validate('required_if:type,' . PalletType::MANUAL_PALLET->name)]
-    public string $weight;
+    #[Validate('required_if:type,' . PalletType::MANUAL_PALLET->name.'|numeric')]
+    public float $weight;
 
     #[Validate('nullable')]
     public string $notes;
+
+    #[Validate('nullable|numeric')]
+    public float $value;
 
     #[Computed]
     protected function isCalculated(): bool {
@@ -232,6 +236,20 @@ new class extends FormComponent {
     @endif
 
     <flux:textarea wire:model="notes" label="{{ __('app.notes') }}" resize="none"/>
+
+    @if (!$this->isCalculated)
+        <flux:separator variant="subtle"/>
+
+        <flux:field>
+            <flux:label>{{ __('app.value.label') }}</flux:label>
+            <flux:description>{{ __('app.value.description') }}</flux:description>
+            <flux:input.group>
+                <flux:input icon="currency-euro" type="number" wire:model="value" />
+                <flux:input.group.suffix>{{ __('app.currencies.EUR') }}</flux:input.group.suffix>
+            </flux:input.group>
+            <flux:error name="value" />
+        </flux:field>
+    @endif
 
     <div class="flex">
         <flux:spacer/>

@@ -43,6 +43,10 @@ return [
         'label' => 'Number of copies',
         'description' => 'Used to create multiple identical parcels.',
     ],
+    'value' => [
+        'label' => 'Estimated value',
+        'description' => 'Used for export and import declarations.',
+    ],
     'city' => 'City',
     'created_at' => 'Created',
     'updated_at' => 'Updated',
@@ -136,6 +140,9 @@ return [
         'num_pieces' => 'Number of pieces',
         'est_weight' => 'Estimated weight, kg',
         'quantity' => 'Quantity, pcs',
+    ],
+    'currencies' => [
+        'EUR' => 'Euro',
     ],
 
     // Available locales:
