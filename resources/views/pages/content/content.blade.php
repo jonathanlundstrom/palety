@@ -38,7 +38,7 @@ new class extends TableComponent {
             )
             ->when($this->category, fn($query) => $query->where('category', $this->category))
             ->orderBy($this->sortBy, $this->sortDirection)
-            ->paginate();
+            ->paginate($this->perPage);
     }
 
     public function render(): View {
@@ -73,7 +73,7 @@ new class extends TableComponent {
         <flux:separator variant="subtle" text="{{ __('app.all_items') }}"/>
     </div>
 
-    <flux:table :paginate="$this->items">
+    <flux:table :paginate="$this->items" pagination:scroll-to>
         <flux:table.columns class="hidden lg:table-header-group">
             <flux:table.column sortable :sorted="$sortBy === 'id'" :direction="$sortDirection" wire:click="sort('id')">{{ __('app.id') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'label_en'" :direction="$sortDirection" wire:click="sort('label_en')">{{ __('app.label_en') }}</flux:table.column>

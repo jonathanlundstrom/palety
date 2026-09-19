@@ -47,7 +47,7 @@ new class extends TableComponent {
             ->when($this->delivery_type, fn($query) => $query->where('delivery_type', $this->delivery_type))
             ->when($this->city, fn($query) => $query->where('city', $this->city))
             ->orderBy($this->sortBy, $this->sortDirection)
-            ->paginate();
+            ->paginate($this->perPage);
     }
 
     #[Computed]
@@ -99,7 +99,7 @@ new class extends TableComponent {
         <flux:separator variant="subtle" text="{{ __('app.all_items') }}"/>
     </div>
 
-    <flux:table :paginate="$this->items">
+    <flux:table :paginate="$this->items" pagination:scroll-to>
         <flux:table.columns class="hidden lg:table-header-group">
             <flux:table.column sortable :sorted="$sortBy === 'id'" :direction="$sortDirection" wire:click="sort('id')">{{ __('app.id') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'name'" :direction="$sortDirection" wire:click="sort('name')">{{ __('app.name') }}</flux:table.column>

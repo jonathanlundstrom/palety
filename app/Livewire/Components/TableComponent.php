@@ -26,6 +26,10 @@ abstract class TableComponent extends Component {
     #[Url(as: 'direction')]
     public ?string $sortDirection;
 
+    #[Url(as: 'per-page')]
+    public ?int $perPage = 25;
+
+
     /**
      * Mount the Livewire component.
      * Currently used to set sorting properties.
