@@ -1,6 +1,6 @@
 <?php use App\Models\Content; ?>
-<flux:card class="lg:hidden not-last:mb-4 p-0 rounded-lg overflow-hidden" key="card-{{ $item->id }}">
-    <div class="flex px-3 py-2 bg-gray-50 dark:bg-white/10 justify-center border-b dark:border-b-0">
+<flux:card class="mx-6 lg:hidden not-last:mb-4 p-0 rounded-lg overflow-hidden" key="card-{{ $item->id }}">
+    <div class="flex px-2 py-2.5 bg-gray-50 dark:bg-white/10 justify-center border-b dark:border-b-0">
         <div class="flex flex-1 items-center">
             <div class="flex gap-1">
                 <div class="flex gap-0">
@@ -27,7 +27,7 @@
                 {{ $item->getWeight() }} {{ __('app.weight.unit') }}
             </flux:text>
 
-            <x-item-actions :form="$this->modalName" :object="$item" class="relative top-1">
+            <x-item-actions :form="$this->modalName" :object="$item">
                 <x-actions.duplicate-button :form="$this->modalName" :object="$item"/>
                 <x-actions.print-button :object="$item"/>
                 <x-actions.add-to-transport-button :object="$item"/>

@@ -1,5 +1,5 @@
-<flux:card class="lg:hidden not-last:mb-4 p-0 rounded-lg overflow-hidden" key="card-{{ $item->id }}">
-    <div class="flex px-3 py-2 bg-gray-50 dark:bg-white/10 justify-center border-b dark:border-b-0">
+<flux:card class="mx-6 lg:hidden not-last:mb-4 p-0 rounded-lg overflow-hidden" key="card-{{ $item->id }}">
+    <div class="flex px-2 py-2.5 bg-gray-50 dark:bg-white/10 justify-center border-b dark:border-b-0">
         <div class="flex flex-1 items-center">
             <div class="flex gap-1">
                 <flux:badge size="sm" inset="top bottom" color="zinc">
@@ -13,7 +13,7 @@
         </div>
 
         <div class="flex-0 flex items-center gap-2">
-            <x-item-actions :form="$this->modalName" :object="$item" :allowDelete="$item->usage_count === 0" class="relative top-1">
+            <x-item-actions :form="$this->modalName" :object="$item" :allowDelete="$item->usage_count === 0">
                 @if ($item->usage_count > 0)
                     <x-actions.merge-button :object="$item"/>
                 @endif

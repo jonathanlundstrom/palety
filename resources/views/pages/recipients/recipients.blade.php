@@ -63,15 +63,9 @@ new class extends TableComponent {
 
 ?>
 <section wire:poll.60s>
-    <header class="mb-6">
-        <flux:heading size="xl" level="1">{{ __('pages.recipients.headline') }}</flux:heading>
-        <flux:text class="mb-6 mt-2 text-base">{{ __('pages.recipients.subtitle') }}</flux:text>
-        <flux:separator variant="subtle" />
-    </header>
-
-    <div class="flex flex-wrap gap-4 items-center mb-4">
-        <flux:input wire:model.live.debounce.500ms="q" icon-trailing="magnifying-glass" placeholder="{{__('app.search')}}" clearable class="w-full md:flex-1" />
-
+    <x-table.filters :headline="__('pages.recipients.headline')"
+                     :subtitle="__('pages.recipients.subtitle')"
+                     :modal="$this->modalName">
         <flux:select variant="listbox" wire:model.live="type" placeholder="{{ __('app.type') }}" clearable class="w-full md:flex-1">
             @foreach (RecipientType::cases() as $case)
                 <flux:select.option value="{{ $case->name }}">{{ $case->label() }}</flux:select.option>
@@ -89,18 +83,10 @@ new class extends TableComponent {
                 <flux:select.option>{{ $city }}</flux:select.option>
             @endforeach
         </flux:select>
+    </x-table.filters>
 
-        <flux:modal.trigger name="{{ $this->modalName }}">
-            <flux:button variant="primary" icon="plus" class="flex-0">{{ __('app.add') }}</flux:button>
-        </flux:modal.trigger>
-    </div>
-
-    <div class="mt-6 mb-6 lg:hidden">
-        <flux:separator variant="subtle" text="{{ __('app.all_items') }}"/>
-    </div>
-
-    <flux:table :paginate="$this->items" pagination:scroll-to>
-        <flux:table.columns class="hidden lg:table-header-group">
+    <x-table.container :paginate="$this->items">
+        <x-slot:columns>
             <flux:table.column sortable :sorted="$sortBy === 'id'" :direction="$sortDirection" wire:click="sort('id')">{{ __('app.id') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'name'" :direction="$sortDirection" wire:click="sort('name')">{{ __('app.name') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'type'" :direction="$sortDirection" wire:click="sort('type')">{{ __('app.type') }}</flux:table.column>
@@ -108,18 +94,13 @@ new class extends TableComponent {
             <flux:table.column sortable :sorted="$sortBy === 'delivery_type'" :direction="$sortDirection" wire:click="sort('delivery_type')">{{ __('app.delivery_type') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'city'" :direction="$sortDirection" wire:click="sort('city')">{{ __('app.city') }}</flux:table.column>
             <flux:table.column></flux:table.column>
-        </flux:table.columns>
-        <flux:table.rows>
-            @forelse ($this->items as $item)
-                @include('pages.recipients._recipient-card')
-                @include('pages.recipients._recipient-row')
-            @empty
-                <flux:table.row>
-                    <flux:table.cell>{{ __('app.no_items') }}</flux:table.cell>
-                </flux:table.row>
-            @endforelse
-        </flux:table.rows>
-    </flux:table>
+        </x-slot:columns>
+
+        @foreach ($this->items as $item)
+            @include('pages.recipients._recipient-card')
+            @include('pages.recipients._recipient-row')
+        @endforeach
+    </x-table.container>
 
     <x-modals.flyout name="{{ $this->modalName }}" position="{{ $this->modalPosition }}">
         <livewire:pages::recipients.recipient-form />
