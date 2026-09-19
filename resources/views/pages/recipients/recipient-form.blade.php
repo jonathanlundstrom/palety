@@ -147,8 +147,7 @@ new class extends FormComponent {
     @endif
 
     <flux:input type="email" icon="at-symbol" wire:model="email" label="{{ __('app.email') }}"/>
-    <flux:input type="phone" icon="phone" wire:model="phone_number"
-                label="{{ __('app.phone_number') }}"/>
+    <flux:phone wire:model="phone_number" label="{{ __('app.phone_number') }}" />
 
     <flux:select variant="listbox" wire:model.live="delivery_type"
                  label="{{ __('app.delivery_type') }}">
