@@ -18,11 +18,11 @@
                 <td colspan="1">{{ $transport->pallets->count() }} {{ mb_strtolower(trans_choice('app.pallet', $transport->pallets->count())) }}</td>
                 <td colspan="1">{{ $transport->parcels->count() }} {{ mb_strtolower(trans_choice('app.parcel', $transport->parcels->count())) }}</td>
                 @if ($transport->notes)
-                <td colspan="5">{{ $transport->notes }}</td>
+                <td colspan="6">{{ $transport->notes }}</td>
                  @endif
             </tr>
-            <tr><td colspan="7"></td></tr>
-            <tr><td colspan="7"></td></tr>
+            <tr><td colspan="8"></td></tr>
+            <tr><td colspan="8"></td></tr>
 
             @foreach($loadedByRecipient as $goods)
                 @php
@@ -84,6 +84,7 @@
                             <td>{{ $pallet->contentList('ua') }}</td>
                             <td>{{ $pallet->notes }}</td>
                             <td>{{ $pallet->getWeight() }}</td>
+                            <td>{{ $pallet->getValue() }}</td>
                             @if ($isFirstRow)
                                 @php $isFirstRow = false; @endphp
                                 <td rowspan="{{ $rowCount }}">{!! $recipientCell !!}</td>
@@ -100,6 +101,7 @@
                                 <td>{{ $parcel->contentList('ua') }}</td>
                                 <td>{{ $parcel->notes }}</td>
                                 <td>{{ $parcel->getWeight() }}</td>
+                                <td>{{ $parcel->getValue() }}</td>
                                 @if ($isFirstRow)
                                     @php $isFirstRow = false; @endphp
                                     <td rowspan="{{ $rowCount }}">{!! $recipientCell !!}</td>
@@ -117,6 +119,7 @@
                         <td>{{ $parcel->contentList('ua') }}</td>
                         <td>{{ $parcel->notes }}</td>
                         <td>{{ $parcel->getWeight() }}</td>
+                        <td>{{ $parcel->getValue() }}</td>
                         @if ($isFirstRow)
                             @php $isFirstRow = false; @endphp
                             <td rowspan="{{ $rowCount }}">{!! $recipientCell !!}</td>
@@ -126,9 +129,10 @@
                 <tr>
                     <td colspan="5">{{ __('app.total_weight') }}:</td>
                     <td>{{ $goods['weight'] }}</td>
+                    <td>{{ $goods['value'] }}</td>
                 </tr>
-                <tr><td colspan="7"></td></tr>
-                <tr><td colspan="7"></td></tr>
+                <tr><td colspan="8"></td></tr>
+                <tr><td colspan="8"></td></tr>
             @endforeach
         </tbody>
     </table>

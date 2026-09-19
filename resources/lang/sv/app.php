@@ -139,6 +139,7 @@ return [
         'item_name' => 'Varubenämning',
         'num_pieces' => 'Antal enheter',
         'est_weight' => 'Uppskattad vikt, kg',
+        'est_value' => 'Uppskattat värde, EUR',
         'quantity' => 'Antal, st',
     ],
     'currencies' => [

@@ -158,6 +158,7 @@ class TransportController extends Controller {
                 'pallets' => collect(),
                 'parcels' => collect(),
                 'weight' => 0,
+                'value' => 0,
             ];
         }
 
@@ -166,6 +167,7 @@ class TransportController extends Controller {
                 fn ($pallet) => $pallet->displayContent()->first()->label_en ?? ''
             )->values();
             $loadedGoods[$recipientId]['weight'] += $items->sum(fn ($pallet) => $pallet->getWeight());
+            $loadedGoods[$recipientId]['value'] += $items->sum(fn ($pallet) => $pallet->getValue());
         }
 
         foreach ($parcels as $recipientId => $items) {
@@ -173,6 +175,7 @@ class TransportController extends Controller {
                 fn ($parcel) => $parcel->content->first()->label_en ?? ''
             )->values();
             $loadedGoods[$recipientId]['weight'] += $items->sum(fn ($parcel) => $parcel->getWeight());
+            $loadedGoods[$recipientId]['value'] += $items->sum('value');
         }
 
         return $loadedGoods;
@@ -233,6 +236,7 @@ class TransportController extends Controller {
                 'label_ua' => $labelUa,
                 'quantity' => 1,
                 'weight' => $parcel->weight,
+                'value' => $parcel->getValue(),
                 'unit' => match ($parcel->type) {
                     ParcelType::BOX => 'app.box',
                     ParcelType::OTHER => 'app.piece',
@@ -254,13 +258,14 @@ class TransportController extends Controller {
                     'label_ua' => $labelUa,
                     'quantity' => 1,
                     'weight' => $pallet->getWeight(),
+                    'value' => $pallet->getValue(),
                 ];
             }
         }
     }
 
     /**
-     * Merge items sharing the same Ukrainian label, summing their quantity and weight.
+     * Merge items sharing the same Ukrainian label, summing their quantity, weight and value.
      */
     private function mergeByLabel(array $items): array {
         $merged = [];
@@ -271,6 +276,7 @@ class TransportController extends Controller {
             if (isset($merged[$key])) {
                 $merged[$key]['quantity'] += $item['quantity'];
                 $merged[$key]['weight'] += $item['weight'];
+                $merged[$key]['value'] += $item['value'];
             } else {
                 $merged[$key] = $item;
             }

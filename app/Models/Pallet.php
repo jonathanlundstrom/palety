@@ -122,6 +122,20 @@ class Pallet extends Model {
     }
 
     /**
+     * Get the value of the pallet based on type and content.
+     * Calculated pallets accumulate the value of their parcels,
+     * while manual pallets use the manually entered value.
+     */
+    public function getValue(): float {
+        $value = $this->value ?? 0;
+        if ($this->type === PalletType::CALCULATED) {
+            $value = $this->parcels()->sum('value');
+        }
+
+        return number_format($value, 2);
+    }
+
+    /**
      * Check if the pallet is loaded on transport or available.
      */
     public function getAvailability(): Availability {

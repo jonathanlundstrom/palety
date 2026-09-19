@@ -115,6 +115,13 @@ class Parcel extends Model {
     }
 
     /**
+     * Get the value of the parcel.
+     */
+    public function getValue(): float {
+        return number_format($this->value ?? 0, 2);
+    }
+
+    /**
      * Scope to parcels that are available (not loaded on a pallet or transport).
      */
     public function scopeAvailable(Builder $query): Builder {

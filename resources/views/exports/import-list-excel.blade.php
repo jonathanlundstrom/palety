@@ -13,6 +13,7 @@
         <td>{{ __('app.import_list.item_name') }}</td>
         <td>{{ __('app.import_list.num_pieces') }}</td>
         <td>{{ __('app.import_list.est_weight') }}</td>
+        <td>{{ __('app.import_list.est_value') }}</td>
         <td>{{ __('app.import_list.quantity') }}</td>
     </tr>
 
@@ -32,6 +33,7 @@
                 <td>{{ $pallet['label_ua'] }}</td>
                 <td>{{ $pallet['quantity'] }}</td>
                 <td>{{ $pallet['weight'] }}</td>
+                <td>{{ $pallet['value'] }}</td>
                 <td>{{ $pallet['quantity'] }} {{ mb_strtolower(trans_choice('app.pallet', $pallet['quantity'])) }}</td>
             </tr>
         @endforeach
@@ -46,6 +48,7 @@
                 <td>{{ $parcel['label_ua'] }}</td>
                 <td>{{ $parcel['quantity'] }}</td>
                 <td>{{ $parcel['weight'] }}</td>
+                <td>{{ $parcel['value'] }}</td>
                 <td>{{ $parcel['quantity'] }} {{ trans_choice($parcel['unit'], $parcel['quantity']) }}</td>
             </tr>
         @endforeach

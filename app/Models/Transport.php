@@ -68,4 +68,16 @@ class Transport extends Model {
 
         return floatval($parcels_weight + $pallets_weight);
     }
+
+    /**
+     * Calculate and retrieve the total estimated value loaded on the transport.
+     *
+     * @return float The calculated value of the transport.
+     */
+    public function getValue(): float {
+        $parcels_value = $this->parcels()->sum('value');
+        $pallets_value = $this->pallets()->get()->sum(fn ($pallet) => $pallet->getValue());
+
+        return floatval($parcels_value + $pallets_value);
+    }
 }

@@ -32,10 +32,15 @@
                             </div>
                         </div>
 
-                        <div class="flex-0 flex justify-center gap-2">
+                        <div class="flex-0 flex justify-center gap-4">
                             <flux:text class="text-lg font-semibold whitespace-nowrap flex">
                                 <flux:icon.scale class="size-8 mr-2"/>
                                 {{ $transport->getWeight() }} {{ __('app.weight.unit') }}
+                            </flux:text>
+
+                            <flux:text class="text-lg font-semibold whitespace-nowrap flex">
+                                <flux:icon.currency-euro class="size-8 mr-2"/>
+                                {{ $transport->getValue() }} {{ __('app.currencies.EUR') }}
                             </flux:text>
                         </div>
                     </div>

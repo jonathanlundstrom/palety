@@ -139,6 +139,7 @@ return [
         'item_name' => 'Item name',
         'num_pieces' => 'Number of pieces',
         'est_weight' => 'Estimated weight, kg',
+        'est_value' => 'Estimated value, EUR',
         'quantity' => 'Quantity, pcs',
     ],
     'currencies' => [
