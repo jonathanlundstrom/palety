@@ -2,7 +2,7 @@
     'paginate',
 ])
 
-<div class="px-0 lg:[--flux-bleed:2rem]">
+<div class="px-6 pb-3">
     <flux:table bleed :paginate="$paginate" pagination:scroll-to>
         <flux:table.columns class="hidden lg:table-header-group bg-zinc-50 dark:bg-white/5">
             {{ $columns }}

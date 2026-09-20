@@ -39,7 +39,7 @@ new class extends Component {
     }
 }
 ?>
-<section class="w-full">
+<section class="w-full p-6">
     @include('partials.settings-heading')
 
     <x-settings.layout :heading="__('pages.settings.subpages.password.headline')" :subheading="__('pages.settings.subpages.password.subtitle')">
