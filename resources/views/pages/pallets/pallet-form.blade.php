@@ -79,7 +79,7 @@ new class extends FormComponent {
     #[Validate('required_if:type,' . PalletType::MANUAL_PALLET->name . '|array')]
     public array $content = [];
 
-    #[Validate('required_if:type,' . PalletType::MANUAL_PALLET->name.'|numeric')]
+    #[Validate('nullable|required_if:type,' . PalletType::MANUAL_PALLET->name.'|numeric')]
     public float $weight;
 
     #[Validate('nullable')]
