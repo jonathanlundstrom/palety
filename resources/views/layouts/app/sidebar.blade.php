@@ -5,35 +5,38 @@
         @include('partials.head')
     </head>
     <body class="min-h-screen bg-white dark:bg-zinc-800">
-        <flux:sidebar sticky stashable class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
+        <flux:sidebar sticky collapsible class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900">
             <flux:sidebar.toggle class="lg:hidden" icon="x-mark" />
 
-            <flux:brand href="{{ route('dashboard') }}" name="{{ config('app.name') }}" class="px-3 me-5 flex items-center space-x-1 rtl:space-x-reverse" wire:navigate>
-                <x-slot name="logo" class="size-6 rounded-full bg-blue-700 text-yellow-300 text-xs font-bold">
-                    <flux:icon name="square-3-stack-3d" variant="micro" />
-                </x-slot>
-            </flux:brand>
+            <flux:sidebar.header>
+                <flux:sidebar.brand href="{{ route('dashboard') }}" name="{{ config('app.name') }}" wire:navigate>
+                    <x-slot name="logo" class="size-6 rounded-full bg-blue-700 text-yellow-300 text-xs font-bold">
+                        <flux:icon name="square-3-stack-3d" variant="micro" />
+                    </x-slot>
+                </flux:sidebar.brand>
 
-            <flux:navlist variant="outline">
-                <flux:navlist.item icon="chart-bar-square" :href="route('dashboard')" wire:navigate>{{ __('pages.dashboard.title') }}</flux:navlist.item>
-                <flux:navlist.item icon="cube" :href="route('parcels')" wire:navigate>{{ __('pages.parcels.title') }}</flux:navlist.item>
-                <flux:navlist.item icon="square-3-stack-3d" :href="route('pallets')" wire:navigate>{{ __('pages.pallets.title') }}</flux:navlist.item>
-                <flux:navlist.item icon="truck" :href="route('transports')" wire:navigate>{{ __('pages.transports.title') }}</flux:navlist.item>
+                <flux:sidebar.collapse class="in-data-flux-sidebar-on-desktop:not-in-data-flux-sidebar-collapsed-desktop:-mr-2" />
+            </flux:sidebar.header>
+
+            <flux:sidebar.nav>
+                <flux:sidebar.item icon="chart-bar-square" :href="route('dashboard')" wire:navigate>{{ __('pages.dashboard.title') }}</flux:sidebar.item>
+                <flux:sidebar.item icon="cube" :href="route('parcels')" wire:navigate>{{ __('pages.parcels.title') }}</flux:sidebar.item>
+                <flux:sidebar.item icon="square-3-stack-3d" :href="route('pallets')" wire:navigate>{{ __('pages.pallets.title') }}</flux:sidebar.item>
+                <flux:sidebar.item icon="truck" :href="route('transports')" wire:navigate>{{ __('pages.transports.title') }}</flux:sidebar.item>
                 @if (Auth::user()->role === UserRole::ADMIN)
-                    <br />
-                    <flux:navlist.group heading="Administration">
-                        <flux:navlist.item icon="list-bullet" :href="route('content')" wire:navigate>{{ __('pages.content.title') }}</flux:navlist.item>
-                        <flux:navlist.item icon="map-pin" :href="route('recipients')" wire:navigate>{{ __('pages.recipients.title') }}</flux:navlist.item>
-                        <flux:navlist.item icon="users" :href="route('users')" wire:navigate>{{ __('pages.users.title') }}</flux:navlist.item>
-                    </flux:navlist.group>
+                    <flux:sidebar.group icon="star" heading="Administration" expandable>
+                        <flux:sidebar.item icon="list-bullet" :href="route('content')" wire:navigate>{{ __('pages.content.title') }}</flux:sidebar.item>
+                        <flux:sidebar.item icon="map-pin" :href="route('recipients')" wire:navigate>{{ __('pages.recipients.title') }}</flux:sidebar.item>
+                        <flux:sidebar.item icon="users" :href="route('users')" wire:navigate>{{ __('pages.users.title') }}</flux:sidebar.item>
+                    </flux:sidebar.group>
                 @endif
-            </flux:navlist>
+            </flux:sidebar.nav>
 
             <flux:spacer />
 
             <!-- Desktop User Menu -->
             <flux:dropdown position="bottom" align="start">
-                <flux:profile
+                <flux:sidebar.profile
                     :name="auth()->user()->name"
                     :initials="auth()->user()->initials()"
                     icon-trailing="chevron-up-down"
@@ -60,7 +63,7 @@
                     <flux:menu.separator />
 
                     <flux:menu.radio.group>
-                        <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>{{ __('pages.settings.title') }}</flux:menu.item>
+                        <flux:menu.item :href="route('settings.profile')" icon="cog-6-tooth" icon:variant="outline" wire:navigate>{{ __('pages.settings.title') }}</flux:menu.item>
                     </flux:menu.radio.group>
 
                     <flux:menu.separator />
@@ -85,6 +88,7 @@
                 <flux:profile
                     :initials="auth()->user()->initials()"
                     icon-trailing="chevron-down"
+                    class="-mr-4"
                 />
 
                 <flux:menu>
@@ -108,7 +112,7 @@
                     <flux:menu.separator />
 
                     <flux:menu.radio.group>
-                        <flux:menu.item :href="route('settings.profile')" icon="cog" wire:navigate>{{ __('pages.settings.title') }}</flux:menu.item>
+                        <flux:menu.item :href="route('settings.profile')" icon="cog-6-tooth" icon:variant="outline" wire:navigate>{{ __('pages.settings.title') }}</flux:menu.item>
                     </flux:menu.radio.group>
 
                     <flux:menu.separator />
