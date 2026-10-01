@@ -19,6 +19,17 @@ class PrintLabel implements ShouldQueue {
     public int $tries = 1;
 
     /**
+     * Target width and height of the label QR-code, in dots.
+     */
+    private const int QR_SIZE = 300;
+
+    /**
+     * Byte-mode data capacity of QR-code versions 1–10 at error correction level Q.
+     * Version N is (17 + 4N) modules wide.
+     */
+    private const array QR_CAPACITIES = [11, 20, 32, 46, 60, 74, 86, 108, 130, 151];
+
+    /**
      * The resource to print the label for.
      */
     private Parcel|Pallet $resource;
@@ -55,6 +66,24 @@ class PrintLabel implements ShouldQueue {
     }
 
     /**
+     * Calculate the QR-code magnification (1–10) that gets closest to QR_SIZE without exceeding it,
+     * keeping the printed size consistent regardless of the data length.
+     *
+     * @throws Exception
+     */
+    private function qrMagnification(string $data): int {
+        foreach (self::QR_CAPACITIES as $index => $capacity) {
+            if (strlen($data) <= $capacity) {
+                $modules = 21 + 4 * $index;
+
+                return max(1, min(10, intdiv(self::QR_SIZE, $modules)));
+            }
+        }
+
+        throw new Exception('QR-code data is too long.');
+    }
+
+    /**
      * Execute the job.
      *
      * @throws Exception
@@ -67,10 +96,16 @@ class PrintLabel implements ShouldQueue {
             throw new Exception('Printer IP or port is not configured.');
         }
 
+        $data = route('details', [
+            'type' => $this->resource->getMorphClass(),
+            'id' => $this->resource->id,
+        ]);
+
         $zpl = view('labels.76_51_compact', [
             'id' => $this->resource->id,
             'type' => strtoupper(class_basename($this->resource)),
-            'data' => $this->resource::class.':'.$this->resource->id,
+            'data' => $data,
+            'magnification' => $this->qrMagnification($data),
             'weight' => $this->resource->getWeight(),
         ])->render();
 

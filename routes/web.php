@@ -12,6 +12,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::livewire('/parcels', 'pages::parcels')->name('parcels');
     Route::livewire('/pallets', 'pages::pallets')->name('pallets');
     Route::livewire('/transports', 'pages::transports')->name('transports');
+    Route::get('/qr/{type}/{id}', fn () => 'Hello, world!')
+        ->whereIn('type', ['pallet', 'parcel'])
+        ->whereNumber('id')
+        ->name('details');
 
     Route::middleware(['admin'])->group(function () {
         Route::livewire('/recipients', 'pages::recipients')->name('recipients');

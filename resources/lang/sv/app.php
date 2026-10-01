@@ -111,6 +111,8 @@ return [
     'scan' => [
         'title' => 'Skanna QR-kod',
         'subtitle' => 'Rikta kameran mot QR-koden för att skanna den.',
+        'camera_error' => 'Kunde inte starta kameran',
+        'camera_error_hint' => 'Kontrollera att webbläsaren har behörighet att använda kameran och att ingen annan app använder den.',
         'toggle_flash' => 'Aktivera blixt',
         'no_items' => 'Inga objekt har länkats',
         'scan_parcels' => 'Skanna paket',

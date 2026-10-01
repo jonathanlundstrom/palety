@@ -111,6 +111,8 @@ return [
     'scan' => [
         'title' => 'Scan QR Code',
         'subtitle' => 'Point your camera at the QR code to scan it.',
+        'camera_error' => 'Could not start the camera',
+        'camera_error_hint' => 'Make sure the browser has permission to use the camera and that no other app is using it.',
         'toggle_flash' => 'Toggle Flash',
         'no_items' => 'No items have been linked',
         'scan_parcels' => 'Scan parcels',

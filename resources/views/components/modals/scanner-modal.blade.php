@@ -1,23 +1,49 @@
 <?php
 
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Livewire\Component;
 
 new class extends Component {
-    /*
+    /**
+     * Supported label formats. Each must capture a `type` (morph alias, case-insensitive) and an `id`.
+     * - url: "https://palety.test/qr/pallet/13". The host is ignored, so labels from other environments still scan.
+     * - legacy: "App\Models\Pallet:13". The class basename maps to its morph alias.
+     */
+    private const array PATTERNS = [
+        'url' => '#^https?://[^/\s]+/qr/(?<type>[a-z]+)/(?<id>\d+)/?$#i',
+        'legacy' => '#^App\\\\Models\\\\(?<type>[A-Za-z]+):(?<id>\d+)$#',
+    ];
+
+    /**
      * Callback when scanning QR-codes. Parses data and emits for continued handling.
-     * @param string $data
-     * @return void
      */
     public function handleScan(string $data): void {
-        if (str_contains($data, ':')) {
-            list($class, $id) = explode(':', $data);
-            $this->dispatch('scan-result', payload: [
-                'class' => $class,
-                'id' => $id,
-            ]);
-        } else {
-            $this->dispatch('scan-result', payload: null);
+        $this->dispatch('scan-result', payload: $this->parse($data));
+    }
+
+    /**
+     * Parse scanned data using the first matching label format, or null if unrecognized.
+     *
+     * @return array{class: string, id: int}|null
+     */
+    private function parse(string $data): ?array {
+        foreach (self::PATTERNS as $pattern) {
+            if (preg_match($pattern, trim($data), $matches)) {
+                return $this->resolve($matches['type'], (int) $matches['id']);
+            }
         }
+
+        return null;
+    }
+
+    /**
+     * Resolve a morph alias to its model class, or null if the alias is not mapped.
+     *
+     * @return array{class: class-string, id: int}|null
+     */
+    private function resolve(string $type, int $id): ?array {
+        $class = Relation::getMorphedModel(strtolower($type));
+        return $class ? ['class' => $class, 'id' => $id] : null;
     }
 }
 
@@ -34,7 +60,11 @@ new class extends Component {
                 <video class="camera_preview"></video>
             </div>
 
-            <flux:skeleton animate="shimmer" class="aspect-[16/9] size-full" x-show="!scanning"/>
+            <flux:skeleton animate="shimmer" class="aspect-[16/9] size-full" x-show="!scanning && !failed"/>
+
+            <flux:callout variant="danger" icon="video-camera-slash" x-show="failed"
+                          :heading="__('app.scan.camera_error')"
+                          :text="__('app.scan.camera_error_hint')"/>
         </div>
 
         <flux:modal.close class="flex-1">
@@ -49,12 +79,14 @@ new class extends Component {
         result: '',
         scanner: null,
         scanning: false,
+        failed: false,
         hasFlash: false,
         flashOn: false,
         video: $el.querySelector('.camera_preview'),
 
         async startScanning() {
             this.result = '';
+            this.failed = false;
 
             if (this.scanner === null) {
                 this.scanner = new QrScanner(
@@ -64,16 +96,14 @@ new class extends Component {
                 );
             }
 
-            await this.scanner.setCamera('environment');
-
-            this.scanner.start()
-                .then(async () => {
-                    this.scanning = true;
-                })
-                .catch(err => {
-                    console.error('Scanner error:', err);
-                    this.$wire.error(result.data);
-                });
+            try {
+                await this.scanner.setCamera('environment');
+                await this.scanner.start();
+                this.scanning = true;
+            } catch (err) {
+                console.error('Scanner error:', err);
+                this.failed = true;
+            }
         },
 
         handleScan(result) {
