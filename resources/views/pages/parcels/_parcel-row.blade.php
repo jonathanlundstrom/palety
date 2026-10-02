@@ -41,7 +41,7 @@
     </flux:table.cell>
     <flux:table.cell>{{ $item->weight }} {{ __('app.weight.unit') }}</flux:table.cell>
     <flux:table.cell>{{ str($item->notes)->limit(30) ?: '--' }}</flux:table.cell>
-    <flux:table.cell>{{ $item->created_at->format('Y-m-d, H:i') }}</flux:table.cell>
+    <flux:table.cell>{{ $item->created_at }}</flux:table.cell>
     <flux:table.cell>
         <x-item-actions :form="$this->modalName" :object="$item">
             <x-actions.duplicate-button :form="$this->modalName" :object="$item"/>

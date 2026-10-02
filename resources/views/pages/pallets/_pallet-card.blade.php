@@ -81,7 +81,7 @@
             <flux:icon.calendar class="flex-none size-4 mt-1 mr-2"/>
             <span class="flex flex-auto flex-row flex-wrap gap-1">
                 <flux:text class="flex-auto text-sm">
-                    {{ $item->created_at->format('Y-m-d, H:i') }}
+                    {{ $item->created_at }}
                 </flux:text>
             </span>
         </li>
