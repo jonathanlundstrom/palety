@@ -51,7 +51,8 @@ new class extends TableComponent {
 <section wire:poll.60s>
     <x-table.filters :headline="__('pages.content.headline')"
                      :subtitle="__('pages.content.subtitle')"
-                     :modal="$this->modalName">
+                     :modal="$this->modalName"
+                     :active-filters="$this->activeFilterCount">
         <flux:select variant="listbox" wire:model.live="category" placeholder="{{ trans_choice('app.category.label', 1) }}" clearable class="md:flex-1 !w-auto grow">
             @foreach (ImportCategory::cases() as $case)
                 <flux:select.option value="{{ $case->name }}">{{ $case->label() }}</flux:select.option>

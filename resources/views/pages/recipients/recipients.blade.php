@@ -65,7 +65,8 @@ new class extends TableComponent {
 <section wire:poll.60s>
     <x-table.filters :headline="__('pages.recipients.headline')"
                      :subtitle="__('pages.recipients.subtitle')"
-                     :modal="$this->modalName">
+                     :modal="$this->modalName"
+                     :active-filters="$this->activeFilterCount">
         <flux:select variant="listbox" wire:model.live="type" placeholder="{{ __('app.type') }}" clearable class="w-full md:flex-1">
             @foreach (RecipientType::cases() as $case)
                 <flux:select.option value="{{ $case->name }}">{{ $case->label() }}</flux:select.option>

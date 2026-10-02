@@ -13,6 +13,7 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
+use ReflectionClass;
 
 abstract class TableComponent extends Component {
     use WithPagination;
@@ -28,7 +29,6 @@ abstract class TableComponent extends Component {
 
     #[Url(as: 'per-page')]
     public ?int $perPage = 25;
-
 
     /**
      * Mount the Livewire component.
@@ -48,6 +48,25 @@ abstract class TableComponent extends Component {
         $component_name = explode('::', $this->getName());
 
         return array_last($component_name).'-modal';
+    }
+
+    /**
+     * Get the number of active filters, excluding search, sorting, and pagination.
+     * Counts every non-empty #[Url] property declared by the extending component.
+     */
+    #[Computed]
+    public function activeFilterCount(): int {
+        $baseProperties = array_column(
+            new ReflectionClass(self::class)->getProperties(),
+            'name'
+        );
+
+        return $this->getAttributes()
+            ->whereInstanceOf(Url::class)
+            ->reject(fn (Url $attribute) => in_array($attribute->getName(), $baseProperties, true))
+            ->map(fn (Url $attribute) => $attribute->getValue())
+            ->filter(fn (mixed $value) => filled(is_array($value) ? array_filter($value) : $value))
+            ->count();
     }
 
     /**

@@ -13,6 +13,7 @@ return [
     'piece' => 'piece|pieces',
     'transport' => 'Transport|Transports',
     'search' => 'Search',
+    'filters' => 'Filters',
     'recipient' => 'Recipient',
     'target' => 'Destination',
     'date_range' => 'Date range',

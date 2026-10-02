@@ -26,9 +26,6 @@ new class extends TableComponent {
     #[Url(except: '')]
     public string $status = '';
 
-    #[Url(except: '')]
-    public string $recipient_id = '';
-
     #[Computed]
     public function items(): LengthAwarePaginator {
         return Transport::query()
@@ -56,7 +53,8 @@ new class extends TableComponent {
 <section wire:poll.60s>
     <x-table.filters :headline="__('pages.transports.headline')"
                      :subtitle="__('pages.transports.subtitle')"
-                     :modal="$this->modalName">
+                     :modal="$this->modalName"
+                     :active-filters="$this->activeFilterCount">
         <flux:date-picker mode="range" wire:model.live="range" locale="{{ App::getLocale() }}" placeholder="{{ __('app.date_range') }}" with-today week-numbers clearable class="w-full md:flex-1" />
 
         <flux:select variant="listbox" wire:model.live="type" placeholder="{{ __('app.type') }}" clearable

@@ -80,7 +80,8 @@ new class extends TableComponent {
 <section wire:poll.60s>
     <x-table.filters :headline="__('pages.parcels.headline')"
                      :subtitle="__('pages.parcels.subtitle')"
-                     :modal="$this->modalName">
+                     :modal="$this->modalName"
+                     :active-filters="$this->activeFilterCount">
         <flux:date-picker mode="range" wire:model.live="range" locale="{{ App::getLocale() }}" placeholder="{{ __('app.date_range') }}" with-today week-numbers clearable class="w-full md:flex-1" />
 
         <flux:select variant="listbox" wire:model.live="availability" placeholder="{{ __('app.availability') }}" clearable

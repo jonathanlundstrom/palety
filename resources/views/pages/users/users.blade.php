@@ -51,7 +51,8 @@ new class extends TableComponent {
 <section>
     <x-table.filters :headline="__('pages.users.headline')"
                      :subtitle="__('pages.users.subtitle')"
-                     :modal="$this->modalName">
+                     :modal="$this->modalName"
+                     :active-filters="$this->activeFilterCount">
         <flux:select variant="listbox" wire:model.live="role" placeholder="{{ trans_choice('app.role.label', 1) }}"
                      clearable class="md:flex-1 !w-auto grow">
             @foreach (UserRole::cases() as $case)

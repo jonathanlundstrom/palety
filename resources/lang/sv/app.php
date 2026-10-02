@@ -13,6 +13,7 @@ return [
     'piece' => 'styck|stycken',
     'transport' => 'Transport|Transporter',
     'search' => 'Sök',
+    'filters' => 'Filter',
     'recipient' => 'Mottagare',
     'target' => 'Destination',
     'date_range' => 'Datumintervall',
