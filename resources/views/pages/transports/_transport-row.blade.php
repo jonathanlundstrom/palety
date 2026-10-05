@@ -7,7 +7,7 @@
     </flux:table.cell>
     <flux:table.cell>{{ $item->pallets_count }} {{ trans_choice('app.pieces', $item->pallets_count) }}</flux:table.cell>
     <flux:table.cell>{{ $item->parcels_count }} {{ trans_choice('app.pieces', $item->parcels_count) }}</flux:table.cell>
-    <flux:table.cell>{{ $item->getWeight() }} {{ __('app.weight.unit') }}</flux:table.cell>
+    <flux:table.cell>{{ number_format($item->getWeight(), 2) }} {{ __('app.weight.unit') }}</flux:table.cell>
     <flux:table.cell>
         <flux:badge size="sm" inset="top bottom" color="{{ $item->status->color() }}">
             {{ $item->status->label() }}

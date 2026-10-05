@@ -22,7 +22,7 @@
         <div class="flex-0 flex items-center gap-2">
             <flux:text class="text-xs whitespace-nowrap flex">
                 <flux:icon.scale variant="micro" class="mr-1"/>
-                {{ $item->getWeight() }} {{ __('app.weight.unit') }}
+                {{ number_format($item->getWeight(), 2) }} {{ __('app.weight.unit') }}
             </flux:text>
 
             <x-item-actions :form="$this->modalName" :object="$item">

@@ -43,6 +43,8 @@ class Parcel extends Model {
      */
     protected $casts = [
         'type' => ParcelType::class,
+        'weight' => 'float',
+        'value' => 'float',
     ];
 
     /**
@@ -111,14 +113,14 @@ class Parcel extends Model {
      * Get the weight of the pallet based on type and content.
      */
     public function getWeight(): float {
-        return number_format($this->weight, 2);
+        return $this->weight ?? 0.0;
     }
 
     /**
      * Get the value of the parcel.
      */
     public function getValue(): float {
-        return number_format($this->value ?? 0, 2);
+        return $this->value ?? 0.0;
     }
 
     /**

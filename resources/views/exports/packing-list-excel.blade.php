@@ -12,7 +12,7 @@
         <tbody>
             <tr>
                 <td colspan="6">{{ __('app.packing_list.for_transport', ['id' => $transport->id]) }}</td>
-                <td>{{ $transport->getWeight() }} {{ __('app.weight.unit') }}</td>
+                <td>{{ round($transport->getWeight(), 2) }} {{ __('app.weight.unit') }}</td>
             </tr>
             <tr>
                 <td colspan="1">{{ $transport->pallets->count() }} {{ mb_strtolower(trans_choice('app.pallet', $transport->pallets->count())) }}</td>
@@ -83,8 +83,8 @@
                             <td>{{ $pallet->contentList('en') }}</td>
                             <td>{{ $pallet->contentList('ua') }}</td>
                             <td>{{ $pallet->notes }}</td>
-                            <td>{{ $pallet->getWeight() }}</td>
-                            <td>{{ $pallet->getValue() }}</td>
+                            <td>{{ round($pallet->getWeight(), 2) }}</td>
+                            <td>{{ round($pallet->getValue(), 2) }}</td>
                             @if ($isFirstRow)
                                 @php $isFirstRow = false; @endphp
                                 <td rowspan="{{ $rowCount }}">{!! $recipientCell !!}</td>
@@ -128,8 +128,8 @@
                 @endforeach
                 <tr>
                     <td colspan="5">{{ __('app.total_weight') }}:</td>
-                    <td>{{ $goods['weight'] }}</td>
-                    <td>{{ $goods['value'] }}</td>
+                    <td>{{ round($goods['weight'], 2) }}</td>
+                    <td>{{ round($goods['value'], 2) }}</td>
                 </tr>
                 <tr><td colspan="8"></td></tr>
                 <tr><td colspan="8"></td></tr>

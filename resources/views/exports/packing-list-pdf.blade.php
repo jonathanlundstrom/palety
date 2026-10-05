@@ -35,12 +35,12 @@
                         <div class="flex-0 flex justify-center gap-4">
                             <flux:text class="text-lg font-semibold whitespace-nowrap flex">
                                 <flux:icon.scale class="size-8 mr-2"/>
-                                {{ $transport->getWeight() }} {{ __('app.weight.unit') }}
+                                {{ number_format($transport->getWeight(), 2) }} {{ __('app.weight.unit') }}
                             </flux:text>
 
                             <flux:text class="text-lg font-semibold whitespace-nowrap flex">
                                 <flux:icon.currency-euro class="size-8 mr-2"/>
-                                {{ $transport->getValue() }} {{ __('app.currencies.EUR') }}
+                                {{ number_format($transport->getValue(), 2) }} {{ __('app.currencies.EUR') }}
                             </flux:text>
                         </div>
                     </div>
@@ -74,7 +74,7 @@
                                             <td>{{ $pallet->contentList('en') }}</td>
                                             <td>{{ $pallet->contentList('ua') }}</td>
                                             <td>{{ $pallet->notes }}</td>
-                                            <td>{{ $pallet->getWeight() }} {{ __('app.weight.unit') }}</td>
+                                            <td>{{ number_format($pallet->getWeight(), 2) }} {{ __('app.weight.unit') }}</td>
                                         </tr>
                                     @else
                                         @foreach ($pallet->parcels as $key => $parcel)
@@ -86,7 +86,7 @@
                                                 <td>{{ $parcel->contentList('en') }}</td>
                                                 <td>{{ $parcel->contentList('ua') }}</td>
                                                 <td>{{ $parcel->notes }}</td>
-                                                <td>{{ $parcel->getWeight() }} {{ __('app.weight.unit') }}</td>
+                                                <td>{{ number_format($parcel->getWeight(), 2) }} {{ __('app.weight.unit') }}</td>
                                             </tr>
                                         @endforeach
                                     @endif
@@ -99,14 +99,14 @@
                                         <td>{{ $parcel->contentList('en') }}</td>
                                         <td>{{ $parcel->contentList('ua') }}</td>
                                         <td>{{ $parcel->notes }}</td>
-                                        <td>{{ $parcel->getWeight() }} {{ __('app.weight.unit') }}</td>
+                                        <td>{{ number_format($parcel->getWeight(), 2) }} {{ __('app.weight.unit') }}</td>
                                     </tr>
                                 @endforeach
 
                                 <tr class="font-bold" style="background-color: {{ $recipient->color }}">
                                     <th colspan="5">{{ __('app.total_weight') }}:</th>
                                     <td>
-                                        <strong>{{ $goods['weight'] }} {{ __('app.weight.unit') }}</strong>
+                                        <strong>{{ number_format($goods['weight'], 2) }} {{ __('app.weight.unit') }}</strong>
                                     </td>
                                 </tr>
                             </tbody>

@@ -47,6 +47,8 @@ class Pallet extends Model {
     protected $casts = [
         'type' => PalletType::class,
         'status' => PalletStatus::class,
+        'weight' => 'float',
+        'value' => 'float',
     ];
 
     /**
@@ -113,12 +115,11 @@ class Pallet extends Model {
      * Get the weight of the pallet based on type and content.
      */
     public function getWeight(): float {
-        $weight = $this->weight;
         if ($this->type === PalletType::CALCULATED) {
-            $weight = $this->parcels()->sum('weight');
+            return $this->parcels->sum('weight');
         }
 
-        return number_format($weight, 2);
+        return $this->weight ?? 0.0;
     }
 
     /**
@@ -127,12 +128,11 @@ class Pallet extends Model {
      * while manual pallets use the manually entered value.
      */
     public function getValue(): float {
-        $value = $this->value ?? 0;
         if ($this->type === PalletType::CALCULATED) {
-            $value = $this->parcels()->sum('value');
+            return $this->parcels->sum('value');
         }
 
-        return number_format($value, 2);
+        return $this->value ?? 0.0;
     }
 
     /**
