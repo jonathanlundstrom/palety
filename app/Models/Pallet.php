@@ -52,6 +52,20 @@ class Pallet extends Model {
     ];
 
     /**
+     * Prevent locked pallets from being deleted, regardless of who asks.
+     */
+    protected static function booted(): void {
+        static::deleting(fn (Pallet $pallet) => ! $pallet->isLocked());
+    }
+
+    /**
+     * Determine whether the pallet is locked, i.e. loaded on a locked transport.
+     */
+    public function isLocked(): bool {
+        return $this->transport?->isLocked() ?? false;
+    }
+
+    /**
      * Get the user who created this parcel.
      */
     public function author(): BelongsTo {

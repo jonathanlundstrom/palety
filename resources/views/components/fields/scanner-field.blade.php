@@ -4,6 +4,7 @@ use App\Models\Pallet;
 use App\Models\Parcel;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
+use Livewire\Attributes\Reactive;
 use Livewire\Component;
 
 new class extends Component {
@@ -28,6 +29,14 @@ new class extends Component {
      * @var string
      */
     public string $buttonText;
+
+    /**
+     * Whether items can no longer be added or removed, e.g. on a locked transport.
+     * Reactive, so the field follows the parent when its lock state changes.
+     * @var bool
+     */
+    #[Reactive]
+    public bool $disabled = false;
 
     public function mount(array $items = []): void {
         $this->items = $items;
@@ -107,7 +116,7 @@ new class extends Component {
                                 <flux:text class="flex-1">{{ $item->contentList() }}
                                     – {{ number_format($item->getWeight(), 2) }} {{ __('app.weight.unit') }}</flux:text>
                             </div>
-                            <flux:button variant="ghost" icon="trash" color="red" size="xs"
+                            <flux:button variant="ghost" icon="trash" color="red" size="xs" :disabled="$disabled"
                                          wire:click="undo({{ $item->id }}, '{{ addslashes($item::class) }}')"/>
                         </div>
                     </flux:card>
@@ -121,7 +130,7 @@ new class extends Component {
                                     – {{ number_format($item->getWeight(), 2) }} {{ __('app.weight.unit') }}
                                 </flux:text>
                             </div>
-                            <flux:button variant="ghost" icon="trash" color="red" size="xs"
+                            <flux:button variant="ghost" icon="trash" color="red" size="xs" :disabled="$disabled"
                                          wire:click="undo({{ $item->id }}, '{{ addslashes($item::class) }}')"/>
                         </div>
                     </flux:card>
@@ -133,12 +142,12 @@ new class extends Component {
 
         <flux:button.group>
             <flux:modal.trigger name="scanner-modal">
-                <flux:button icon="qr-code" class="rounded-t-none w-full"
+                <flux:button icon="qr-code" class="rounded-t-none w-full" :disabled="$disabled"
                              wire:click="scan">{{ $buttonText }}</flux:button>
             </flux:modal.trigger>
 
             <flux:dropdown>
-                <flux:button icon="chevron-down" class="rounded-t-none"></flux:button>
+                <flux:button icon="chevron-down" class="rounded-t-none" :disabled="$disabled"></flux:button>
                 <flux:menu>
                     <flux:modal.trigger name="add-modal">
                         <flux:menu.item icon="magnifying-glass" wire:click="add()">{{ __('app.add_manually') }}</flux:menu.item>

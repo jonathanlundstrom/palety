@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enumerables\Permission;
 use App\Enumerables\TransportStatus;
 use App\Enumerables\TransportType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -42,6 +43,23 @@ class Transport extends Model {
         'sent_at' => 'datetime',
         'delivered_at' => 'datetime',
     ];
+
+    /**
+     * Prevent locked transports from being deleted, unless the current user may also unlock them.
+     * Without an authenticated user (e.g. queues or the console), locked transports cannot be deleted.
+     */
+    protected static function booted(): void {
+        static::deleting(fn (Transport $transport) => ! $transport->isLocked()
+            || auth()->user()?->can(Permission::UNLOCK_TRANSPORT));
+    }
+
+    /**
+     * Determine whether the transport is locked. A transport is locked once it is
+     * no longer in progress, which also locks every pallet and parcel loaded on it.
+     */
+    public function isLocked(): bool {
+        return $this->status !== TransportStatus::IN_PROGRESS;
+    }
 
     /**
      * Get the parcels associated with the transport.

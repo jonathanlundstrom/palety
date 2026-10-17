@@ -35,7 +35,7 @@ new class extends TableComponent {
     #[Computed]
     public function items(): LengthAwarePaginator {
         return Pallet::query()
-            ->with(['content', 'recipient', 'parcels.content'])
+            ->with(['content', 'recipient', 'parcels.content', 'transport'])
             ->when($this->q, fn($query) => $query
                 ->whereAny(['id', 'weight', 'notes'], 'ILIKE', "%{$this->q}%")
                 ->orWhereHas('author', fn($q) => $q->where('name', 'ILIKE', "%{$this->q}%"))

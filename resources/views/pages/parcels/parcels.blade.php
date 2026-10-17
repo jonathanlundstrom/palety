@@ -56,7 +56,7 @@ new class extends TableComponent {
                     default => $query->whereNull('pallet_id')->whereNull('transport_id'),
                 };
             })
-            ->with(['content' => fn($query) => $query->orderBy(Content::label())])
+            ->with(['content' => fn($query) => $query->orderBy(Content::label()), 'transport', 'pallet.transport'])
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate($this->perPage);
     }

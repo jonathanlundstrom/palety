@@ -144,6 +144,9 @@ new class extends FormComponent {
             FormStatus::EDITING => Permission::EDIT_PALLET,
         });
 
+        // Pallets on a locked transport are read-only for everyone.
+        abort_if($this->resource?->isLocked(), 403);
+
         $validated = [
             ...$this->validate(),
             'user_id' => Auth::id()

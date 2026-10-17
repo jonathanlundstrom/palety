@@ -48,6 +48,21 @@ class Parcel extends Model {
     ];
 
     /**
+     * Prevent locked parcels from being deleted, regardless of who asks.
+     */
+    protected static function booted(): void {
+        static::deleting(fn (Parcel $parcel) => ! $parcel->isLocked());
+    }
+
+    /**
+     * Determine whether the parcel is locked, i.e. loaded on a locked transport,
+     * either directly or through the pallet it is packed on.
+     */
+    public function isLocked(): bool {
+        return ($this->transport ?? $this->pallet?->transport)?->isLocked() ?? false;
+    }
+
+    /**
      * Get the user who created this parcel.
      */
     public function author(): BelongsTo {

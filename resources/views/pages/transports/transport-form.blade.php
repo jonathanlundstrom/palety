@@ -13,6 +13,7 @@ use App\Models\Transport;
 use Carbon\Carbon;
 use Flux\Flux;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 
@@ -28,6 +29,15 @@ new class extends FormComponent {
         parent::edit($id, $class);
         $this->linked_pallets = $this->resource->pallets->all();
         $this->linked_parcels = $this->resource->parcels->all();
+    }
+
+    /**
+     * Whether the transport being edited is locked, which freezes its pallets and parcels.
+     * @return bool
+     */
+    #[Computed]
+    public function isLocked(): bool {
+        return $this->resource?->isLocked() ?? false;
     }
 
     #[On('scan-result')]
@@ -102,8 +112,8 @@ new class extends FormComponent {
 
     /**
      * Update transport timestamps based on status.
-     * This could potentially override sent_at and/or delivered_at if
-     * you step backwards in terms of progress. But that's an odd move.
+     * Existing timestamps are kept, so correcting a sent or delivered transport
+     * does not move its dates. Stepping backwards in progress clears the later ones.
      * @param array $validated
      * @return void
      */
@@ -116,13 +126,13 @@ new class extends FormComponent {
             ],
             TransportStatus::SENT->name => [
                 ...$validated,
-                'sent_at' => Carbon::now(),
+                'sent_at' => $this->resource?->sent_at ?? Carbon::now(),
                 'delivered_at' => null,
             ],
             TransportStatus::DELIVERED->name => [
                 ...$validated,
                 'sent_at' => $this->resource?->sent_at ?? Carbon::now(),
-                'delivered_at' => Carbon::now(),
+                'delivered_at' => $this->resource?->delivered_at ?? Carbon::now(),
             ],
             default => $validated,
         };
@@ -147,8 +157,6 @@ new class extends FormComponent {
     protected function updateTransport(array $validated): Transport {
         $result = $this->resource->update($validated);
         if (!$result) throw new Exception('toasts.transport.failed');
-        $this->resource->pallets()->update(['transport_id' => null]);
-        $this->resource->parcels()->update(['transport_id' => null]);
         return $this->resource;
     }
 
@@ -162,6 +170,12 @@ new class extends FormComponent {
             FormStatus::EDITING => Permission::EDIT_TRANSPORT,
         });
 
+        // Determined before saving, since this save may change the status.
+        $isLocked = $this->resource?->isLocked() ?? false;
+
+        // Once locked, a transport may only be edited by those who may also unlock it.
+        if ($isLocked) $this->authorize(Permission::UNLOCK_TRANSPORT);
+
         $validated = $this->validate();
         $this->updateTimestamps($validated);
 
@@ -171,8 +185,13 @@ new class extends FormComponent {
                 FormStatus::CREATING => $this->createTransport($validated),
             };
 
-            $transport->pallets()->saveMany($this->linked_pallets);
-            $transport->parcels()->saveMany($this->linked_parcels);
+            // The loaded pallets and parcels stay untouched while the transport is locked.
+            if (!$isLocked) {
+                $transport->pallets()->update(['transport_id' => null]);
+                $transport->parcels()->update(['transport_id' => null]);
+                $transport->pallets()->saveMany($this->linked_pallets);
+                $transport->parcels()->saveMany($this->linked_parcels);
+            }
 
             $this->dispatch('items-updated');
             Flux::toast(variant: 'success', text: __('toasts.transport.saved'));
@@ -203,14 +222,14 @@ new class extends FormComponent {
     <flux:field>
         <flux:select wire:model.live="linked_pallets" class="hidden" multiple></flux:select>
         <livewire:fields.scanner-field handles="{{ Pallet::class }}" :items="$linked_pallets" buttonText="{{ __('app.scan.scan_pallets') }}" label="{{ __('app.linked_pallets') }}"
-                                :key="'pallets-'.count($linked_pallets)"/>
+                                :disabled="$this->isLocked" :key="'pallets-'.count($linked_pallets)"/>
         <flux:error name="linked_pallets"/>
     </flux:field>
 
     <flux:field>
         <flux:select wire:model.live="linked_parcels" class="hidden" multiple></flux:select>
         <livewire:fields.scanner-field handles="{{ Parcel::class }}" :items="$linked_parcels" buttonText="{{ __('app.scan.scan_parcels') }}" label="{{ __('app.linked_parcels') }}"
-                                :key="'parcels-'.count($linked_parcels)"/>
+                                :disabled="$this->isLocked" :key="'parcels-'.count($linked_parcels)"/>
         <flux:error name="linked_parcels"/>
     </flux:field>
 

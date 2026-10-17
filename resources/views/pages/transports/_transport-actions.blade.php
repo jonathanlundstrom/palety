@@ -5,7 +5,7 @@ use App\Enumerables\Permission;
 ?>
 <x-item-actions>
     @can(Permission::EDIT_TRANSPORT, $item)
-        <x-actions.edit-button :form="$this->modalName" :object="$item"/>
+        <x-actions.edit-button :form="$this->modalName" :object="$item" :disabled="$item->isLocked() && auth()->user()->cannot(Permission::UNLOCK_TRANSPORT)"/>
         <x-actions.delivered-button :object="$item"/>
     @endcan
 
@@ -15,6 +15,6 @@ use App\Enumerables\Permission;
     @endcan
 
     @can(Permission::DELETE_TRANSPORT, $item)
-        <x-actions.delete-button :object="$item"/>
+        <x-actions.delete-button :object="$item" :disabled="$item->isLocked() && auth()->user()->cannot(Permission::UNLOCK_TRANSPORT)"/>
     @endcan
 </x-item-actions>

@@ -113,12 +113,12 @@ new class extends FormComponent {
     }
 
     /**
-     * The roles the current user may assign. Only super admins may assign the super admin role.
+     * The roles the current user may assign. The super admin role requires permission to manage super admins.
      * @return array<int, Role>
      */
     #[Computed]
     public function assignableRoles(): array {
-        return Auth::user()->hasRole(Role::SUPER_ADMIN)
+        return Auth::user()->can(Permission::MANAGE_SUPER_ADMINS)
             ? Role::cases()
             : array_values(array_filter(
                 Role::cases(),
@@ -136,8 +136,8 @@ new class extends FormComponent {
             FormStatus::EDITING => Permission::EDIT_USER,
         });
 
-        // Prevent non-super admin users from editing super admins.
-        abort_if($this->resource?->hasRole(Role::SUPER_ADMIN) && !Auth::user()->hasRole(Role::SUPER_ADMIN), 403);
+        // Only users who may manage super admins can edit them.
+        abort_if($this->resource?->hasRole(Role::SUPER_ADMIN) && Auth::user()->cannot(Permission::MANAGE_SUPER_ADMINS), 403);
 
         // Append validation rules that are conditional.
         $this->withValidator(function ($validator) {

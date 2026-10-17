@@ -4,23 +4,27 @@ use App\Enumerables\Permission;
 
 ?>
 <x-item-actions>
-    @can(Permission::EDIT_PARCEL)
-        <x-actions.edit-button :form="$this->modalName" :object="$item"/>
-    @endcan
+    @unless ($item->isLocked())
+        @can(Permission::EDIT_PARCEL)
+            <x-actions.edit-button :form="$this->modalName" :object="$item"/>
+        @endcan
+    @endunless
 
     @can(Permission::CREATE_PARCEL)
         <x-actions.duplicate-button :form="$this->modalName" :object="$item"/>
     @endcan
 
-    @can(Permission::PRINT_LABELS)
-        <x-actions.print-button :object="$item"/>
-    @endif
+    @unless ($item->isLocked())
+        @can(Permission::PRINT_LABELS)
+            <x-actions.print-button :object="$item"/>
+        @endcan
 
-    @can(Permission::EDIT_TRANSPORT)
-        <x-actions.add-to-transport-button :object="$item"/>
-    @endcan
+        @can(Permission::EDIT_TRANSPORT)
+            <x-actions.add-to-transport-button :object="$item"/>
+        @endcan
+    @endunless
 
     @can(Permission::DELETE_PARCEL)
-        <x-actions.delete-button :object="$item"/>
+        <x-actions.delete-button :object="$item" :disabled="$item->isLocked()"/>
     @endcan
 </x-item-actions>

@@ -37,6 +37,7 @@ enum Permission: string implements Ability {
     case CREATE_TRANSPORT = 'create-transport';
     case EDIT_TRANSPORT = 'edit-transport';
     case DELETE_TRANSPORT = 'delete-transport';
+    case UNLOCK_TRANSPORT = 'unlock-transport';
 
     /**
      * Content permissions
@@ -55,13 +56,14 @@ enum Permission: string implements Ability {
     case EDIT_RECIPIENT = 'edit-recipient';
     case DELETE_RECIPIENT = 'delete-recipient';
 
-    /*
+    /**
      * User permissions
      */
     case VIEW_USERS = 'view-users';
     case CREATE_USER = 'create-user';
     case EDIT_USER = 'edit-user';
     case DELETE_USER = 'delete-user';
+    case MANAGE_SUPER_ADMINS = 'manage-super-admins';
 
     public function deniedMessage(): string {
         return __('auth.unauthorized');
