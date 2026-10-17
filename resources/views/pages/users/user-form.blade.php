@@ -200,11 +200,7 @@ new class extends FormComponent {
         @endforeach
     </flux:pillbox>
 
-    <flux:select variant="listbox" wire:model.live="locale" label="{{ __('app.locale.label') }}">
-        <flux:select.option value="sv">{{ __('app.locales.sv') }}</flux:select.option>
-        <flux:select.option value="en">{{ __('app.locales.en') }}</flux:select.option>
-        <flux:select.option value="uk">{{ __('app.locales.uk') }}</flux:select.option>
-    </flux:select>
+    <x-fields.locale-select wire:model.live="locale"/>
 
     <flux:select variant="listbox" wire:model.live="timezone" label="{{ __('app.timezone.label') }}" searchable>
         @foreach (DateTimeZone::listIdentifiers(DateTimeZone::ALL) as $timezone)
