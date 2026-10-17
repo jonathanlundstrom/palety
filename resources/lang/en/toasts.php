@@ -8,6 +8,10 @@ return [
             'failed' => 'Failed to update password',
             'saved' => 'Password updated successfully!',
         ],
+        'delete' => [
+            'success' => 'User deleted successfully!',
+            'failed' => 'Failed to delete user',
+        ],
     ],
     'recipient' => [
         'failed' => 'Failed to save recipient',

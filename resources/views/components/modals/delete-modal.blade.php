@@ -6,6 +6,7 @@ use App\Models\Pallet;
 use App\Models\Parcel;
 use App\Models\Recipient;
 use App\Models\Transport;
+use App\Models\User;
 use Flux\Flux;
 use hisorange\BrowserDetect\Facade as Browser;
 use Illuminate\Database\Eloquent\Model;
@@ -42,6 +43,7 @@ new class extends Component {
             Transport::class => Permission::DELETE_TRANSPORT,
             Content::class => Permission::DELETE_CONTENT,
             Recipient::class => Permission::DELETE_RECIPIENT,
+            User::class => Permission::DELETE_USER,
         };
     }
 

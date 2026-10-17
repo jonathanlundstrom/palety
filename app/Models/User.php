@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enumerables\Permission;
 use App\Models\Traits\ModelHelpers;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -45,6 +46,15 @@ class User extends Authenticatable {
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Users who may manage super admins can only be deleted by someone who may as well.
+     * Without an authenticated user (e.g. queues or the console), such users cannot be deleted.
+     */
+    protected static function booted(): void {
+        static::deleting(fn (User $user) => $user->cannot(Permission::MANAGE_SUPER_ADMINS)
+            || auth()->user()?->can(Permission::MANAGE_SUPER_ADMINS));
     }
 
     /**

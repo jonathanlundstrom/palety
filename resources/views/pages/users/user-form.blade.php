@@ -137,7 +137,7 @@ new class extends FormComponent {
         });
 
         // Only users who may manage super admins can edit them.
-        abort_if($this->resource?->hasRole(Role::SUPER_ADMIN) && Auth::user()->cannot(Permission::MANAGE_SUPER_ADMINS), 403);
+        abort_if($this->resource?->can(Permission::MANAGE_SUPER_ADMINS) && Auth::user()->cannot(Permission::MANAGE_SUPER_ADMINS), 403);
 
         // Append validation rules that are conditional.
         $this->withValidator(function ($validator) {

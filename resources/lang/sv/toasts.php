@@ -8,6 +8,10 @@ return [
             'failed' => 'Misslyckades med att uppdatera lösenordet',
             'saved' => 'Lösenordet uppdaterades!',
         ],
+        'delete' => [
+            'success' => 'Användaren togs bort!',
+            'failed' => 'Misslyckades med att ta bort användaren',
+        ],
     ],
     'recipient' => [
         'failed' => 'Misslyckades med att spara mottagaren',
