@@ -69,6 +69,7 @@ new class extends Component {
     #[Computed]
     public function transports(): Collection {
         return Transport::query()
+            ->visibleTo(auth()->user())
             ->where('status', TransportStatus::IN_PROGRESS)
             ->withCount(['pallets', 'parcels'])
             ->orderByDesc('id')
@@ -112,6 +113,7 @@ new class extends Component {
             }
 
             $transport = Transport::query()
+                ->visibleTo(auth()->user())
                 ->where('status', TransportStatus::IN_PROGRESS)
                 ->find($this->transport_id);
 

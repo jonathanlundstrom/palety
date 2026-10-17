@@ -5,8 +5,10 @@ namespace App\Models;
 use App\Enumerables\Permission;
 use App\Enumerables\TransportStatus;
 use App\Enumerables\TransportType;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Transport extends Model {
@@ -30,6 +32,7 @@ class Transport extends Model {
         'notes',
         'sent_at',
         'delivered_at',
+        'import_agent_id',
     ];
 
     /**
@@ -42,6 +45,7 @@ class Transport extends Model {
         'status' => TransportStatus::class,
         'sent_at' => 'datetime',
         'delivered_at' => 'datetime',
+        'import_agent_id' => 'integer',
     ];
 
     /**
@@ -59,6 +63,32 @@ class Transport extends Model {
      */
     public function isLocked(): bool {
         return $this->status !== TransportStatus::IN_PROGRESS;
+    }
+
+    /**
+     * Determine whether the given user may see the transport. Users without permission
+     * to view all transports only see those they are the listed import agent for.
+     */
+    public function isVisibleTo(User $user): bool {
+        return $user->can(Permission::VIEW_ALL_TRANSPORTS) || $this->import_agent_id === $user->id;
+    }
+
+    /**
+     * Limit the query to the transports the given user may see.
+     * Mirrors isVisibleTo(), so both must be kept in sync.
+     */
+    public function scopeVisibleTo(Builder $query, User $user): Builder {
+        return $query->when(
+            $user->cannot(Permission::VIEW_ALL_TRANSPORTS),
+            fn (Builder $query) => $query->where('import_agent_id', $user->id)
+        );
+    }
+
+    /**
+     * Get the import agent responsible for the transport.
+     */
+    public function importAgent(): BelongsTo {
+        return $this->belongsTo(User::class, 'import_agent_id');
     }
 
     /**

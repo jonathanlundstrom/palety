@@ -4,14 +4,17 @@ use App\Enumerables\FormStatus;
 use App\Enumerables\Availability;
 use App\Enumerables\PalletStatus;
 use App\Enumerables\Permission;
+use App\Enumerables\Role;
 use App\Enumerables\TransportStatus;
 use App\Enumerables\TransportType;
 use App\Livewire\Components\FormComponent;
 use App\Models\Pallet;
 use App\Models\Parcel;
 use App\Models\Transport;
+use App\Models\User;
 use Carbon\Carbon;
 use Flux\Flux;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\On;
@@ -38,6 +41,21 @@ new class extends FormComponent {
     #[Computed]
     public function isLocked(): bool {
         return $this->resource?->isLocked() ?? false;
+    }
+
+    /**
+     * The users who can be listed as the transport's import agent, ordered by name.
+     * @return Collection<int, User>
+     */
+    #[Computed]
+    public function importAgents(): Collection {
+        return User::query()
+            ->whereHas('roleAssignments', fn ($assignments) => $assignments
+                ->where('role', Role::IMPORT_AGENT->value)
+                ->whereNull('scopeable_type')
+            )
+            ->orderBy('name')
+            ->get(['id', 'name']);
     }
 
     #[On('scan-result')]
@@ -81,6 +99,9 @@ new class extends FormComponent {
 
     #[Validate('required')]
     public string $status = TransportStatus::IN_PROGRESS->name;
+
+    #[Validate('nullable|integer')]
+    public ?int $import_agent_id = null;
 
     #[Validate('nullable|array')]
     public array $linked_pallets = [];
@@ -216,6 +237,13 @@ new class extends FormComponent {
     <flux:select variant="listbox" wire:model.live="status" label="{{ __('app.status') }}">
         @foreach (TransportStatus::cases() as $case)
             <flux:select.option :value="$case->name">{{ $case->label() }}</flux:select.option>
+        @endforeach
+    </flux:select>
+
+    <flux:select variant="listbox" wire:model="import_agent_id" label="{{ __('app.import_agent.label') }}"
+                 placeholder="{{ __('app.import_agent.select') }}" clearable>
+        @foreach ($this->importAgents as $agent)
+            <flux:select.option :value="$agent->id">{{ $agent->name }}</flux:select.option>
         @endforeach
     </flux:select>
 

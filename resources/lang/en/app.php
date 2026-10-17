@@ -86,6 +86,10 @@ return [
         'label' => 'Role|Roles',
         'select' => 'Select role',
     ],
+    'import_agent' => [
+        'label' => 'Import agent',
+        'select' => 'Select import agent',
+    ],
     'locale' => [
         'label' => 'Locale',
         'select' => 'Select locale',

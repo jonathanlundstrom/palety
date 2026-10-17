@@ -30,6 +30,7 @@ new class extends TableComponent {
     #[Computed]
     public function items(): LengthAwarePaginator {
         return Transport::query()
+            ->visibleTo(auth()->user())
             ->when($this->q, fn($query) => $query->whereAny(
                 ['id', 'notes'], 'ILIKE', "%{$this->q}%")
             )

@@ -31,11 +31,15 @@ enum Role: string implements RoleContract {
                 Permission::DELETE_PALLET,
 
                 Permission::VIEW_TRANSPORTS,
+                Permission::VIEW_ALL_TRANSPORTS,
                 Permission::CREATE_TRANSPORT,
                 Permission::EDIT_TRANSPORT,
             ],
             self::FIELD_COORDINATOR => [],
-            self::IMPORT_AGENT => [],
+            self::IMPORT_AGENT => [
+                Permission::VIEW_TRANSPORTS,
+                Permission::DOWNLOAD_DECLARATIONS,
+            ],
         };
     }
 

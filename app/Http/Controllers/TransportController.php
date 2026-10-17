@@ -32,6 +32,8 @@ class TransportController extends Controller {
      * Generate a PDF of the packing list using Browsershot and return it as a download.
      */
     public function downloadPackingListPDF(Transport $transport): Response {
+        abort_unless($transport->isVisibleTo(auth()->user()), 404);
+
         $signedUrl = URL::temporarySignedRoute('transports.packing-list.show', now()->addMinutes(5), [
             'transport' => $transport,
         ]);
@@ -75,6 +77,8 @@ class TransportController extends Controller {
      * Generate an Excel file of the packing list and return it as a download.
      */
     public function downloadPackingListXlsx(Transport $transport): BinaryFileResponse {
+        abort_unless($transport->isVisibleTo(auth()->user()), 404);
+
         App::setLocale('en'); // Force English locale.
 
         $loadedByRecipient = $this->buildLoadedByRecipient($transport);
@@ -104,6 +108,8 @@ class TransportController extends Controller {
      * Generate an Excel file of the import declaration and return it as a download.
      */
     public function downloadImportListXlsx(Transport $transport): BinaryFileResponse {
+        abort_unless($transport->isVisibleTo(auth()->user()), 404);
+
         App::setLocale('uk');
 
         $data = $this->buildLoadedByCategory($transport);

@@ -34,6 +34,7 @@ enum Permission: string implements Ability {
      * Transport permissions
      */
     case VIEW_TRANSPORTS = 'view-transports';
+    case VIEW_ALL_TRANSPORTS = 'view-all-transports';
     case CREATE_TRANSPORT = 'create-transport';
     case EDIT_TRANSPORT = 'edit-transport';
     case DELETE_TRANSPORT = 'delete-transport';

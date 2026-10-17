@@ -86,6 +86,10 @@ return [
         'label' => 'Roll|Roller',
         'select' => 'Välj roll',
     ],
+    'import_agent' => [
+        'label' => 'Importombud',
+        'select' => 'Välj importombud',
+    ],
     'locale' => [
         'label' => 'Språk',
         'select' => 'Välj språk',
