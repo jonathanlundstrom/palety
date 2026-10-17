@@ -7,9 +7,9 @@ use App\Enumerables\PalletStatus;
 use App\Enumerables\PalletType;
 use App\Enumerables\ParcelType;
 use App\Enumerables\RecipientType;
+use App\Enumerables\Role;
 use App\Enumerables\TransportStatus;
 use App\Enumerables\TransportType;
-use App\Enumerables\UserRole;
 
 return [
     RecipientType::ORGANISATION->name => 'Organisation',
@@ -51,6 +51,8 @@ return [
     PalletStatus::DRAFT->name => 'Utkast',
     PalletStatus::COMPLETED->name => 'Slutförd',
 
-    UserRole::ADMIN->name => 'Admin',
-    UserRole::USER->name => 'Användare',
+    Role::SUPER_ADMIN->name => 'Superadmin',
+    Role::WAREHOUSE_VOLUNTEER->name => 'Lagervolontär',
+    Role::FIELD_COORDINATOR->name => 'Fältkoordinator',
+    Role::IMPORT_AGENT->name => 'Importombud',
 ];

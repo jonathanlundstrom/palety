@@ -3,11 +3,13 @@
     <flux:table.cell>{{ $item->name }}</flux:table.cell>
     <flux:table.cell>{{ $item->email }}</flux:table.cell>
     <flux:table.cell>
-        <flux:badge size="sm" color="{{ $item->role->color() }}">{{ $item->role->label() }}</flux:badge>
+        @foreach ($item->roles() as $role)
+            <flux:badge size="sm" color="{{ $role->color() }}">{{ $role->label() }}</flux:badge>
+        @endforeach
     </flux:table.cell>
     <flux:table.cell>{{ $item->created_at }}</flux:table.cell>
     <flux:table.cell>{{ $item->updated_at }}</flux:table.cell>
     <flux:table.cell>
-        <x-item-actions :form="$this->modalName" :object="$item" :allow-delete="false"/>
+        @include('pages.users._user-actions')
     </flux:table.cell>
 </flux:table.row>

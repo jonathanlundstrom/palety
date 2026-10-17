@@ -2,6 +2,7 @@
     'headline',
     'subtitle',
     'modal',
+    'allowCreate' => false,
     'activeFilters' => 0,
 ])
 
@@ -32,7 +33,9 @@
         </div>
     @endif
 
-    <flux:modal.trigger name="{{ $modal }}">
-        <flux:button variant="primary" icon="plus" class="flex-0">{{ __('app.add') }}</flux:button>
-    </flux:modal.trigger>
+    @if ($allowCreate)
+        <flux:modal.trigger name="{{ $modal }}">
+            <flux:button variant="primary" icon="plus" class="flex-0">{{ __('app.add') }}</flux:button>
+        </flux:modal.trigger>
+    @endif
 </div>

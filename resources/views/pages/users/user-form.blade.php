@@ -2,25 +2,33 @@
 
 use App\Enumerables\FormStatus;
 use App\Enumerables\ImportCategory;
-use App\Enumerables\UserRole;
+use App\Enumerables\Permission;
+use App\Enumerables\Role;
 use App\Livewire\Components\FormComponent;
 use App\Models\User;
 use Flux\Flux;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 
 new class extends FormComponent {
+    /**
+     * The model managed by this form. Edit and duplicate requests
+     * for any other class are rejected by the FormComponent.
+     */
+    protected string $model = User::class;
+
     #[Validate('required')]
     public string $name;
 
     #[Validate('required|email')]
     public string $email;
 
-    #[Validate('required')]
-    public string $role = UserRole::USER->name;
+    #[Validate(['roles' => ['required', 'array', 'min:1'], 'roles.*' => [new Enum(Role::class)]])]
+    public array $roles = [Role::WAREHOUSE_VOLUNTEER->value];
 
     #[Validate('nullable|min:8')]
     public string $password = '';
@@ -30,6 +38,27 @@ new class extends FormComponent {
 
     #[Validate('required')]
     public string $timezone = 'Europe/Stockholm';
+
+    /**
+     * Skip the roles field, since it is hydrated from Grant below.
+     * @return array<int, string>
+     */
+    protected function skipHydration(): array {
+        return [...parent::skipHydration(), 'roles'];
+    }
+
+    /**
+     * Hydrate the form fields, including the roles assigned through Grant.
+     * @param object $object
+     * @return void
+     */
+    protected function hydrateFields(object $object): void {
+        parent::hydrateFields($object);
+
+        $this->roles = $object->roles()
+            ->map(fn (Role $role) => $role->value)
+            ->all();
+    }
 
     /**
      * Create a new user from validated form data.
@@ -46,8 +75,12 @@ new class extends FormComponent {
             throw new Exception('toasts.user.duplicate');
         }
 
-        $content = User::create($validated);
-        if (!$content) throw new Exception('toasts.user.failed');
+        $user = DB::transaction(function () use ($validated) {
+            return User::create($validated)
+                ->syncRoles($this->selectedRoles());
+        });
+
+        if (!$user) throw new Exception('toasts.user.failed');
     }
 
     /**
@@ -59,8 +92,38 @@ new class extends FormComponent {
             unset($validated['password']);
         }
 
-        $result = $this->resource->update($validated);
+        $result = DB::transaction(function () use ($validated) {
+            $result = $this->resource->update($validated);
+            if ($result && ! $this->isCurrentUser) {
+                $this->resource->syncRoles($this->selectedRoles());
+            }
+
+            return $result;
+        });
+
         if (!$result) throw new Exception('toasts.user.failed');
+    }
+
+    /**
+     * Resolve the selected role values into Role instances.
+     * @return array<int, Role>
+     */
+    protected function selectedRoles(): array {
+        return array_map(Role::from(...), $this->roles);
+    }
+
+    /**
+     * The roles the current user may assign. Only super admins may assign the super admin role.
+     * @return array<int, Role>
+     */
+    #[Computed]
+    public function assignableRoles(): array {
+        return Auth::user()->hasRole(Role::SUPER_ADMIN)
+            ? Role::cases()
+            : array_values(array_filter(
+                Role::cases(),
+                fn (Role $role) => $role !== Role::SUPER_ADMIN
+            ));
     }
 
     /**
@@ -68,6 +131,14 @@ new class extends FormComponent {
      * @return void
      */
     public function onSubmit(): void {
+        $this->authorize(match ($this->formStatus()) {
+            FormStatus::CREATING => Permission::CREATE_USER,
+            FormStatus::EDITING => Permission::EDIT_USER,
+        });
+
+        // Prevent non-super admin users from editing super admins.
+        abort_if($this->resource?->hasRole(Role::SUPER_ADMIN) && !Auth::user()->hasRole(Role::SUPER_ADMIN), 403);
+
         // Append validation rules that are conditional.
         $this->withValidator(function ($validator) {
             $validator->addRules([
@@ -77,6 +148,7 @@ new class extends FormComponent {
                 'password' => $this->formStatus() === FormStatus::CREATING
                     ? 'required'
                     : 'nullable',
+                'roles.*' => Rule::enum(Role::class)->only($this->assignableRoles),
             ]);
         });
 
@@ -114,19 +186,19 @@ new class extends FormComponent {
     <flux:input wire:model="name" label="{{ __('app.name') }}"/>
     <flux:input wire:model="email" label="{{ __('app.email') }}"/>
 
-    <flux:select variant="listbox" wire:model.live="role" label="{{ trans_choice('app.role.label', 1) }}"
-                 placeholder="{{ __('app.role.select') }}" :disabled="$this->isCurrentUser">
-        @foreach (UserRole::cases() as $case)
-            <flux:select.option :value="$case->name">{{ $case->label() }}</flux:select.option>
-        @endforeach
-    </flux:select>
-
     <flux:input type="password" wire:model="password" label="{{ __('app.password') }}" viewable/>
 
     @if ($this->formStatus() === FormStatus::EDITING)
         <flux:callout variant="warning" icon="information-circle"
                       heading="{{ __('pages.users.form.extras.password_warning') }}"/>
     @endif
+
+    <flux:pillbox wire:model="roles" multiple label="{{ trans_choice('app.role.label', 2) }}"
+                  placeholder="{{ __('app.role.select') }}" :disabled="$this->isCurrentUser">
+        @foreach ($this->assignableRoles as $case)
+            <flux:pillbox.option :value="$case->value">{{ $case->label() }}</flux:pillbox.option>
+        @endforeach
+    </flux:pillbox>
 
     <flux:select variant="listbox" wire:model.live="locale" label="{{ __('app.locale.label') }}">
         <flux:select.option value="sv">{{ __('app.locales.sv') }}</flux:select.option>

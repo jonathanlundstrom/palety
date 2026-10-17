@@ -13,11 +13,7 @@
         </div>
 
         <div class="flex-0 flex items-center gap-2">
-            <x-item-actions :form="$this->modalName" :object="$item" :allowDelete="$item->usage_count === 0">
-                @if ($item->usage_count > 0)
-                    <x-actions.merge-button :object="$item"/>
-                @endif
-            </x-item-actions>
+            @include('pages.content._content-actions')
         </div>
     </div>
 

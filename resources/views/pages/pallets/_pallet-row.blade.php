@@ -52,10 +52,6 @@
     <flux:table.cell>{{ str($item->notes)->limit(30) ?: '--' }}</flux:table.cell>
     <flux:table.cell>{{ $item->created_at }}</flux:table.cell>
     <flux:table.cell>
-        <x-item-actions :form="$this->modalName" :object="$item">
-            <x-actions.duplicate-button :form="$this->modalName" :object="$item"/>
-            <x-actions.print-button :object="$item"/>
-            <x-actions.add-to-transport-button :object="$item"/>
-        </x-item-actions>
+        @include('pages.pallets._pallet-actions')
     </flux:table.cell>
 </flux:table.row>

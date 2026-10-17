@@ -1,7 +1,8 @@
 <?php
 
 use App\Enumerables\ImportCategory;
-use App\Enumerables\UserRole;
+use App\Enumerables\Permission;
+use App\Enumerables\Role;
 use App\Livewire\Components\TableComponent;
 use App\Models\User;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -36,7 +37,10 @@ new class extends TableComponent {
             ->when($this->q, fn($query) => $query->whereAny(
                 ['name', 'email'], 'ILIKE', "%{$this->q}%")
             )
-            ->when($this->role, fn($query) => $query->where('role', $this->role))
+            ->when($this->role, fn($query) => $query->whereHas('roleAssignments', fn($assignments) => $assignments
+                ->where('role', $this->role)
+                ->whereNull('scopeable_type')
+            ))
             ->orderBy($this->sortBy, $this->sortDirection)
             ->paginate($this->perPage);
     }
@@ -52,11 +56,12 @@ new class extends TableComponent {
     <x-table.filters :headline="__('pages.users.headline')"
                      :subtitle="__('pages.users.subtitle')"
                      :modal="$this->modalName"
+                     :allow-create="auth()->user()->can(Permission::CREATE_USER)"
                      :active-filters="$this->activeFilterCount">
         <flux:select variant="listbox" wire:model.live="role" placeholder="{{ trans_choice('app.role.label', 1) }}"
                      clearable class="md:flex-1 !w-auto grow">
-            @foreach (UserRole::cases() as $case)
-                <flux:select.option value="{{ $case->name }}">{{ $case->label() }}</flux:select.option>
+            @foreach (Role::cases() as $case)
+                <flux:select.option value="{{ $case->value }}">{{ $case->label() }}</flux:select.option>
             @endforeach
         </flux:select>
     </x-table.filters>
@@ -69,8 +74,7 @@ new class extends TableComponent {
                                wire:click="sort('name')">{{ __('app.name') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'email'" :direction="$sortDirection"
                                wire:click="sort('email')">{{ __('app.email') }}</flux:table.column>
-            <flux:table.column sortable :sorted="$sortBy === 'role'" :direction="$sortDirection"
-                               wire:click="sort('role')">{{ trans_choice('app.role.label', 1) }}</flux:table.column>
+            <flux:table.column>{{ trans_choice('app.role.label', 2) }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'created_at'" :direction="$sortDirection"
                                wire:click="sort('created_at')">{{ __('app.created_at') }}</flux:table.column>
             <flux:table.column sortable :sorted="$sortBy === 'updated_at'" :direction="$sortDirection"
@@ -84,7 +88,9 @@ new class extends TableComponent {
         @endforeach
     </x-table.container>
 
-    <x-modals.flyout name="{{ $this->modalName }}" position="{{ $this->modalPosition }}">
-        <livewire:pages::users.user-form/>
-    </x-modals.flyout>
+    @canany([Permission::CREATE_USER, Permission::EDIT_USER])
+        <x-modals.flyout name="{{ $this->modalName }}" position="{{ $this->modalPosition }}">
+            <livewire:pages::users.user-form/>
+        </x-modals.flyout>
+    @endcanany
 </section>

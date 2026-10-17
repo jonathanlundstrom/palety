@@ -1,5 +1,6 @@
 <?php
 
+use App\Enumerables\Permission;
 use App\Enumerables\TransportStatus;
 use App\Enumerables\TransportType;
 use App\Livewire\Components\TableComponent;
@@ -54,6 +55,7 @@ new class extends TableComponent {
     <x-table.filters :headline="__('pages.transports.headline')"
                      :subtitle="__('pages.transports.subtitle')"
                      :modal="$this->modalName"
+                     :allow-create="auth()->user()->can(Permission::CREATE_TRANSPORT)"
                      :active-filters="$this->activeFilterCount">
         <flux:date-picker mode="range" wire:model.live="range" locale="{{ App::getLocale() }}" placeholder="{{ __('app.date_range') }}" with-today week-numbers clearable class="w-full md:flex-1" />
 
@@ -97,10 +99,12 @@ new class extends TableComponent {
         @endforeach
     </x-table.container>
 
-    <x-modals.flyout name="{{ $this->modalName }}" position="{{ $this->modalPosition }}">
-        <livewire:pages::transports.transport-form/>
-    </x-modals.flyout>
+    @canany([Permission::CREATE_TRANSPORT, Permission::EDIT_TRANSPORT])
+        <x-modals.flyout name="{{ $this->modalName }}" position="{{ $this->modalPosition }}">
+            <livewire:pages::transports.transport-form/>
+        </x-modals.flyout>
 
-    <livewire:modals.scanner-modal/>
-    <livewire:modals.add-modal/>
+        <livewire:modals.scanner-modal/>
+        <livewire:modals.add-modal/>
+    @endcanany
 </section>

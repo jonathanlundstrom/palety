@@ -25,6 +25,6 @@
     </flux:table.cell>
     <flux:table.cell>{{ $item->city }}</flux:table.cell>
     <flux:table.cell>
-        <x-item-actions :form="$this->modalName" :object="$item"/>
+        @include('pages.recipients._recipient-actions')
     </flux:table.cell>
 </flux:table.row>

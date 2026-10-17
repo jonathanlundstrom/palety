@@ -1,10 +1,12 @@
 <?php
 
+use App\Enumerables\Permission;
 use App\Models\Content;
 use Flux\Flux;
 use hisorange\BrowserDetect\Facade as Browser;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rules\Exists;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use Livewire\Attributes\On;
@@ -16,7 +18,7 @@ new class extends Component {
     #[Locked]
     public ?int $source_id = null;
 
-    #[Validate('required|integer')]
+    #[Validate(['required', 'integer', new Exists(Content::class), 'different:source_id'])]
     public ?int $target_id = null;
 
     #[Validate('nullable|string|max:255')]
@@ -74,6 +76,7 @@ new class extends Component {
      * @return void
      */
     public function onSubmit(): void {
+        $this->authorize(Permission::MERGE_CONTENT);
         $this->validate();
 
         try {

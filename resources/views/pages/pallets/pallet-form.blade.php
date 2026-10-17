@@ -3,6 +3,7 @@
 use App\Enumerables\FormStatus;
 use App\Enumerables\PalletStatus;
 use App\Enumerables\PalletType;
+use App\Enumerables\Permission;
 use App\Enumerables\Availability;
 use App\Events\PalletSaved;
 use App\Livewire\Components\FormComponent;
@@ -20,6 +21,11 @@ use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 
 new class extends FormComponent {
+    /**
+     * The model managed by this form. Edit and duplicate requests
+     * for any other class are rejected by the FormComponent.
+     */
+    protected string $model = Pallet::class;
 
     #[On('edit-resource')]
     public function edit(int $id, string $class): void {
@@ -31,8 +37,7 @@ new class extends FormComponent {
     public function onScanResult(?array $payload): void {
         if (!is_null($payload) && $payload['class'] === Parcel::class) {
             try {
-                $abstract = app()->make($payload['class']);
-                $object = $abstract::findOrFail($payload['id']);
+                $object = $payload['class']::findOrFail($payload['id']);
                 if ($object->getAvailability() === Availability::AVAILABLE) {
                     if (!in_array($object->id, array_column($this->linked_parcels, 'id'), true)) {
                         $this->linked_parcels[] = $object;
@@ -134,6 +139,11 @@ new class extends FormComponent {
      * @return void
      */
     public function onSubmit(): void {
+        $this->authorize(match ($this->formStatus()) {
+            FormStatus::CREATING => Permission::CREATE_PALLET,
+            FormStatus::EDITING => Permission::EDIT_PALLET,
+        });
+
         $validated = [
             ...$this->validate(),
             'user_id' => Auth::id()

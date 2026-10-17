@@ -2,6 +2,7 @@
 
 use App\Enumerables\FormStatus;
 use App\Enumerables\ImportCategory;
+use App\Enumerables\Permission;
 use App\Livewire\Components\FormComponent;
 use App\Models\Content;
 use Flux\Flux;
@@ -10,6 +11,12 @@ use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 
 new class extends FormComponent {
+    /**
+     * The model managed by this form. Edit and duplicate requests
+     * for any other class are rejected by the FormComponent.
+     */
+    protected string $model = Content::class;
+
     #[Validate('required')]
     public string $category;
 
@@ -52,6 +59,11 @@ new class extends FormComponent {
      * @return void
      */
     public function onSubmit(): void {
+        $this->authorize(match ($this->formStatus()) {
+            FormStatus::CREATING => Permission::CREATE_CONTENT,
+            FormStatus::EDITING => Permission::EDIT_CONTENT,
+        });
+
         $validated = $this->validate();
 
         try {

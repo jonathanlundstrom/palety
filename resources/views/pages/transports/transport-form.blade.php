@@ -3,6 +3,7 @@
 use App\Enumerables\FormStatus;
 use App\Enumerables\Availability;
 use App\Enumerables\PalletStatus;
+use App\Enumerables\Permission;
 use App\Enumerables\TransportStatus;
 use App\Enumerables\TransportType;
 use App\Livewire\Components\FormComponent;
@@ -16,6 +17,11 @@ use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 
 new class extends FormComponent {
+    /**
+     * The model managed by this form. Edit and duplicate requests
+     * for any other class are rejected by the FormComponent.
+     */
+    protected string $model = Transport::class;
 
     #[On('edit-resource')]
     public function edit(int $id, string $class): void {
@@ -33,8 +39,7 @@ new class extends FormComponent {
             };
 
             try {
-                $abstract = app()->make($payload['class']);
-                $object = $abstract::query()
+                $object = $payload['class']::query()
                     ->when($payload['class'] === Pallet::class, fn($q) => $q->with('parcels'))
                     ->findOrFail($payload['id']);
 
@@ -152,6 +157,11 @@ new class extends FormComponent {
      * @return void
      */
     public function onSubmit(): void {
+        $this->authorize(match ($this->formStatus()) {
+            FormStatus::CREATING => Permission::CREATE_TRANSPORT,
+            FormStatus::EDITING => Permission::EDIT_TRANSPORT,
+        });
+
         $validated = $this->validate();
         $this->updateTimestamps($validated);
 

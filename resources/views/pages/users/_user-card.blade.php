@@ -6,14 +6,16 @@
                     {{ $item->id }}
                 </flux:badge>
 
-                <flux:badge size="sm" inset="top bottom" color="{{ $item->role->color() }}" class="rounded-l-none">
-                    {{ $item->role->label() }}
-                </flux:badge>
+                @foreach ($item->roles() as $role)
+                    <flux:badge size="sm" inset="top bottom" color="{{ $role->color() }}" class="rounded-l-none">
+                        {{ $role->label() }}
+                    </flux:badge>
+                @endforeach
             </div>
         </div>
 
         <div class="flex-0 flex items-center gap-2">
-            <x-item-actions :form="$this->modalName" :object="$item"/>
+            @include('pages.users._user-actions')
         </div>
     </div>
 

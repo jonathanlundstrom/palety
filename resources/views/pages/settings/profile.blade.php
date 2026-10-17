@@ -1,6 +1,6 @@
 <?php
 
-use App\Enumerables\UserRole;
+use App\Enumerables\Permission;
 use App\Models\User;
 use Flux\Flux;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -156,8 +156,8 @@ new class extends Component {
             </div>
         </form>
 
-        @if (Auth::user()->role === UserRole::ADMIN)
+        @can(Permission::DELETE_USER)
             <livewire:pages::settings.delete-user-form/>
-        @endif
+        @endcan
     </x-settings.layout>
 </section>

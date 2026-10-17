@@ -16,6 +16,7 @@ return [
     'failed' => 'Dessa uppgifter stämmer inte med våra register.',
     'password' => 'Det angivna lösenordet är felaktigt.',
     'throttle' => 'För många inloggningsförsök. Försök igen om :seconds sekunder.',
+    'unauthorized' => 'Du har inte behörighet att göra det.',
     'login' => [
         'title' => 'Logga in på ditt konto',
         'description' => 'Ange din e-postadress och ditt lösenord nedan för att logga in.',

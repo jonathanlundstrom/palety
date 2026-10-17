@@ -27,11 +27,7 @@
                 {{ number_format($item->getWeight(), 2) }} {{ __('app.weight.unit') }}
             </flux:text>
 
-            <x-item-actions :form="$this->modalName" :object="$item">
-                <x-actions.duplicate-button :form="$this->modalName" :object="$item"/>
-                <x-actions.print-button :object="$item"/>
-                <x-actions.add-to-transport-button :object="$item"/>
-            </x-item-actions>
+            @include('pages.parcels._parcel-actions')
         </div>
     </div>
 

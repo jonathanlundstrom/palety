@@ -1,6 +1,7 @@
 <?php
 
 use App\Enumerables\DeliveryType;
+use App\Enumerables\Permission;
 use App\Enumerables\RecipientType;
 use App\Livewire\Components\TableComponent;
 use App\Models\Recipient;
@@ -66,6 +67,7 @@ new class extends TableComponent {
     <x-table.filters :headline="__('pages.recipients.headline')"
                      :subtitle="__('pages.recipients.subtitle')"
                      :modal="$this->modalName"
+                     :allow-create="auth()->user()->can(Permission::CREATE_RECIPIENT)"
                      :active-filters="$this->activeFilterCount">
         <flux:select variant="listbox" wire:model.live="type" placeholder="{{ __('app.type') }}" clearable class="w-full md:flex-1">
             @foreach (RecipientType::cases() as $case)
@@ -103,7 +105,9 @@ new class extends TableComponent {
         @endforeach
     </x-table.container>
 
-    <x-modals.flyout name="{{ $this->modalName }}" position="{{ $this->modalPosition }}">
-        <livewire:pages::recipients.recipient-form />
-    </x-modals.flyout>
+    @canany([Permission::CREATE_RECIPIENT, Permission::EDIT_RECIPIENT])
+        <x-modals.flyout name="{{ $this->modalName }}" position="{{ $this->modalPosition }}">
+            <livewire:pages::recipients.recipient-form />
+        </x-modals.flyout>
+    @endcanany
 </section>

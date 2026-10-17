@@ -1,6 +1,7 @@
 <?php
 
 use App\Enumerables\ImportCategory;
+use App\Enumerables\Permission;
 use App\Livewire\Components\TableComponent;
 use App\Models\Content;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -52,6 +53,7 @@ new class extends TableComponent {
     <x-table.filters :headline="__('pages.content.headline')"
                      :subtitle="__('pages.content.subtitle')"
                      :modal="$this->modalName"
+                     :allow-create="auth()->user()->can(Permission::CREATE_CONTENT)"
                      :active-filters="$this->activeFilterCount">
         <flux:select variant="listbox" wire:model.live="category" placeholder="{{ trans_choice('app.category.label', 1) }}" clearable class="md:flex-1 !w-auto grow">
             @foreach (ImportCategory::cases() as $case)
@@ -76,7 +78,9 @@ new class extends TableComponent {
         @endforeach
     </x-table.container>
 
-    <x-modals.flyout name="{{ $this->modalName }}" position="{{ $this->modalPosition }}">
-        <livewire:pages::content.content-form />
-    </x-modals.flyout>
+    @canany([Permission::CREATE_CONTENT, Permission::EDIT_CONTENT])
+        <x-modals.flyout name="{{ $this->modalName }}" position="{{ $this->modalPosition }}">
+            <livewire:pages::content.content-form />
+        </x-modals.flyout>
+    @endcanany
 </section>

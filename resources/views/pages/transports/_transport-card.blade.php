@@ -25,11 +25,7 @@
                 {{ number_format($item->getWeight(), 2) }} {{ __('app.weight.unit') }}
             </flux:text>
 
-            <x-item-actions :form="$this->modalName" :object="$item">
-                <x-actions.delivered-button :object="$item"/>
-                <x-actions.packing-list-button :object="$item"/>
-                <x-actions.import-list-button :object="$item"/>
-            </x-item-actions>
+            @include('pages.transports._transport-actions')
         </div>
     </div>
 

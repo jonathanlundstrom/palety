@@ -17,10 +17,6 @@
     <flux:table.cell>{{ $item->created_at }}</flux:table.cell>
     <flux:table.cell>{{ $item->delivered_at?->format('Y-m-d') ?? '--' }}</flux:table.cell>
     <flux:table.cell>
-        <x-item-actions :form="$this->modalName" :object="$item">
-            <x-actions.delivered-button :object="$item"/>
-            <x-actions.packing-list-button :object="$item"/>
-            <x-actions.import-list-button :object="$item"/>
-        </x-item-actions>
+        @include('pages.transports._transport-actions')
     </flux:table.cell>
 </flux:table.row>

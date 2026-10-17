@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Components;
 
+use App\Enumerables\Permission;
 use App\Events\PalletSaved;
 use App\Events\ParcelSaved;
 use App\Models\Pallet;
@@ -128,8 +129,10 @@ abstract class TableComponent extends Component {
      * Print a label for the specified resource.
      */
     public function print($id, string $class): void {
+        $this->authorize(Permission::PRINT_LABELS);
+
         try {
-            $object = app()->make($class)::find($id);
+            $object = $class::findOrFail($id);
 
             match ($class) {
                 Parcel::class => event(new ParcelSaved($object)),

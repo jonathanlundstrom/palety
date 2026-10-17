@@ -9,10 +9,6 @@
     </flux:table.cell>
     <flux:table.cell>{{ $item->usage_count }} {{ trans_choice('app.usage.unit', $item->usage_count) }}</flux:table.cell>
     <flux:table.cell>
-        <x-item-actions :form="$this->modalName" :object="$item" :allowDelete="$item->usage_count === 0">
-            @if ($item->usage_count > 0)
-                <x-actions.merge-button :object="$item"/>
-            @endif
-        </x-item-actions>
+        @include('pages.content._content-actions')
     </flux:table.cell>
 </flux:table.row>

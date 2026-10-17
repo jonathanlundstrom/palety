@@ -19,10 +19,19 @@ abstract class FormComponent extends Component {
     #[Locked]
     public bool $duplicating = false;
 
+    /**
+     * The model class this form manages. Only resources of this class can be
+     * loaded into the form, so a crafted request cannot edit another model.
+     *
+     * @var class-string<Model>
+     */
+    protected string $model;
+
     #[On('edit-resource')]
     public function edit(int $id, string $class): void {
-        $abstract = app()->make($class);
-        $this->resource = $abstract::find($id);
+        abort_unless($class === $this->model, 403);
+
+        $this->resource = $class::findOrFail($id);
         $this->hydrateFields($this->resource);
         $this->dispatch('edit-hydrated');
     }
@@ -35,8 +44,9 @@ abstract class FormComponent extends Component {
      */
     #[On('duplicate-resource')]
     public function duplicate(int $id, string $class): void {
-        $abstract = app()->make($class);
-        $this->hydrateFields($abstract::find($id));
+        abort_unless($class === $this->model, 403);
+
+        $this->hydrateFields($class::findOrFail($id));
         $this->duplicating = true;
         $this->dispatch('edit-hydrated');
     }

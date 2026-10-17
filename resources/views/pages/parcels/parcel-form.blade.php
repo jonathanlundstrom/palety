@@ -3,6 +3,7 @@
 use App\Enumerables\Availability;
 use App\Enumerables\FormStatus;
 use App\Enumerables\ParcelType;
+use App\Enumerables\Permission;
 use App\Events\ParcelSaved;
 use App\Livewire\Components\FormComponent;
 use App\Models\Content;
@@ -19,6 +20,11 @@ use Livewire\Attributes\On;
 use Livewire\Attributes\Validate;
 
 new class extends FormComponent {
+    /**
+     * The model managed by this form. Edit and duplicate requests
+     * for any other class are rejected by the FormComponent.
+     */
+    protected string $model = Parcel::class;
 
     #[Validate('required')]
     public string $type = ParcelType::BOX->name;
@@ -90,18 +96,23 @@ new class extends FormComponent {
      * @return void
      */
     public function onSubmit(): void {
+        $this->authorize(match ($this->formStatus()) {
+            FormStatus::CREATING => Permission::CREATE_PARCEL,
+            FormStatus::EDITING => Permission::EDIT_PARCEL,
+        });
+
         $validated = [
             ...$this->validate(),
             'user_id' => Auth::id()
         ];
 
         // Round weight to one decimal place before saving.
-        $validated['weight'] = round((float) $validated['weight'], 1);
+        $validated['weight'] = round((float)$validated['weight'], 1);
 
         try {
             $is_creating = $this->formStatus() === FormStatus::CREATING;
             $previous_weight = $is_creating ? null : $this->resource->weight;
-            $copies = $is_creating ? max(1, (int) ($this->copies ?? 1)) : 1;
+            $copies = $is_creating ? max(1, (int)($this->copies ?? 1)) : 1;
 
             DB::transaction(function () use ($validated, $is_creating, $previous_weight, $copies) {
                 if ($is_creating) {
@@ -134,7 +145,7 @@ new class extends FormComponent {
                     :subtitle="__('pages.parcels.form.'.$this->formMode.'.subtitle')"/>
 
     @if ($this->formStatus() === FormStatus::EDITING && $resource->getAvailability() === Availability::ALREADY_LOADED)
-        <flux:callout variant="danger" heading="{!! __('app.parcel_loaded') !!}" icon="exclamation-circle" />
+        <flux:callout variant="danger" heading="{!! __('app.parcel_loaded') !!}" icon="exclamation-circle"/>
     @endif
 
     <flux:select variant="listbox" wire:model.live="type" label="{{ __('app.type') }}">
@@ -160,13 +171,15 @@ new class extends FormComponent {
     </flux:field>
 
     @if ($this->canSelectRecipient)
-        <flux:select variant="combobox" wire:model.live="recipient_id" label="{{ __('app.recipient') }}" :clearable="isset($recipient_id)">
+        <flux:select variant="combobox" wire:model.live="recipient_id" label="{{ __('app.recipient') }}"
+                     :clearable="isset($recipient_id)">
             @foreach ($this->recipients as $recipient)
                 <flux:select.option value="{{ $recipient->id }}">{{ $recipient->name }}</flux:select.option>
             @endforeach
         </flux:select>
 
-        <flux:callout variant="warning" icon="information-circle" heading="{{ __('pages.parcels.form.extras.recipient_warning') }}"/>
+        <flux:callout variant="warning" icon="information-circle"
+                      heading="{{ __('pages.parcels.form.extras.recipient_warning') }}"/>
     @endif
 
     <flux:textarea wire:model="notes" label="{{ __('app.notes') }}" resize="none"/>
@@ -177,10 +190,10 @@ new class extends FormComponent {
         <flux:label>{{ __('app.value.label') }}</flux:label>
         <flux:description>{{ __('app.value.description') }}</flux:description>
         <flux:input.group>
-            <flux:input icon="currency-euro" type="number" wire:model="value" />
+            <flux:input icon="currency-euro" type="number" wire:model="value"/>
             <flux:input.group.suffix>{{ __('app.currencies.EUR') }}</flux:input.group.suffix>
         </flux:input.group>
-        <flux:error name="value" />
+        <flux:error name="value"/>
     </flux:field>
 
     @if ($this->formStatus() === FormStatus::CREATING)
@@ -188,9 +201,9 @@ new class extends FormComponent {
             <flux:label>{{ __('app.num_copies.label') }}</flux:label>
             <flux:description>{{ __('app.num_copies.description') }}</flux:description>
             <flux:input.group>
-                <flux:input icon="document-duplicate" type="number" min="1" max="15" wire:model="copies" />
+                <flux:input icon="document-duplicate" type="number" min="1" max="15" wire:model="copies"/>
             </flux:input.group>
-            <flux:error name="copies" />
+            <flux:error name="copies"/>
         </flux:field>
     @endif
 

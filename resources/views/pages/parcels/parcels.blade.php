@@ -2,6 +2,7 @@
 
 use App\Enumerables\Availability;
 use App\Enumerables\ParcelType;
+use App\Enumerables\Permission;
 use App\Livewire\Components\TableComponent;
 use App\Models\Parcel;
 use App\Models\Content;
@@ -51,7 +52,7 @@ new class extends TableComponent {
                     Availability::ANY_STATUS->name => $query,
                     Availability::LOADED_ON_PALLET->name => $query->whereNotNull('pallet_id'),
                     Availability::LOADED_ON_TRANSPORT->name => $query->whereNotNull('transport_id'),
-                    Availability::ALREADY_LOADED->name => $query->where(fn ($q) => $q->whereNotNull('pallet_id')->orWhereNotNull('transport_id')),
+                    Availability::ALREADY_LOADED->name => $query->where(fn($q) => $q->whereNotNull('pallet_id')->orWhereNotNull('transport_id')),
                     default => $query->whereNull('pallet_id')->whereNull('transport_id'),
                 };
             })
@@ -81,10 +82,14 @@ new class extends TableComponent {
     <x-table.filters :headline="__('pages.parcels.headline')"
                      :subtitle="__('pages.parcels.subtitle')"
                      :modal="$this->modalName"
+                     :allow-create="auth()->user()->can(Permission::CREATE_PARCEL)"
                      :active-filters="$this->activeFilterCount">
-        <flux:date-picker mode="range" wire:model.live="range" locale="{{ App::getLocale() }}" placeholder="{{ __('app.date_range') }}" with-today week-numbers clearable class="w-full md:flex-1" />
+        <flux:date-picker mode="range" wire:model.live="range" locale="{{ App::getLocale() }}"
+                          placeholder="{{ __('app.date_range') }}" with-today week-numbers clearable
+                          class="w-full md:flex-1"/>
 
-        <flux:select variant="listbox" wire:model.live="availability" placeholder="{{ __('app.availability') }}" clearable
+        <flux:select variant="listbox" wire:model.live="availability" placeholder="{{ __('app.availability') }}"
+                     clearable
                      class="md:flex-1">
             @foreach (Availability::parcelFilters() as $case)
                 <flux:select.option value="{{ $case->name }}">{{ $case->label() }}</flux:select.option>
@@ -130,7 +135,9 @@ new class extends TableComponent {
         @endforeach
     </x-table.container>
 
-    <x-modals.flyout name="{{ $this->modalName }}" position="{{ $this->modalPosition }}">
-        <livewire:pages::parcels.parcel-form/>
-    </x-modals.flyout>
+    @canany([Permission::CREATE_PARCEL, Permission::EDIT_PARCEL])
+        <x-modals.flyout name="{{ $this->modalName }}" position="{{ $this->modalPosition }}">
+            <livewire:pages::parcels.parcel-form/>
+        </x-modals.flyout>
+    @endcanany
 </section>

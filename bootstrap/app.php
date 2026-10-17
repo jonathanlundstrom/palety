@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Middleware\EnsureUserIsAdmin;
 use App\Http\Middleware\SetUserLocale;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -21,10 +20,6 @@ return Application::configure(basePath: dirname(__DIR__))
                 Request::HEADER_X_FORWARDED_PROTO |
                 Request::HEADER_X_FORWARDED_PORT
         );
-
-        $middleware->alias([
-            'admin' => EnsureUserIsAdmin::class,
-        ]);
 
         $middleware->web(append: [
             SetUserLocale::class,

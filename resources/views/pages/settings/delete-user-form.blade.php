@@ -1,5 +1,6 @@
 <?php
 
+use App\Enumerables\Permission;
 use App\Livewire\Actions\Logout;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
@@ -11,6 +12,8 @@ new class extends Component {
      * Delete the currently authenticated user.
      */
     public function deleteUser(Logout $logout): void {
+        $this->authorize(Permission::DELETE_USER);
+
         $this->validate([
             'password' => ['required', 'string', 'current_password'],
         ]);

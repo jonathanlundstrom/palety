@@ -20,7 +20,7 @@
         </div>
 
         <div class="flex-0 flex items-center gap-2">
-            <x-item-actions :form="$this->modalName" :object="$item"/>
+            @include('pages.recipients._recipient-actions')
         </div>
     </div>
 

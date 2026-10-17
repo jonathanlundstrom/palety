@@ -1,6 +1,7 @@
 <?php
 
 use App\Enumerables\Availability;
+use App\Enumerables\Permission;
 use App\Livewire\Components\TableComponent;
 use App\Models\Content;
 use App\Models\Pallet;
@@ -77,6 +78,7 @@ new class extends TableComponent {
     <x-table.filters :headline="__('pages.pallets.headline')"
                      :subtitle="__('pages.pallets.subtitle')"
                      :modal="$this->modalName"
+                     :allow-create="auth()->user()->can(Permission::CREATE_PALLET)"
                      :active-filters="$this->activeFilterCount">
         <flux:date-picker mode="range" wire:model.live="range" locale="{{ App::getLocale() }}" placeholder="{{ __('app.date_range') }}" with-today week-numbers clearable class="w-full md:flex-1" />
 
@@ -127,10 +129,12 @@ new class extends TableComponent {
         @endforeach
     </x-table.container>
 
-    <x-modals.flyout name="{{ $this->modalName }}" position="{{ $this->modalPosition }}">
-        <livewire:pages::pallets.pallet-form/>
-    </x-modals.flyout>
+    @canany([Permission::CREATE_PALLET, Permission::EDIT_PALLET])
+        <x-modals.flyout name="{{ $this->modalName }}" position="{{ $this->modalPosition }}">
+            <livewire:pages::pallets.pallet-form/>
+        </x-modals.flyout>
 
-    <livewire:modals.scanner-modal/>
-    <livewire:modals.add-modal/>
+        <livewire:modals.scanner-modal/>
+        <livewire:modals.add-modal/>
+    @endcanany
 </section>

@@ -2,11 +2,22 @@
 
 namespace App\Helpers;
 
+use BackedEnum;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Validate;
 use UnitEnum;
 
 trait ComponentHelpers {
+    /**
+     * Fields that hydrateFields() should skip, either because they must never be
+     * pre-filled or because the component hydrates them itself.
+     *
+     * @return array<int, string>
+     */
+    protected function skipHydration(): array {
+        return ['password'];
+    }
+
     /**
      * Populates the properties of the current object based on a given object's attributes.
      *
@@ -23,12 +34,14 @@ trait ComponentHelpers {
         foreach ($fields as $field) {
             if (get_class($field) === Validate::class) {
                 $property_name = $field->getSubName();
-                if ($property_name === 'password') {
+                if (in_array($property_name, $this->skipHydration(), true)) {
                     continue;
-                } // Skip all password fields.
+                }
 
                 if (! is_null($object->{$property_name})) {
-                    if ($object->{$property_name} instanceof UnitEnum) {
+                    if ($object->{$property_name} instanceof BackedEnum) {
+                        $this->{$property_name} = $object->{$property_name}->value;
+                    } elseif ($object->{$property_name} instanceof UnitEnum) {
                         $this->{$property_name} = $object->{$property_name}->name;
                     } elseif ($object->{$property_name} instanceof Collection) {
                         $this->{$property_name} = $object->{$property_name}

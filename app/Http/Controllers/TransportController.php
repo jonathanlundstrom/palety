@@ -31,7 +31,7 @@ class TransportController extends Controller {
     /**
      * Generate a PDF of the packing list using Browsershot and return it as a download.
      */
-    public function printPackingList(Transport $transport): Response {
+    public function downloadPackingListPDF(Transport $transport): Response {
         $signedUrl = URL::temporarySignedRoute('transports.packing-list.show', now()->addMinutes(5), [
             'transport' => $transport,
         ]);

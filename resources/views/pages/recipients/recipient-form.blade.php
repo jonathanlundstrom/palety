@@ -2,6 +2,7 @@
 
 use App\Enumerables\DeliveryType;
 use App\Enumerables\FormStatus;
+use App\Enumerables\Permission;
 use App\Enumerables\RecipientType;
 use App\Livewire\Components\FormComponent;
 use App\Models\Recipient;
@@ -11,6 +12,11 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\Validate;
 
 new class extends FormComponent {
+    /**
+     * The model managed by this form. Edit and duplicate requests
+     * for any other class are rejected by the FormComponent.
+     */
+    protected string $model = Recipient::class;
 
     #[Validate('nullable|integer')]
     public ?int $parent_id = null;
@@ -102,6 +108,11 @@ new class extends FormComponent {
      * @return void
      */
     public function onSubmit(): void {
+        $this->authorize(match ($this->formStatus()) {
+            FormStatus::CREATING => Permission::CREATE_RECIPIENT,
+            FormStatus::EDITING => Permission::EDIT_RECIPIENT,
+        });
+
         $validated = $this->validate();
 
         try {

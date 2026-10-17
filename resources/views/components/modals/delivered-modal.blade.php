@@ -1,5 +1,6 @@
 <?php
 
+use App\Enumerables\Permission;
 use App\Enumerables\TransportStatus;
 use App\Models\Transport;
 use Carbon\Carbon;
@@ -64,6 +65,7 @@ new class extends Component {
      * @return void
      */
     public function onSubmit(): void {
+        $this->authorize(Permission::EDIT_TRANSPORT);
         $this->validate();
 
         try {

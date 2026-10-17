@@ -1,5 +1,6 @@
 <?php
 
+use App\Enumerables\Permission;
 use App\Models\Parcel;
 use App\Models\Pallet;
 use Livewire\Attributes\Computed;
@@ -37,34 +38,40 @@ new class extends Component {
 <div class="flex w-full flex-1 flex-col gap-6 rounded-xl">
     <header class="w-full bg-zinc-50 dark:bg-white/5 border-b-1 border-zinc-800/10 dark:border-b-white/10">
         <div class="p-6 flex flex-wrap items-center justify-between">
-            <flux:heading size="xl" level="1">{{ __('pages.dashboard.headline') }}</flux:heading>
+            @can(Permission::VIEW_STATISTICS)
+                <flux:heading size="xl" level="1">{{ __('pages.dashboard.headline') }}</flux:heading>
 
-            <div>
-                <flux:select wire:model.live="year" variant="listbox" size="sm">
-                    @foreach ($this->availableYears as $y)
-                        <flux:select.option value="{{ $y }}">{{ $y }}</flux:select.option>
-                    @endforeach
-                </flux:select>
-            </div>
+                <div>
+                    <flux:select wire:model.live="year" variant="listbox" size="sm">
+                        @foreach ($this->availableYears as $y)
+                            <flux:select.option value="{{ $y }}">{{ $y }}</flux:select.option>
+                        @endforeach
+                    </flux:select>
+                </div>
+            @else
+                <flux:heading size="xl" level="1">{{ __('pages.dashboard.title') }}</flux:heading>
+            @endcan
         </div>
     </header>
 
-    <div class="px-6 grid lg:grid-cols-12 grid-cols-1 gap-6">
-        <livewire:pages::dashboard.cards.parcels :year="$year" />
-        <livewire:pages::dashboard.cards.pallets :year="$year" />
-        <livewire:pages::dashboard.cards.transports :year="$year" />
-    </div>
+    @can(Permission::VIEW_STATISTICS)
+        <div class="px-6 grid lg:grid-cols-12 grid-cols-1 gap-6">
+            <livewire:pages::dashboard.cards.parcels :year="$year"/>
+            <livewire:pages::dashboard.cards.pallets :year="$year"/>
+            <livewire:pages::dashboard.cards.transports :year="$year"/>
+        </div>
 
-    <div class="px-6 pb-6 grid grid-cols-1 lg:grid-cols-12 gap-6 h-full flex-1 items-start">
-        <div class="col-span-12 lg:col-span-4 gap-6">
-            <div class="flex flex-col gap-6">
-                <livewire:pages::dashboard.cards.top-contents :year="$year" />
-                <livewire:pages::dashboard.cards.top-recipients :year="$year" />
+        <div class="px-6 pb-6 grid grid-cols-1 lg:grid-cols-12 gap-6 h-full flex-1 items-start">
+            <div class="col-span-12 lg:col-span-4 gap-6">
+                <div class="flex flex-col gap-6">
+                    <livewire:pages::dashboard.cards.top-contents :year="$year"/>
+                    <livewire:pages::dashboard.cards.top-recipients :year="$year"/>
+                </div>
+            </div>
+
+            <div class="flex flex-col col-span-12 lg:col-span-8 gap-6">
+                <livewire:pages::dashboard.cards.weight-by-category :year="$year"/>
             </div>
         </div>
-
-        <div class="flex flex-col col-span-12 lg:col-span-8 gap-6">
-            <livewire:pages::dashboard.cards.weight-by-category :year="$year" />
-        </div>
-    </div>
+    @endcan
 </div>

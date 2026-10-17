@@ -1,5 +1,11 @@
 <?php
 
+use App\Enumerables\Permission;
+use App\Models\Content;
+use App\Models\Pallet;
+use App\Models\Parcel;
+use App\Models\Recipient;
+use App\Models\Transport;
 use Flux\Flux;
 use hisorange\BrowserDetect\Facade as Browser;
 use Illuminate\Database\Eloquent\Model;
@@ -19,8 +25,24 @@ new class extends Component {
 
     #[On('confirm-delete')]
     public function delete(int $id, string $class): void {
-        $abstract = app()->make($class);
-        $this->resource = $abstract::find($id);
+        $this->resource = $class::findOrFail($id);
+    }
+
+    /**
+     * Resolve the permission required to delete the given model class.
+     * Classes that are not listed cannot be deleted through this modal.
+     *
+     * @param string $class
+     * @return Permission
+     */
+    private function permissionFor(string $class): Permission {
+        return match ($class) {
+            Parcel::class => Permission::DELETE_PARCEL,
+            Pallet::class => Permission::DELETE_PALLET,
+            Transport::class => Permission::DELETE_TRANSPORT,
+            Content::class => Permission::DELETE_CONTENT,
+            Recipient::class => Permission::DELETE_RECIPIENT,
+        };
     }
 
     #[On('reset-modal')]
@@ -46,6 +68,7 @@ new class extends Component {
      * @return void
      */
     public function onSubmit(): void {
+        $this->authorize($this->permissionFor($this->resource::class));
         $this->validate(); // For good measure...
         $resource_type = strtolower(class_basename($this->resource));
 
