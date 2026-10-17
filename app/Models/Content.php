@@ -41,6 +41,14 @@ class Content extends Model {
     ];
 
     /**
+     * Prevent content that is still used by parcels or pallets from being deleted, regardless of who asks.
+     * The counts are loaded first, since usage_count depends on them. Content in use should be merged instead.
+     */
+    protected static function booted(): void {
+        static::deleting(fn (Content $content) => $content->loadCount(['parcels', 'pallets'])->usage_count === 0);
+    }
+
+    /**
      * Get the parcels associated with the content.
      */
     public function parcels(): BelongsToMany {
