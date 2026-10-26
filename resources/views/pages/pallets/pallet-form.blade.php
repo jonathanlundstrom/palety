@@ -227,6 +227,7 @@ new class extends FormComponent {
             <livewire:fields.scanner-field handles="{{ Parcel::class }}" :items="$linked_parcels"
                                            buttonText="{{ __('app.scan.scan_parcels') }}"
                                            label="{{ __('app.linked_parcels') }}"
+                                           :disabled="$resource?->isLocked() ?? false"
                                            :key="'parcels-'.count($linked_parcels)"/>
             <flux:error name="linked_parcels"/>
         </flux:field>

@@ -20,7 +20,7 @@ use App\Models\Content;
             <flux:badge size="sm" inset="top bottom" color="zinc" title="{{ $item->recipient->name }}">
                 {{ str($item->recipient->name)->limit(25) }}
             </flux:badge>
-        @elseif ($item->pallet)
+        @elseif ($item->pallet?->recipient)
             <flux:badge size="sm" inset="top bottom" color="zinc" icon="square-3-stack-3d"
                         title="{{ $item->pallet->recipient->name }}">
                 {{ str($item->pallet->recipient->name)->limit(25) }}
